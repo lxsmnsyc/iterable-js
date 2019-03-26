@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable func-names */
-import { isIterable } from './utils';
+import { isIterable, BadArgumentError, isFunction } from './utils';
 import Iterable from '../iterable';
 
 /**
@@ -8,10 +8,10 @@ import Iterable from '../iterable';
  */
 const onDone = (iterable, fn) => {
   if (!isIterable(iterable)) {
-    throw new TypeError('bad argument #1 to Iterable.onDone (Iterable expected)');
+    throw new BadArgumentError(1, 'Iterable.onDone', 'Iterable');
   }
-  if (typeof fn !== 'function') {
-    throw new TypeError('bad argument #2 to Iterable.onDone (function expected)');
+  if (!isFunction(fn)) {
+    throw new BadArgumentError(2, 'Iterable.onDone', 'function');
   }
 
   return new Iterable(function* () {
