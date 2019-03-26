@@ -26,3 +26,7 @@ export const isFunction = x => typeof x === 'function';
  * @ignore
  */
 export const isNumber = x => typeof x === 'number';
+/**
+ * @ignore
+ */
+export const isUndefined = x => typeof x === 'undefined';
