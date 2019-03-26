@@ -2,17 +2,17 @@
 /* eslint-disable no-restricted-syntax */
 
 import Iterable from '../iterable';
-import { isIterable } from './utils';
+import { isIterable, BadArgumentError, isFunction } from './utils';
 
 /**
  * @ignore
  */
 const takeUntil = (iterable, predicate) => {
   if (!isIterable(iterable)) {
-    throw new TypeError('bad argument #1 to Iterable.takeWhile (Iterable expected)');
+    throw new BadArgumentError(1, 'Iterable.takeUntil', 'Iterable');
   }
-  if (typeof predicate !== 'function') {
-    throw new TypeError('bad argument #2 to Iterable.takeWhile (function expected)');
+  if (!isFunction(predicate)) {
+    throw new BadArgumentError(2, 'Iterable.takeUntil', 'function');
   }
   return new Iterable(function* () {
     for (const i of iterable) {
