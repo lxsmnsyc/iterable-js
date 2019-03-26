@@ -45,8 +45,11 @@
   "homepage": "https://github.com/LXSMNSYC/iterable-js#readme",
   "devDependencies": {
     "@babel/core": "^7.4.0",
+    "@babel/plugin-transform-regenerator": "^7.4.0",
+    "@babel/polyfill": "^7.4.0",
     "@babel/preset-env": "^7.4.2",
     "@babel/register": "^7.4.0",
+    "acorn": "^6.1.1",
     "esdoc": "^1.1.0",
     "esdoc-integrate-test-plugin": "^1.0.0",
     "esdoc-standard-plugin": "^1.0.0",
@@ -57,5 +60,6 @@
     "nyc": "^13.3.0",
     "rollup": "^1.7.2",
     "terser": "^3.17.0"
-  }
+  },
+  "dependencies": {}
 }
