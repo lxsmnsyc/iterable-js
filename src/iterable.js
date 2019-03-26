@@ -29,20 +29,27 @@
 /**
  * @external {Iteration Protocol} https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols
  */
+import { isNumber } from 'util';
 import { isIterable, ITERATOR } from './internal/utils';
 import {
   map, filter, concat, just, first, last, repeat,
   startWith, zip, flat, all, any, isEmpty, empty,
   skip, take, takeLast, skipLast, split, skipWhile,
   takeWhile, onYield, onDone, onStart, count, contains,
-  indexOf, find, breakWith, spanWith, partition, flatMap,
+  indexOf, find, breakWith, spanWith, partition,
+  flatMap, range, elementAt, replace,
 } from './internal/dependency';
 
 /**
  * The Iterable class serves as a super set of all objects
  * that implements the Iteration Protocol.
  *
- * Iterable allows the unification of these objects.
+ * Iterable allows the unification and abstraction
+ * of these objects.
+ *
+ * Iterable also provides operators which allows to
+ * transform an Iterable into a new one, making Iterable
+ * an Immutable.
  */
 export default class Iterable {
   /**
@@ -63,38 +70,36 @@ export default class Iterable {
      * @ignore
      */
     this.it = it;
+
+    return new Proxy(this, {
+      get(target, index) {
+        if (typeof index === 'string' && index in target) {
+          return target[index];
+        }
+        if (isNumber(index)) {
+          return target.get(index);
+        }
+        return undefined;
+      },
+    });
   }
 
+  /**
+   * Similar to elementAt, excepts that this method
+   * returns the actual value at the given index.
+   * @param {!number} index
+   * @returns {any}
+   */
   get(index) {
     const { it } = this;
-    let step = index;
+    let step = 0;
     for (const i of it) {
-      step -= 1;
-      if (step === 0) {
+      if (step === index) {
         return i;
       }
+      step += 1;
     }
     return undefined;
-  }
-
-  set(index, value) {
-    const { it } = this;
-    // eslint-disable-next-line func-names
-    const gen = function* () {
-      let step = index;
-      for (const i of it) {
-        step -= 1;
-        if (step === 0) {
-          yield value;
-        } else {
-          yield i;
-        }
-      }
-    };
-
-    gen[ITERATOR] = gen;
-
-    return new Iterable(gen);
   }
 
   /**
@@ -257,6 +262,33 @@ export default class Iterable {
   }
 
   /**
+   * Returns an Iterable that yields the single item at a specified
+   * index in a sequence of yields from the source Iterable.
+   * @param {!Iterable} it
+   * @param {!number} index
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given index is not a number.
+   * @returns {Iterable}
+   */
+  static elementAt(it, index) {
+    return elementAt(it, index);
+  }
+
+  /**
+   * Returns an Iterable that yields the single item at a specified
+   * index in a sequence of yields from this Iterable.
+   * @param {!number} index
+   * @throws {TypeError}
+   * throws error if the given index is not a number.
+   * @returns {Iterable}
+   */
+  elementAt(index) {
+    return elementAt(this.it, index);
+  }
+
+  /**
    * Returns an Iterable that doesn't yield any value.
    * @returns {Iterable}
    */
@@ -359,7 +391,7 @@ export default class Iterable {
    * Iterable, where that function returns an Iterable, and then
    * merging those resulting Iterable and yielding the results of this merger.
    * @param {!Iterable} it
-   * @param {function(x: any):Iterable} fn
+   * @param {function(x: any):Iterable} mapper
    * @throws {TypeError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {TypeError}
@@ -368,6 +400,20 @@ export default class Iterable {
    */
   static flatMap(it, mapper) {
     return flatMap(it, mapper);
+  }
+
+  /**
+   * Returns an Iterable that yields items based on applying a
+   * function that you supply to each item yielded by this
+   * Iterable, where that function returns an Iterable, and then
+   * merging those resulting Iterable and yielding the results of this merger.
+   * @param {function(x: any):Iterable} mapper
+   * @throws {TypeError}
+   * throws error if the given mapper is not a function
+   * @returns {Iterable}
+   */
+  flatMap(mapper) {
+    return flatMap(this.it, mapper);
   }
 
   /**
@@ -591,6 +637,18 @@ export default class Iterable {
   }
 
   /**
+   * Returns an Iterable that yields a sequence of numbers
+   * within a specified range.
+   * @param {!number} start
+   * @param {!number} end
+   * @param {?number} steps
+   * @returns {Iterable}
+   */
+  static range(start, end, steps) {
+    return range(start, end, steps);
+  }
+
+  /**
    * Repeats the yielded values of a source Iterable by a certain
    * amount.
    * @param {!Iterable} it
@@ -615,6 +673,37 @@ export default class Iterable {
    */
   repeat(amount) {
     return repeat(this.it, amount);
+  }
+
+  /**
+   * Returns an Iterable that replaces the value at the
+   * given index of the source Iterable with the given value.
+   * @param {Iterable} it
+   * @param {!number} index
+   * @param {any} value
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given index is not a number.
+   * @returns {Iterable}
+   */
+  static replace(it, index, value) {
+    return replace(it, index, value);
+  }
+
+  /**
+   * Returns an Iterable that replaces the value at the
+   * given index of this Iterable with the given value.
+   * @param {!number} index
+   * @param {any} value
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given index is not a number.
+   * @returns {Iterable}
+   */
+  replace(index, value) {
+    return replace(this.it, index, value);
   }
 
   /**
@@ -879,7 +968,9 @@ export default class Iterable {
    * @param {!Array} its
    * @param {!function(yields: Array):any} fn
    * @throws {TypeError}
-   * throws error if the given predicate is not a function
+   * throws error if the given iterables is not an array
+   * @throws {TypeError}
+   * throws error if the given zipper is not a function or undefined
    * @returns {Iterable}
    */
   static zip(its, fn) {
@@ -893,7 +984,9 @@ export default class Iterable {
    * @param {!Array} its
    * @param {!function(yields: Array):any} fn
    * @throws {TypeError}
-   * throws error if the given predicate is not a function
+   * throws error if the given iterables is not an array
+   * @throws {TypeError}
+   * throws error if the given zipper is not a function or undefined
    * @returns {Iterable}
    */
   zip(its, fn) {
