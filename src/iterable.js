@@ -35,7 +35,7 @@ import {
   startWith, zip, flat, all, any, isEmpty, empty,
   skip, take, takeLast, skipLast, split, skipWhile,
   takeWhile, onYield, onDone, onStart, count, contains,
-  indexOf, find, breakWith, spanWith, partition,
+  indexOf, find, breakWith, spanWith, partition, flatMap,
 } from './internal/dependency';
 
 /**
@@ -354,6 +354,23 @@ export default class Iterable {
   }
 
   /**
+   * Returns an Iterable that yields items based on applying a
+   * function that you supply to each item yielded by the source
+   * Iterable, where that function returns an Iterable, and then
+   * merging those resulting Iterable and yielding the results of this merger.
+   * @param {!Iterable} it
+   * @param {function(x: any):Iterable} fn
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given mapper is not a function
+   * @returns {Iterable}
+   */
+  static flatMap(it, mapper) {
+    return flatMap(it, mapper);
+  }
+
+  /**
    * Returns an Iterable that yields the index of the
    * given value if it the source Iterable yields the same
    * value.
@@ -629,7 +646,7 @@ export default class Iterable {
 
   /**
    * Returns an Iterable that drops a specified number of items
-   * from the end of the sequence emitted by the source
+   * from the end of the sequence yielded by the source
    * Iterable.
    * @param {!Iterable} it
    * @param {!number} amount
@@ -645,7 +662,7 @@ export default class Iterable {
 
   /**
    * Returns an Iterable that drops a specified number of items
-   * from the end of the sequence emitted by this Iterable.
+   * from the end of the sequence yielded by this Iterable.
    * @param {!number} amount
    * @throws {TypeError}
    * throws error if the given amount is not a number.
@@ -828,7 +845,7 @@ export default class Iterable {
   }
 
   /**
-   * Returns an Iterable that emits items yielded by the source Iterable
+   * Returns an Iterable that yields items yielded by the source Iterable
    * so long as each item satisfied a specified condition, and then
    * completes as soon as this condition is not satisfied.
    * @param {!Iterable} it
@@ -844,7 +861,7 @@ export default class Iterable {
   }
 
   /**
-   * Returns an Iterable that emits items yielded by this Iterable
+   * Returns an Iterable that yields items yielded by this Iterable
    * so long as each item satisfied a specified condition, and then
    * completes as soon as this condition is not satisfied.
    * @param {!function(x: any):boolean} predicate
