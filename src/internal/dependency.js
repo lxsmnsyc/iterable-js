@@ -10,6 +10,8 @@ export { default as isEmpty } from './isEmpty';
 export { default as just } from './just';
 export { default as last } from './last';
 export { default as map } from './map';
+export { default as onDone } from './onDone';
+export { default as onStart } from './onStart';
 export { default as onYield } from './onYield';
 export { default as repeat } from './repeat';
 export { default as skip } from './skip';
