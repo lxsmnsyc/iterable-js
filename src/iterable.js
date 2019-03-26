@@ -2,14 +2,16 @@
 import { isIterable, ITERATOR } from './internal/utils';
 import {
   map, filter, concat, just, first, last, repeat,
-  startWith, zip, flat, all, any, isEmpty, 
+  startWith, zip, flat, all, any, isEmpty, empty,
+  skip, take, takeLast, skipLast, split, skipWhile,
+  takeWhile,
 } from './internal/dependency';
 
 
 export default class Iterable {
   constructor(iterable) {
     const it = iterable;
-    if (it.constructor.name === 'GeneratorFunction') {
+    if (it.constructor.name === 'Generatorfunction') {
       it[ITERATOR] = it;
     }
     this.it = it;
@@ -59,8 +61,8 @@ export default class Iterable {
   /**
    * Returns an Iterable that yields true if all of the yields of the
    * source Iterable passes the predicate function, false if not.
-   * @param {Iterable} it
-   * @param {Function(x: any):boolean} predicate
+   * @param {!Iterable} it
+   * @param {function(x: any):boolean} predicate
    * @returns {Iterable}
    */
   static all(it, predicate) {
@@ -70,7 +72,7 @@ export default class Iterable {
   /**
    * Returns an Iterable that yields true if all of the yields of
    * this Iterable passes the predicate function, false if not.
-   * @param {Function(x: any):boolean} predicate
+   * @param {function(x: any):boolean} predicate
    * @returns {Iterable}
    */
   all(predicate) {
@@ -80,8 +82,8 @@ export default class Iterable {
   /**
    * Returns an Iterable that yields true if any of the yields of the
    * source Iterable passes the predicate function, false if not.
-   * @param {Iterable} it
-   * @param {Function(x: any):boolean} predicate
+   * @param {!Iterable} it
+   * @param {function(x: any):boolean} predicate
    * @returns {Iterable}
    */
   static any(it, predicate) {
@@ -91,7 +93,7 @@ export default class Iterable {
   /**
    * Returns an Iterable that yields true if any of the yields of
    * this Iterable passes the predicate function, false if not.
-   * @param {Function(x: any):boolean} predicate
+   * @param {function(x: any):boolean} predicate
    * @returns {Iterable}
    */
   any(predicate) {
@@ -116,11 +118,15 @@ export default class Iterable {
     return concat(this.it, ...its);
   }
 
+  static empty() {
+    return empty();
+  }
+
   /**
-   * Filters the yields of a given Iterable with a filter function.
+   * Filters the yields of a source Iterable with a filter function.
    *
-   * @param {Iterable} it
-   * @param {Function(x: any):boolean} fn
+   * @param {!Iterable} it
+   * @param {function(x: any):boolean} fn
    * @returns {Iterable}
    */
   static filter(it, fn) {
@@ -129,7 +135,7 @@ export default class Iterable {
 
   /**
    * Filters the yields of this Iterable with a filter function.
-   * @param {Function(x: any):boolean} fn
+   * @param {function(x: any):boolean} fn
    * @returns {Iterable}
    */
   filter(fn) {
@@ -137,9 +143,9 @@ export default class Iterable {
   }
 
   /**
-   * Creates an Iterable that yields the first value of the given
+   * Creates an Iterable that yields the first value of the source
    * Iterable.
-   * @param {Iterable} it
+   * @param {!Iterable} it
    * @returns {Iterable}
    */
   static first(it) {
@@ -156,9 +162,9 @@ export default class Iterable {
   }
 
   /**
-   * Flattens the given Iterable by removing a single layer of
+   * Flattens the source Iterable by removing a single layer of
    * nesting for the yielded Iterables.
-   * @param {Iterable} it
+   * @param {!Iterable} it
    * @returns {Iterable}
    */
   static flat(it) {
@@ -177,7 +183,7 @@ export default class Iterable {
   /**
    * Creates an Iterable that yields the true if this
    * Iterable is empty.
-   * @param {Iterable} it
+   * @param {!Iterable} it
    * @returns {Iterable}
    */
   static isEmpty(it) {
@@ -202,7 +208,7 @@ export default class Iterable {
   }
 
   /**
-   * Creates an Iterable that yields the last value of the given
+   * Creates an Iterable that yields the last value of the source
    * Iterable.
    * @returns {Iterable}
    */
@@ -221,10 +227,10 @@ export default class Iterable {
 
 
   /**
-   * Applies a mapping function to each yielded value of the given
+   * Applies a mapping function to each yielded value of the source
    * Iterable.
-   * @param {Iterable} it
-   * @param {Function(x: any):any} fn
+   * @param {!Iterable} it
+   * @param {function(x: any):any} fn
    * @returns {Iterable}
    */
   static map(it, fn) {
@@ -234,8 +240,8 @@ export default class Iterable {
   /**
    * Applies a mapping function to each yielded value of this
    * Iterable.
-   * @param {Iterable} it
-   * @param {Function(x: any):any} fn
+   * @param {!Iterable} it
+   * @param {function(x: any):any} fn
    * @returns {Iterable}
    */
   map(fn) {
@@ -243,10 +249,10 @@ export default class Iterable {
   }
 
   /**
-   * Repeats the yielded values of a given Iterable by a certain
+   * Repeats the yielded values of a source Iterable by a certain
    * amount.
-   * @param {Iterable} it
-   * @param {number} count
+   * @param {!Iterable} it
+   * @param {!number} count
    * @returns {Iterable}
    */
   static repeat(it, count) {
@@ -256,7 +262,7 @@ export default class Iterable {
   /**
    * Repeats the yielded values of this Iterable by a certain
    * amount.
-   * @param {number} count
+   * @param {!number} count
    * @returns {Iterable}
    */
   repeat(count) {
@@ -264,9 +270,98 @@ export default class Iterable {
   }
 
   /**
-   * Same to concat, except that it prefixes the given Iterable
+   * Returns an Iterable that skips the first count items yielded by
+   * the source Iterable and yields the remainder.
+   * @param {!Iterable} it
+   * @param {!number} count
+   * @returns {Iterable}
+   */
+  static skip(it, count) {
+    return skip(it, count);
+  }
+
+  /**
+   * Returns an Iterable that skips the first count items yielded by
+   * the source Iterable and yields the remainder.
+   * @param {!number} count
+   * @returns {Iterable}
+   */
+  skip(count) {
+    return skip(this.it, count);
+  }
+
+  /**
+   * Returns an Iterable that drops a specified number of items
+   * from the end of the sequence emitted by the source
+   * Iterable.
+   * @param {!Iterable} it
+   * @param {!number} count
+   * @returns {Iterable}
+   */
+  static skipLast(it, count) {
+    return skipLast(it, count);
+  }
+
+  /**
+   * Returns an Iterable that drops a specified number of items
+   * from the end of the sequence emitted by this Iterable.
+   * @param {!number} count
+   * @returns {Iterable}
+   */
+  skipLast(count) {
+    return skipLast(this.it, count);
+  }
+
+  /**
+   * Returns an Iterable that skips all items yielded by the source
+   * Iterable as long as a specified condition holds true, but yields
+   * all further source items as soon as the condition becomes false.
+   * @param {!Iterable} it
+   * @param {!function(x: any):boolean} predicate
+   * @returns {Iterable}
+   */
+  static skipWhile(it, predicate) {
+    return skipWhile(it, predicate);
+  }
+
+  /**
+   * Returns an Iterable that skips all items yielded by the source
+   * Iterable as long as a specified condition holds true, but yields
+   * all further source items as soon as the condition becomes false.
+   * @param {!function(x: any):boolean} predicate
+   * @returns {Iterable}
+   */
+  skipWhile(predicate) {
+    return skipWhile(this.it, predicate);
+  }
+
+  /**
+   * Given an index, get a two-tuple of Iterable
+   * from the start of the source Iterable,
+   * and the Iterable that follows them.
+   * @param {!Iterable} it
+   * @param {!number} count
+   * @returns {Array}
+   */
+  static split(it, count) {
+    return split(it, count);
+  }
+
+  /**
+   * Given an index, get a two-tuple of Iterable
+   * from the start of this Iterable,
+   * and the Iterable that follows them.
+   * @param {!number} count
+   * @returns {Array}
+   */
+  split(count) {
+    return split(this.it, count);
+  }
+
+  /**
+   * Same to concat, except that it prefixes the source Iterable
    * to a set of Iterables into a single Iterable.
-   * @param {Iterable} it
+   * @param {!Iterable} it
    * @param  {...Iterable} its
    * @returns {Iterable}
    */
@@ -277,7 +372,7 @@ export default class Iterable {
   /**
    * Same to concat, except that it prefixes this Iterable
    * to a set of Iterables into a single Iterable.
-   * @param {Iterable} it
+   * @param {!Iterable} it
    * @param  {...Iterable} its
    * @returns {Iterable}
    */
@@ -286,10 +381,75 @@ export default class Iterable {
   }
 
   /**
+   * Returns an Iterable that yields only the first count items yielded by the
+   * source Iterable.
+   * @param {!Iterable} it
+   * @param {!number} count
+   * @returns {Iterable}
+   */
+  static take(it, count) {
+    return take(it, count);
+  }
+
+  /**
+   * Returns an Iterable that yields only the first count items yielded by
+   * this Iterable.
+   * @param {!number} count
+   * @returns {Iterable}
+   */
+  take(count) {
+    return take(this.it, count);
+  }
+
+  /**
+   * Returns an Iterable that yields at most the last count
+   * items yielded by the source Iterable.
+   * @param {!Iterable} it
+   * @param {!number} count
+   * @returns {Single}
+   */
+  static takeLast(it, count) {
+    return takeLast(it, count);
+  }
+
+  /**
+   * Returns an Iterable that yields at most the last count
+   * items yielded by the source Iterable.
+   * @param {!number} count
+   * @returns {Single}
+   */
+  takeLast(count) {
+    return takeLast(this.it, count);
+  }
+
+  /**
+   * Returns an Iterable that emits items yielded by the source Iterable
+   * so long as each item satisfied a specified condition, and then
+   * completes as soon as this condition is not satisfied.
+   * @param {!Iterable} it
+   * @param {!function(x: any):boolean} predicate
+   * @returns {Single}
+   */
+  static takeWhile(it, predicate) {
+    return takeWhile(it, predicate);
+  }
+
+  /**
+   * Returns an Iterable that emits items yielded by this Iterable
+   * so long as each item satisfied a specified condition, and then
+   * completes as soon as this condition is not satisfied.
+   * @param {!function(x: any):boolean} predicate
+   * @returns {Single}
+   */
+  takeWhile(predicate) {
+    return takeWhile(this.it, predicate);
+  }
+
+  /**
    * combine the yields of multiple Iterables together via a specified function and
    * yields single items for each combination based on the results of this function.
-   * @param {Iterable} its
-   * @param {Function(yields: Array):any} fn
+   * @param {!Iterable} its
+   * @param {!function(yields: Array):any} fn
    * @returns {Iterable}
    */
   static zip(its, fn) {
@@ -300,8 +460,8 @@ export default class Iterable {
    * combine the yields of this Iterable with multiple Iterables together via a specified
    * function and yields single items for each combination based on the results of this
    * function.
-   * @param {Iterable} its
-   * @param {Function(yields: Array):any} fn
+   * @param {!Iterable} its
+   * @param {!function(yields: Array):any} fn
    * @returns {Iterable}
    */
   zip(its, fn) {
