@@ -7,21 +7,14 @@ import Iterable from '../iterable';
  */
 const map = (iterable, mapper) => {
   if (!(iterable instanceof Iterable)) {
-    throw new TypeError('expects an object that implements the Iteration Protocol');
+    throw new TypeError('bad argument #1 to Iterable.map (Iterable expected)');
   }
   if (typeof mapper !== 'function') {
-    throw new TypeError('expects the mapper to be a function.');
+    throw new TypeError('bad argument #2 to Iterable.map (function expected)');
   }
   return new Iterable(function* () {
     for (const i of iterable) {
-      let result;
-
-      try {
-        result = mapper(i);
-      } catch (e) {
-        break;
-      }
-      yield result;
+      yield mapper(i);
     }
   });
 };
