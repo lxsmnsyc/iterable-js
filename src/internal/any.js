@@ -1,16 +1,16 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable func-names */
 import Iterable from '../iterable';
-import { isIterable } from './utils';
+import { isIterable, BadArgumentError, isFunction } from './utils';
 /**
  * @ignore
  */
 const any = (iterable, predicate) => {
   if (!isIterable(iterable)) {
-    throw new TypeError('bad argument #1 to Iterable.any (Iterable expected)');
+    throw new BadArgumentError(1, 'Iterable.any', 'Iterable');
   }
-  if (typeof predicate !== 'function') {
-    throw new TypeError('bad argument #2 to Iterable.any (function expected)');
+  if (!isFunction(predicate)) {
+    throw new BadArgumentError(2, 'Iterable.any', 'function');
   }
   return new Iterable(function* () {
     for (const i of iterable) {
