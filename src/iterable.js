@@ -34,7 +34,8 @@ import {
   map, filter, concat, just, first, last, repeat,
   startWith, zip, flat, all, any, isEmpty, empty,
   skip, take, takeLast, skipLast, split, skipWhile,
-  takeWhile, onYield, onDone, onStart, count, contains, indexOf, find,
+  takeWhile, onYield, onDone, onStart, count, contains,
+  indexOf, find, breakWith, spanWith, partition,
 } from './internal/dependency';
 
 /**
@@ -160,8 +161,40 @@ export default class Iterable {
   }
 
   /**
+   * Split an Iterable into a longest prefix such that all
+   * the elements of it do not satisfy a given predicate,
+   * and the rest of the Iterable following them.
+   * @param {Iterable} it
+   * @param {function(x: any):boolean} predicate
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given predicate is not a function
+   * @returns {Iterable}
+   */
+  static break(it, predicate) {
+    return breakWith(it, predicate);
+  }
+
+  /**
+   * Split an Iterable into a longest prefix such that all
+   * the elements of it do not satisfy a given predicate,
+   * and the rest of the Iterable following them.
+   * @param {function(x: any):boolean} predicate
+   * @throws {TypeError}
+   * throws error if the given predicate is not a function
+   * @returns {Iterable}
+   */
+  break(predicate) {
+    return breakWith(this.it, predicate);
+  }
+
+  /**
    * Concatenates the given set of Iterables into a single Iterable.
-   * @param  {...Iterable} its
+   *
+   * If a value is an Iterable, concat removes a single layer
+   * of nesting
+   * @param  {...any} its
    * @returns {Iterable}
    */
   static concat(...its) {
@@ -170,7 +203,11 @@ export default class Iterable {
 
   /**
    * Concatenates the given Iterables to this Iterable.
-   * @param  {...Iterable} its
+   *
+   * If a value is an Iterable, concat removes a single layer
+   * of nesting
+   *
+   * @param  {...any} its
    * @returns {Iterable}
    */
   concat(...its) {
@@ -182,6 +219,9 @@ export default class Iterable {
    * whether the source Iterable yielded a specified item.
    * @param {Iterable} it
    * @param {any} value
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
    */
   static contains(it, value) {
     return contains(it, value);
@@ -191,6 +231,7 @@ export default class Iterable {
    * Returns an Iterable that yields a Boolean that indicates
    * whether the source Iterable yielded a specified item.
    * @param {any} value
+   * @returns {Iterable}
    */
   contains(value) {
     return contains(this.it, value);
@@ -253,6 +294,8 @@ export default class Iterable {
    * Finds the index of the first element that satisfy a predicate.
    * @param {Iterable} it
    * @param {function(x: any):boolean} predicate
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @returns {Iterable}
    */
   static find(it, predicate) {
@@ -316,6 +359,9 @@ export default class Iterable {
    * value.
    * @param {Iterable} it
    * @param {any} value
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
    */
   static indexOf(it, value) {
     return indexOf(it, value);
@@ -326,6 +372,7 @@ export default class Iterable {
    * given value if it this Iterable yields the same
    * value.
    * @param {any} value
+   * @returns {Iterable}
    */
   indexOf(value) {
     return indexOf(this.it, value);
@@ -416,6 +463,10 @@ export default class Iterable {
    * process.
    * @param {Iterable} it
    * @param {function(x: any)} fn
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given action is not a function
    * @returns {Iterable}
    */
   static onDone(it, fn) {
@@ -427,6 +478,8 @@ export default class Iterable {
    * executed when this Iterable finishes the iteration
    * process.
    * @param {function(x: any)} fn
+   * @throws {TypeError}
+   * throws error if the given action is not a function
    * @returns {Iterable}
    */
   onDone(fn) {
@@ -439,6 +492,10 @@ export default class Iterable {
    * process.
    * @param {Iterable} it
    * @param {function(x: any)} fn
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given action is not a function
    * @returns {Iterable}
    */
   static onStart(it, fn) {
@@ -450,6 +507,8 @@ export default class Iterable {
    * executed when this Iterable finishes the iteration
    * process.
    * @param {function(x: any)} fn
+   * @throws {TypeError}
+   * throws error if the given action is not a function
    * @returns {Iterable}
    */
   onStart(fn) {
@@ -462,6 +521,10 @@ export default class Iterable {
    * a value.
    * @param {Iterable} it
    * @param {function(x: any)} fn
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given consumer is not a function
    * @returns {Iterable}
    */
   static onYield(it, fn) {
@@ -473,10 +536,41 @@ export default class Iterable {
    * executed whenever this Iterable yields
    * a value.
    * @param {function(x: any)} fn
+   * @throws {TypeError}
+   * throws error if the given consumer is not a function
    * @returns {Iterable}
    */
   onYield(fn) {
     return onYield(this.it, fn);
+  }
+
+  /**
+   * Given a predicate and an Iterable, return a pair of Iterables
+   * which do and do not satisfy the predicate, respectively.
+   * @param {Iterable} it
+   * @param {function(x: any):boolean} predicate
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given consumer is not a function
+   * @returns {Iterable}
+   */
+  static partition(it, predicate) {
+    return partition(it, predicate);
+  }
+
+  /**
+   * Given a predicate and an Iterable, return a pair of Iterables
+   * which do and do not satisfy the predicate, respectively.
+   * @param {function(x: any):boolean} predicate
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given consumer is not a function
+   * @returns {Iterable}
+   */
+  partition(predicate) {
+    return partition(this.it, predicate);
   }
 
   /**
@@ -588,6 +682,35 @@ export default class Iterable {
    */
   skipWhile(predicate) {
     return skipWhile(this.it, predicate);
+  }
+
+  /**
+   * Split an Iterable into a longest prefix such that all
+   * the elements of it do satisfy a given predicate,
+   * and the rest of the Iterable following them.
+   * @param {Iterable} it
+   * @param {function(x: any):boolean} predicate
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given predicate is not a function
+   * @returns {Iterable}
+   */
+  static span(it, predicate) {
+    return spanWith(it, predicate);
+  }
+
+  /**
+   * Split an Iterable into a longest prefix such that all
+   * the elements of it do satisfy a given predicate,
+   * and the rest of the Iterable following them.
+   * @param {function(x: any):boolean} predicate
+   * @throws {TypeError}
+   * throws error if the given predicate is not a function
+   * @returns {Iterable}
+   */
+  span(predicate) {
+    return spanWith(this.it, predicate);
   }
 
   /**
