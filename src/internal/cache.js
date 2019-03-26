@@ -3,9 +3,12 @@
 import { BadArgumentError, isIterable } from './utils';
 import Iterable from '../iterable';
 
+/**
+ * @ignore
+ */
 const cache = (iterable) => {
   if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.flatMap', 'Iterable');
+    throw new BadArgumentError(1, 'Iterable.cache', 'Iterable');
   }
 
   const c = [];
