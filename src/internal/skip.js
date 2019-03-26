@@ -8,13 +8,13 @@ import Iterable from '../iterable';
  */
 const skip = (iterable, count) => {
   if (!isIterable(iterable)) {
-    throw new TypeError('expects an object that implements the Iteration Protocol');
+    throw new TypeError('bad argument #1 to Iterable.skip (Iterable expected)');
   }
   if (typeof count !== 'number') {
-    throw new TypeError('expects count to be a number.');
+    throw new TypeError('bad argument #2 to Iterable.skip (number expected)');
   }
   if (count < 0) {
-    throw new TypeError('expects "count" to be a positive number.');
+    throw new TypeError('bad argument #2 to Iterable.skip (positive number expected)');
   }
 
   return new Iterable(function* () {
