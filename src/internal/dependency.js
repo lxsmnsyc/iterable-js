@@ -2,6 +2,7 @@
 export { default as all } from './all';
 export { default as any } from './any';
 export { default as breakWith } from './breakWith';
+export { default as cache } from './cache';
 export { default as concat } from './concat';
 export { default as contains } from './contains';
 export { default as count } from './count';
@@ -24,6 +25,7 @@ export { default as partition } from './partition';
 export { default as range } from './range';
 export { default as repeat } from './repeat';
 export { default as replace } from './replace';
+export { default as reverse } from './reverse';
 export { default as skip } from './skip';
 export { default as skipLast } from './skipLast';
 export { default as skipUntil } from './skipUntil';
