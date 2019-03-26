@@ -172,7 +172,7 @@ export default class Iterable {
    * throws error if the given predicate is not a function
    * @returns {Iterable}
    */
-  static break(it, predicate) {
+  static breakWith(it, predicate) {
     return breakWith(it, predicate);
   }
 
@@ -185,7 +185,7 @@ export default class Iterable {
    * throws error if the given predicate is not a function
    * @returns {Iterable}
    */
-  break(predicate) {
+  breakWith(predicate) {
     return breakWith(this.it, predicate);
   }
 
@@ -713,7 +713,7 @@ export default class Iterable {
    * throws error if the given predicate is not a function
    * @returns {Iterable}
    */
-  static span(it, predicate) {
+  static spanWith(it, predicate) {
     return spanWith(it, predicate);
   }
 
@@ -726,7 +726,7 @@ export default class Iterable {
    * throws error if the given predicate is not a function
    * @returns {Iterable}
    */
-  span(predicate) {
+  spanWith(predicate) {
     return spanWith(this.it, predicate);
   }
 
