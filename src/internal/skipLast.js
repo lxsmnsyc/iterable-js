@@ -1,6 +1,6 @@
 /* eslint-disable func-names */
 /* eslint-disable no-restricted-syntax */
-import { isIterable } from './utils';
+import { isIterable, BadArgumentError, isNumber } from './utils';
 import Iterable from '../iterable';
 
 /**
@@ -8,13 +8,13 @@ import Iterable from '../iterable';
  */
 const skipLast = (iterable, count) => {
   if (!isIterable(iterable)) {
-    throw new TypeError('bad argument #1 to Iterable.skipLast (Iterable expected)');
+    throw new BadArgumentError(1, 'Iterable.skipLast', 'Iterable');
   }
-  if (typeof count !== 'number') {
-    throw new TypeError('bad argument #2 to Iterable.skipLast (number expected)');
+  if (!isNumber(count)) {
+    throw new BadArgumentError(2, 'Iterable.skipLast', 'number');
   }
   if (count < 0) {
-    throw new TypeError('bad argument #2 to Iterable.skipLast (positive number expected)');
+    throw new BadArgumentError(2, 'Iterable.skipLast', 'positive number');
   }
 
   return new Iterable(function* () {
