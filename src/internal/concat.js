@@ -2,8 +2,6 @@
 /* eslint-disable func-names */
 import Iterable from '../iterable';
 import flat from './flat';
-
-
 /**
  * @ignore
  */
