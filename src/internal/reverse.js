@@ -3,6 +3,9 @@
 import { isIterable, BadArgumentError } from './utils';
 import Iterable from '../iterable';
 
+/**
+ * @ignore
+ */
 const reverse = (iterable) => {
   if (!isIterable(iterable)) {
     throw new BadArgumentError(1, 'Iterable.reverse', 'Iterable');
