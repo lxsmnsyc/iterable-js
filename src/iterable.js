@@ -34,7 +34,7 @@ import {
   map, filter, concat, just, first, last, repeat,
   startWith, zip, flat, all, any, isEmpty, empty,
   skip, take, takeLast, skipLast, split, skipWhile,
-  takeWhile, onYield, onDone, onStart,
+  takeWhile, onYield, onDone, onStart, count, contains, indexOf, find,
 } from './internal/dependency';
 
 /**
@@ -45,7 +45,7 @@ import {
  */
 export default class Iterable {
   /**
-   * Creates an Iterable with the given object.
+   * Returns an Iterable with the given object.
    *
    * This object must be either a generator or an object
    * that implements the Iteration Protocol.
@@ -178,6 +178,44 @@ export default class Iterable {
   }
 
   /**
+   * Returns an Iterable that yields a Boolean that indicates
+   * whether the source Iterable yielded a specified item.
+   * @param {Iterable} it
+   * @param {any} value
+   */
+  static contains(it, value) {
+    return contains(it, value);
+  }
+
+  /**
+   * Returns an Iterable that yields a Boolean that indicates
+   * whether the source Iterable yielded a specified item.
+   * @param {any} value
+   */
+  contains(value) {
+    return contains(this.it, value);
+  }
+
+  /**
+   * Returns an Iterable that counts the total number of items
+   * yielded by the source Iterable and yields this count.
+   * @param {Iterable} it
+   * @returns {Iterable}
+   */
+  static count(it) {
+    return count(it);
+  }
+
+  /**
+   * Returns an Iterable that counts the total number of items
+   * yielded by this Iterable and yields this count.
+   * @returns {Iterable}
+   */
+  count() {
+    return count(this.it);
+  }
+
+  /**
    * Returns an Iterable that doesn't yield any value.
    * @returns {Iterable}
    */
@@ -212,7 +250,26 @@ export default class Iterable {
   }
 
   /**
-   * Creates an Iterable that yields the first value of the source
+   * Finds the index of the first element that satisfy a predicate.
+   * @param {Iterable} it
+   * @param {function(x: any):boolean} predicate
+   * @returns {Iterable}
+   */
+  static find(it, predicate) {
+    return find(it, predicate);
+  }
+
+  /**
+   * Finds the index of the first element that satisfy a predicate.
+   * @param {function(x: any):boolean} predicate
+   * @returns {Iterable}
+   */
+  find(predicate) {
+    return find(this.it, predicate);
+  }
+
+  /**
+   * Returns an Iterable that yields the first value of the source
    * Iterable.
    * @param {!Iterable} it
    * @throws {TypeError}
@@ -224,7 +281,7 @@ export default class Iterable {
   }
 
   /**
-   * Creates an Iterable that yields the first value of this
+   * Returns an Iterable that yields the first value of this
    * Iterable.
    * @returns {Iterable}
    */
@@ -254,7 +311,28 @@ export default class Iterable {
   }
 
   /**
-   * Creates an Iterable that yields true if this
+   * Returns an Iterable that yields the index of the
+   * given value if it the source Iterable yields the same
+   * value.
+   * @param {Iterable} it
+   * @param {any} value
+   */
+  static indexOf(it, value) {
+    return indexOf(it, value);
+  }
+
+  /**
+   * Returns an Iterable that yields the index of the
+   * given value if it this Iterable yields the same
+   * value.
+   * @param {any} value
+   */
+  indexOf(value) {
+    return indexOf(this.it, value);
+  }
+
+  /**
+   * Returns an Iterable that yields true if this
    * Iterable is empty.
    * @param {!Iterable} it
    * @throws {TypeError}
@@ -266,7 +344,7 @@ export default class Iterable {
   }
 
   /**
-   * Creates an Iterable that yields the true if this
+   * Returns an Iterable that yields the true if this
    * Iterable is empty.
    * @returns {Iterable}
    */
@@ -275,7 +353,7 @@ export default class Iterable {
   }
 
   /**
-   * Creates an Iterable that yields a single value.
+   * Returns an Iterable that yields a single value.
    * @param {any} value
    * @returns {Iterable}
    */
@@ -284,7 +362,7 @@ export default class Iterable {
   }
 
   /**
-   * Creates an Iterable that yields the last value of the source
+   * Returns an Iterable that yields the last value of the source
    * Iterable.
    * @param {Iterable} it
    * @throws {TypeError}
@@ -296,7 +374,7 @@ export default class Iterable {
   }
 
   /**
-   * Creates an Iterable that yields the last value of this
+   * Returns an Iterable that yields the last value of this
    * Iterable.
    * @returns {Iterable}
    */
@@ -405,54 +483,54 @@ export default class Iterable {
    * Repeats the yielded values of a source Iterable by a certain
    * amount.
    * @param {!Iterable} it
-   * @param {!number} count
+   * @param {!number} amount
    * @throws {TypeError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {TypeError}
-   * throws error if the given count is not a number.
+   * throws error if the given amount is not a number.
    * @returns {Iterable}
    */
-  static repeat(it, count) {
-    return repeat(it, count);
+  static repeat(it, amount) {
+    return repeat(it, amount);
   }
 
   /**
    * Repeats the yielded values of this Iterable by a certain
    * amount.
-   * @param {!number} count
+   * @param {!number} amount
    * @throws {TypeError}
-   * throws error if the given count is not a number.
+   * throws error if the given amount is not a number.
    * @returns {Iterable}
    */
-  repeat(count) {
-    return repeat(this.it, count);
+  repeat(amount) {
+    return repeat(this.it, amount);
   }
 
   /**
    * Returns an Iterable that skips the first count items yielded by
    * the source Iterable and yields the remainder.
    * @param {!Iterable} it
-   * @param {!number} count
+   * @param {!number} amount
    * @throws {TypeError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {TypeError}
-   * throws error if the given count is not a number.
+   * throws error if the given amount is not a number.
    * @returns {Iterable}
    */
-  static skip(it, count) {
-    return skip(it, count);
+  static skip(it, amount) {
+    return skip(it, amount);
   }
 
   /**
    * Returns an Iterable that skips the first count items yielded by
    * the source Iterable and yields the remainder.
-   * @param {!number} count
+   * @param {!number} amount
    * @throws {TypeError}
-   * throws error if the given count is not a number.
+   * throws error if the given amount is not a number.
    * @returns {Iterable}
    */
-  skip(count) {
-    return skip(this.it, count);
+  skip(amount) {
+    return skip(this.it, amount);
   }
 
   /**
@@ -460,27 +538,27 @@ export default class Iterable {
    * from the end of the sequence emitted by the source
    * Iterable.
    * @param {!Iterable} it
-   * @param {!number} count
+   * @param {!number} amount
    * @throws {TypeError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {TypeError}
-   * throws error if the given count is not a number.
+   * throws error if the given amount is not a number.
    * @returns {Iterable}
    */
-  static skipLast(it, count) {
-    return skipLast(it, count);
+  static skipLast(it, amount) {
+    return skipLast(it, amount);
   }
 
   /**
    * Returns an Iterable that drops a specified number of items
    * from the end of the sequence emitted by this Iterable.
-   * @param {!number} count
+   * @param {!number} amount
    * @throws {TypeError}
-   * throws error if the given count is not a number.
+   * throws error if the given amount is not a number.
    * @returns {Iterable}
    */
-  skipLast(count) {
-    return skipLast(this.it, count);
+  skipLast(amount) {
+    return skipLast(this.it, amount);
   }
 
   /**
@@ -517,28 +595,28 @@ export default class Iterable {
    * from the start of the source Iterable,
    * and the Iterable that follows them.
    * @param {!Iterable} it
-   * @param {!number} count
+   * @param {!number} amount
    * @throws {TypeError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {TypeError}
-   * throws error if the given count is not a number.
+   * throws error if the given amount is not a number.
    * @returns {Array}
    */
-  static split(it, count) {
-    return split(it, count);
+  static split(it, amount) {
+    return split(it, amount);
   }
 
   /**
    * Given an index, get a two-tuple of Iterable
    * from the start of this Iterable,
    * and the Iterable that follows them.
-   * @param {!number} count
+   * @param {!number} amount
    * @throws {TypeError}
-   * throws error if the given count is not a number.
+   * throws error if the given amount is not a number.
    * @returns {Array}
    */
-  split(count) {
-    return split(this.it, count);
+  split(amount) {
+    return split(this.it, amount);
   }
 
   /**
@@ -576,54 +654,54 @@ export default class Iterable {
    * Returns an Iterable that yields only the first count items yielded by the
    * source Iterable.
    * @param {!Iterable} it
-   * @param {!number} count
+   * @param {!number} amount
    * @throws {TypeError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {TypeError}
-   * throws error if the given count is not a number.
+   * throws error if the given amount is not a number.
    * @returns {Iterable}
    */
-  static take(it, count) {
-    return take(it, count);
+  static take(it, amount) {
+    return take(it, amount);
   }
 
   /**
    * Returns an Iterable that yields only the first count items yielded by
    * this Iterable.
-   * @param {!number} count
+   * @param {!number} amount
    * @throws {TypeError}
-   * throws error if the given count is not a number.
+   * throws error if the given amount is not a number.
    * @returns {Iterable}
    */
-  take(count) {
-    return take(this.it, count);
+  take(amount) {
+    return take(this.it, amount);
   }
 
   /**
-   * Returns an Iterable that yields at most the last count
+   * Returns an Iterable that yields at most the last amount
    * items yielded by the source Iterable.
    * @param {!Iterable} it
-   * @param {!number} count
+   * @param {!number} amount
    * @throws {TypeError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {TypeError}
-   * throws error if the given count is not a number.
+   * throws error if the given amount is not a number.
    * @returns {Iterable}
    */
-  static takeLast(it, count) {
-    return takeLast(it, count);
+  static takeLast(it, amount) {
+    return takeLast(it, amount);
   }
 
   /**
-   * Returns an Iterable that yields at most the last count
+   * Returns an Iterable that yields at most the last amount
    * items yielded by the source Iterable.
-   * @param {!number} count
+   * @param {!number} amount
    * @throws {TypeError}
-   * throws error if the given count is not a number.
+   * throws error if the given amount is not a number.
    * @returns {Iterable}
    */
-  takeLast(count) {
-    return takeLast(this.it, count);
+  takeLast(amount) {
+    return takeLast(this.it, amount);
   }
 
   /**
