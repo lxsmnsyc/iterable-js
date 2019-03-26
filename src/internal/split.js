@@ -1,4 +1,4 @@
-import { isIterable } from './utils';
+import { isIterable, isNumber, BadArgumentError } from './utils';
 import take from './take';
 import skip from './skip';
 
@@ -7,13 +7,13 @@ import skip from './skip';
  */
 const split = (iterable, count) => {
   if (!isIterable(iterable)) {
-    throw new TypeError('bad argument #1 to Iterable.split (Iterable expected)');
+    throw new BadArgumentError(1, 'Iterable.split', 'Iterable');
   }
-  if (typeof count !== 'number') {
-    throw new TypeError('bad argument #2 to Iterable.split (number expected)');
+  if (!isNumber(count)) {
+    throw new BadArgumentError(2, 'Iterable.split', 'number');
   }
   if (count < 0) {
-    throw new TypeError('bad argument #2 to Iterable.split (positive number expected)');
+    throw new BadArgumentError(2, 'Iterable.split', 'positive number');
   }
 
   return [take(iterable, count), skip(iterable, count)];
