@@ -9,22 +9,14 @@ import { isIterable } from './utils';
  */
 const filter = (iterable, filterFunc) => {
   if (!isIterable(iterable)) {
-    throw new TypeError('expects an object that implements the Iteration Protocol');
+    throw new TypeError('bad argument #1 to Iterable.filter (Iterable expected)');
   }
   if (typeof filterFunc !== 'function') {
-    throw new TypeError('expects the filterFunc to be a function.');
+    throw new TypeError('bad argument #2 to Iterable.filter (function expected)');
   }
   return new Iterable(function* () {
     for (const i of iterable) {
-      let result;
-
-      try {
-        result = filterFunc(i);
-      } catch (e) {
-        break;
-      }
-
-      if (result) {
+      if (filterFunc(i)) {
         yield i;
       }
     }
