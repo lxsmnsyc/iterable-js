@@ -2,21 +2,21 @@
 /* eslint-disable no-restricted-syntax */
 
 import Iterable from '../iterable';
-import { isIterable } from './utils';
+import { isIterable, BadArgumentError, isFunction } from './utils';
 
 /**
  * @ignore
  */
-const filter = (iterable, filterFunc) => {
+const filter = (iterable, predicate) => {
   if (!isIterable(iterable)) {
-    throw new TypeError('bad argument #1 to Iterable.filter (Iterable expected)');
+    throw new BadArgumentError(1, 'Iterable.filter', 'Iterable');
   }
-  if (typeof filterFunc !== 'function') {
-    throw new TypeError('bad argument #2 to Iterable.filter (function expected)');
+  if (!isFunction(predicate)) {
+    throw new BadArgumentError(2, 'Iterable.filter', 'function');
   }
   return new Iterable(function* () {
     for (const i of iterable) {
-      if (filterFunc(i)) {
+      if (predicate(i)) {
         yield i;
       }
     }
