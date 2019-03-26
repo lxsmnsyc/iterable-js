@@ -7,7 +7,7 @@ import find from './find';
  */
 const indexOf = (iterable, value) => {
   if (!isIterable(iterable)) {
-    throw new TypeError('bad argument #1 to Iterable.find (Iterable expected)');
+    throw new TypeError('bad argument #1 to Iterable.indexOf (Iterable expected)');
   }
   return find(iterable, x => x === value);
 };
