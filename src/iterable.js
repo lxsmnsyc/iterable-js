@@ -1,19 +1,66 @@
 /* eslint-disable no-restricted-syntax */
+/**
+ * @license
+ * MIT License
+ *
+ * Copyright (c) 2019 Alexis Munsayac
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ *
+ * @author Alexis Munsayac <alexis.munsayac@gmail.com>
+ * @copyright Alexis Munsayac 2019
+ */
+/**
+ * @external {Iteration Protocol} https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols
+ */
 import { isIterable, ITERATOR } from './internal/utils';
 import {
   map, filter, concat, just, first, last, repeat,
   startWith, zip, flat, all, any, isEmpty, empty,
   skip, take, takeLast, skipLast, split, skipWhile,
-  takeWhile,
+  takeWhile, onYield, onDone, onStart,
 } from './internal/dependency';
 
-
+/**
+ * The Iterable class serves as a super set of all objects
+ * that implements the Iteration Protocol.
+ *
+ * Iterable allows the unification of these objects.
+ */
 export default class Iterable {
+  /**
+   * Creates an Iterable with the given object.
+   *
+   * This object must be either a generator or an object
+   * that implements the Iteration Protocol.
+   *
+   * @param {Iterable} iterable
+   * @returns {Iterable}
+   */
   constructor(iterable) {
     const it = iterable;
-    if (it.constructor.name === 'Generatorfunction') {
+    if (it.constructor.name === 'GeneratorFunction') {
       it[ITERATOR] = it;
     }
+    /**
+     * @ignore
+     */
     this.it = it;
   }
 
@@ -239,6 +286,7 @@ export default class Iterable {
   /**
    * Creates an Iterable that yields the last value of the source
    * Iterable.
+   * @param {Iterable} it
    * @throws {TypeError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @returns {Iterable}
@@ -282,6 +330,75 @@ export default class Iterable {
    */
   map(fn) {
     return map(this.it, fn);
+  }
+
+  /**
+   * Attaches a callback to a source Iterable that is
+   * executed when the Iterable finishes the iteration
+   * process.
+   * @param {Iterable} it
+   * @param {function(x: any)} fn
+   * @returns {Iterable}
+   */
+  static onDone(it, fn) {
+    return onDone(it, fn);
+  }
+
+  /**
+   * Attaches a callback to this Iterable that is
+   * executed when this Iterable finishes the iteration
+   * process.
+   * @param {function(x: any)} fn
+   * @returns {Iterable}
+   */
+  onDone(fn) {
+    return onDone(this.it, fn);
+  }
+
+  /**
+   * Attaches a callback to a source Iterable that is
+   * executed when the Iterable finishes the iteration
+   * process.
+   * @param {Iterable} it
+   * @param {function(x: any)} fn
+   * @returns {Iterable}
+   */
+  static onStart(it, fn) {
+    return onStart(it, fn);
+  }
+
+  /**
+   * Attaches a callback to this Iterable that is
+   * executed when this Iterable finishes the iteration
+   * process.
+   * @param {function(x: any)} fn
+   * @returns {Iterable}
+   */
+  onStart(fn) {
+    return onStart(this.it, fn);
+  }
+
+  /**
+   * Attaches a callback to a source Iterable that is
+   * executed whenever the source Iterable yields
+   * a value.
+   * @param {Iterable} it
+   * @param {function(x: any)} fn
+   * @returns {Iterable}
+   */
+  static onYield(it, fn) {
+    return onYield(it, fn);
+  }
+
+  /**
+   * Attaches a callback to this Iterable that is
+   * executed whenever this Iterable yields
+   * a value.
+   * @param {function(x: any)} fn
+   * @returns {Iterable}
+   */
+  onYield(fn) {
+    return onYield(this.it, fn);
   }
 
   /**
@@ -491,7 +608,7 @@ export default class Iterable {
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {TypeError}
    * throws error if the given count is not a number.
-   * @returns {Single}
+   * @returns {Iterable}
    */
   static takeLast(it, count) {
     return takeLast(it, count);
@@ -503,7 +620,7 @@ export default class Iterable {
    * @param {!number} count
    * @throws {TypeError}
    * throws error if the given count is not a number.
-   * @returns {Single}
+   * @returns {Iterable}
    */
   takeLast(count) {
     return takeLast(this.it, count);
@@ -519,7 +636,7 @@ export default class Iterable {
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {TypeError}
    * throws error if the given predicate is not a function
-   * @returns {Single}
+   * @returns {Iterable}
    */
   static takeWhile(it, predicate) {
     return takeWhile(it, predicate);
@@ -532,7 +649,7 @@ export default class Iterable {
    * @param {!function(x: any):boolean} predicate
    * @throws {TypeError}
    * throws error if the given predicate is not a function
-   * @returns {Single}
+   * @returns {Iterable}
    */
   takeWhile(predicate) {
     return takeWhile(this.it, predicate);
