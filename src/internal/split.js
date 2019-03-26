@@ -2,6 +2,9 @@ import { isIterable } from './utils';
 import take from './take';
 import skip from './skip';
 
+/**
+ * @ignore
+ */
 const split = (iterable, count) => {
   if (!isIterable(iterable)) {
     throw new TypeError('bad argument #1 to Iterable.split (Iterable expected)');
