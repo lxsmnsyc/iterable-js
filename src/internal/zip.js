@@ -1,7 +1,9 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable func-names */
 import Iterable from '../iterable';
-import { isIterable, ITERATOR } from './utils';
+import {
+  isIterable, ITERATOR, BadArgumentError, isFunction, isUndefined,
+} from './utils';
 /**
  * @ignore
  */
@@ -11,11 +13,16 @@ const defaultZipper = x => x;
  */
 const zip = (iterables, fn) => {
   if (!(iterables instanceof Array)) {
-    throw new TypeError('bad argument #1 to Iterable.zip (Array expected)');
+    throw new BadArgumentError(1, 'Iterable.zip', 'Array');
   }
 
   let zipper = fn;
-  if (typeof fn !== 'function') {
+
+  if (!isUndefined(fn)) {
+    if (!isFunction(fn)) {
+      throw new BadArgumentError(2, 'Iterable.zip', 'function or undefined');
+    }
+  } else {
     zipper = defaultZipper;
   }
 
