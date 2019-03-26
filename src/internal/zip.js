@@ -2,9 +2,13 @@
 /* eslint-disable func-names */
 import Iterable from '../iterable';
 import { isIterable, ITERATOR } from './utils';
-
+/**
+ * @ignore
+ */
 const defaultZipper = x => x;
-
+/**
+ * @ignore
+ */
 const zip = (iterables, fn) => {
   if (!(iterables instanceof Array)) {
     throw new TypeError('expects "iterables" to be an Array');
