@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable func-names */
-import { isIterable } from './utils';
+import { isIterable, BadArgumentError, isNumber } from './utils';
 import Iterable from '../iterable';
 
 /**
@@ -8,13 +8,13 @@ import Iterable from '../iterable';
  */
 const repeat = (iterable, count) => {
   if (!isIterable(iterable)) {
-    throw new TypeError('bad argument #1 to Iterable.repeat (Iterable expected)');
+    throw new BadArgumentError(1, 'Iterable.repeat', 'Iterable');
   }
-  if (typeof count !== 'number') {
-    throw new TypeError('bad argument #2 to Iterable.repeat (number expected)');
+  if (!isNumber(count)) {
+    throw new BadArgumentError(2, 'Iterable.repeat', 'number');
   }
   if (count < 0) {
-    throw new TypeError('bad argument #2 to Iterable.repeat (positive number expected)');
+    throw new BadArgumentError(2, 'Iterable.repeat', 'positive number');
   }
 
   return new Iterable(function* () {
