@@ -1,21 +1,21 @@
-import { isIterable } from './utils';
+import { isIterable, isFunction, BadArgumentError } from './utils';
 import skipWhile from './skipWhile';
 import takeWhile from './takeWhile';
 
 /**
  * @ignore
  */
-const spanWith = (iterable, filterFunc) => {
+const spanWith = (iterable, predicate) => {
   if (!isIterable(iterable)) {
-    throw new TypeError('bad argument #1 to Iterable.spanWith (Iterable expected)');
+    throw new BadArgumentError(1, 'Iterable.spanWith', 'Iterable');
   }
-  if (typeof filterFunc !== 'function') {
-    throw new TypeError('bad argument #2 to Iterable.spanWith (function expected)');
+  if (!isFunction(predicate)) {
+    throw new BadArgumentError(2, 'Iterable.spanWith', 'function');
   }
 
   return [
-    takeWhile(iterable, filterFunc),
-    skipWhile(iterable, filterFunc),
+    takeWhile(iterable, predicate),
+    skipWhile(iterable, predicate),
   ];
 };
 
