@@ -11,7 +11,7 @@ const defaultZipper = x => x;
  */
 const zip = (iterables, fn) => {
   if (!(iterables instanceof Array)) {
-    throw new TypeError('expects "iterables" to be an Array');
+    throw new TypeError('bad argument #1 to Iterable.zip (Array expected)');
   }
 
   let zipper = fn;
