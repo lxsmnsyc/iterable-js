@@ -10,7 +10,7 @@ const first = (iterable) => {
   return new Iterable(function* () {
     for (const i of iterable) {
       yield i;
-      break;
+      return;
     }
   });
 };
