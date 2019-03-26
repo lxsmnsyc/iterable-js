@@ -3,6 +3,9 @@
 import { isIterable, BadArgumentError, isNumber } from './utils';
 import Iterable from '../iterable';
 
+/**
+ * @ignore
+ */
 const replace = (iterable, index, value) => {
   if (!isIterable(iterable)) {
     throw new BadArgumentError(1, 'Iterable.replace', 'Iterable');
