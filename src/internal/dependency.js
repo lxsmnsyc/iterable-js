@@ -10,6 +10,7 @@ export { default as filter } from './filter';
 export { default as find } from './find';
 export { default as first } from './first';
 export { default as flat } from './flat';
+export { default as flatMap } from './flatMap';
 export { default as indexOf } from './indexOf';
 export { default as isEmpty } from './isEmpty';
 export { default as just } from './just';
