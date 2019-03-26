@@ -9,24 +9,16 @@ import { isIterable } from './utils';
  */
 const skipWhile = (iterable, predicate) => {
   if (!isIterable(iterable)) {
-    throw new TypeError('expects an object that implements the Iteration Protocol');
+    throw new TypeError('bad argument #1 to Iterable.skipWhile (Iterable expected)');
   }
   if (typeof predicate !== 'function') {
-    throw new TypeError('expects the predicate to be a function.');
+    throw new TypeError('bad argument #2 to Iterable.skipWhile (function expected)');
   }
   return new Iterable(function* () {
     let flag = true;
     for (const i of iterable) {
       if (flag) {
-        let result;
-
-        try {
-          result = predicate(i);
-        } catch (e) {
-          return;
-        }
-
-        flag = result;
+        flag = predicate(i);
       }
       if (!flag) {
         yield i;
