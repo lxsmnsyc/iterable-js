@@ -1,20 +1,20 @@
-import { isIterable } from './utils';
+import { isIterable, BadArgumentError, isFunction } from './utils';
 import filter from './filter';
 
 /**
  * @ignore
  */
-const partition = (iterable, filterFunc) => {
+const partition = (iterable, predicate) => {
   if (!isIterable(iterable)) {
-    throw new TypeError('bad argument #1 to Iterable.partition (Iterable expected)');
+    throw new BadArgumentError(1, 'Iterable.partition', 'Iterable');
   }
-  if (typeof filterFunc !== 'function') {
-    throw new TypeError('bad argument #2 to Iterable.partition (function expected)');
+  if (!isFunction(predicate)) {
+    throw new BadArgumentError(2, 'Iterable.partition', 'function');
   }
 
   return [
-    filter(iterable, filterFunc),
-    filter(iterable, x => !filterFunc(x)),
+    filter(iterable, predicate),
+    filter(iterable, x => !predicate(x)),
   ];
 };
 
