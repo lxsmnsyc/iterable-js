@@ -2,8 +2,9 @@
 /* eslint-disable func-names */
 import Iterable from '../iterable';
 import { isIterable } from './utils';
-
-
+/**
+ * @ignore
+ */
 const flat = (iterable) => {
   if (!isIterable(iterable)) {
     throw new TypeError('expects an object that implements the Iteration Protocol');
