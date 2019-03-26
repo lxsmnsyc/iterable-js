@@ -2,7 +2,9 @@
 /* eslint-disable func-names */
 import { isIterable, isNumber, BadArgumentError } from './utils';
 import Iterable from '../iterable';
-
+/**
+ * @ignore
+ */
 const elementAt = (iterable, index) => {
   if (!isIterable(iterable)) {
     throw new BadArgumentError(1, 'Iterable.elementAt', 'Iterable');
