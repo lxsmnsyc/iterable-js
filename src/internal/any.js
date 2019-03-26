@@ -2,7 +2,9 @@
 /* eslint-disable func-names */
 import Iterable from '../iterable';
 import { isIterable } from './utils';
-
+/**
+ * @ignore
+ */
 const any = (iterable, predicate) => {
   if (!isIterable(iterable)) {
     throw new TypeError('expects an object that implements the Iteration Protocol');
