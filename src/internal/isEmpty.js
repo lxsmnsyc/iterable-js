@@ -3,7 +3,9 @@
 /* eslint-disable func-names */
 import { isIterable } from './utils';
 import Iterable from '../iterable';
-
+/**
+ * @ignore
+ */
 const isEmpty = (iterable) => {
   if (!isIterable(iterable)) {
     throw new TypeError('expects an object that implements the Iteration Protocol');
