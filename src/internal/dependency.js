@@ -2,10 +2,14 @@
 export { default as all } from './all';
 export { default as any } from './any';
 export { default as concat } from './concat';
+export { default as contains } from './contains';
+export { default as count } from './count';
 export { default as empty } from './empty';
 export { default as filter } from './filter';
+export { default as find } from './find';
 export { default as first } from './first';
 export { default as flat } from './flat';
+export { default as indexOf } from './indexOf';
 export { default as isEmpty } from './isEmpty';
 export { default as just } from './just';
 export { default as last } from './last';
