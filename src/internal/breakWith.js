@@ -1,21 +1,20 @@
-import { isIterable } from './utils';
+import { isIterable, isFunction, BadArgumentError } from './utils';
 import takeUntil from './takeUntil';
 import skipUntil from './skipUntil';
 
 /**
  * @ignore
  */
-const breakWith = (iterable, filterFunc) => {
+const breakWith = (iterable, predicate) => {
   if (!isIterable(iterable)) {
-    throw new TypeError('bad argument #1 to Iterable.breakWith (Iterable expected)');
+    throw new BadArgumentError(1, 'Iterable.breakWith', 'Iterable');
   }
-  if (typeof filterFunc !== 'function') {
-    throw new TypeError('bad argument #2 to Iterable.breakWith (function expected)');
+  if (!isFunction(predicate)) {
+    throw new BadArgumentError(2, 'Iterable.breakWith', 'function');
   }
-
   return [
-    takeUntil(iterable, filterFunc),
-    skipUntil(iterable, filterFunc),
+    takeUntil(iterable, predicate),
+    skipUntil(iterable, predicate),
   ];
 };
 
