@@ -1,8 +1,11 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable func-names */
 import { isIterable } from './utils';
-import Iterable from '..';
+import Iterable from '../iterable';
 
+/**
+ * @ignore
+ */
 const onYield = (iterable, fn) => {
   if (!isIterable(iterable)) {
     throw new TypeError('bad argument #1 to Iterable.onYield (Iterable expected)');
@@ -13,7 +16,7 @@ const onYield = (iterable, fn) => {
 
   return new Iterable(function* () {
     for (const i of iterable) {
-      onYield(i);
+      fn(i);
       yield i;
     }
   });
