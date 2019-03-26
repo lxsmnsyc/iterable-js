@@ -1,14 +1,14 @@
 /* eslint-disable func-names */
 /* eslint-disable no-restricted-syntax */
 import Iterable from '../iterable';
-import { isIterable } from './utils';
+import { isIterable, BadArgumentError } from './utils';
 
 /**
  * @ignore
  */
 const last = (iterable) => {
   if (!isIterable(iterable)) {
-    throw new TypeError('bad argument #1 to Iterable.last (Iterable expected)');
+    throw new BadArgumentError(1, 'Iterable.last', 'Iterable');
   }
   return new Iterable(function* () {
     let v;
