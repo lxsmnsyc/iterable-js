@@ -1,6 +1,6 @@
 /* eslint-disable func-names */
 /* eslint-disable no-restricted-syntax */
-import { isIterable } from './utils';
+import { isIterable, BadArgumentError } from './utils';
 import Iterable from '../iterable';
 
 /**
@@ -8,7 +8,7 @@ import Iterable from '../iterable';
  */
 const count = (iterable) => {
   if (!isIterable(iterable)) {
-    throw new TypeError('bad argument #1 to Iterable.count (Iterable expected)');
+    throw new BadArgumentError(1, 'Iterable.count', 'Iterable');
   }
 
   return new Iterable(function* () {
