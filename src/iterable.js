@@ -63,6 +63,10 @@ export default class Iterable {
    * source Iterable passes the predicate function, false if not.
    * @param {!Iterable} it
    * @param {function(x: any):boolean} predicate
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given predicate is not a function
    * @returns {Iterable}
    */
   static all(it, predicate) {
@@ -73,6 +77,8 @@ export default class Iterable {
    * Returns an Iterable that yields true if all of the yields of
    * this Iterable passes the predicate function, false if not.
    * @param {function(x: any):boolean} predicate
+   * @throws {TypeError}
+   * throws error if the given predicate is not a function
    * @returns {Iterable}
    */
   all(predicate) {
@@ -84,6 +90,10 @@ export default class Iterable {
    * source Iterable passes the predicate function, false if not.
    * @param {!Iterable} it
    * @param {function(x: any):boolean} predicate
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given predicate is not a function
    * @returns {Iterable}
    */
   static any(it, predicate) {
@@ -94,6 +104,8 @@ export default class Iterable {
    * Returns an Iterable that yields true if any of the yields of
    * this Iterable passes the predicate function, false if not.
    * @param {function(x: any):boolean} predicate
+   * @throws {TypeError}
+   * throws error if the given predicate is not a function
    * @returns {Iterable}
    */
   any(predicate) {
@@ -118,6 +130,10 @@ export default class Iterable {
     return concat(this.it, ...its);
   }
 
+  /**
+   * Returns an Iterable that doesn't yield any value.
+   * @returns {Iterable}
+   */
   static empty() {
     return empty();
   }
@@ -127,6 +143,10 @@ export default class Iterable {
    *
    * @param {!Iterable} it
    * @param {function(x: any):boolean} fn
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given predicate is not a function
    * @returns {Iterable}
    */
   static filter(it, fn) {
@@ -136,6 +156,8 @@ export default class Iterable {
   /**
    * Filters the yields of this Iterable with a filter function.
    * @param {function(x: any):boolean} fn
+   * @throws {TypeError}
+   * throws error if the given predicate is not a function
    * @returns {Iterable}
    */
   filter(fn) {
@@ -146,6 +168,8 @@ export default class Iterable {
    * Creates an Iterable that yields the first value of the source
    * Iterable.
    * @param {!Iterable} it
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @returns {Iterable}
    */
   static first(it) {
@@ -165,6 +189,8 @@ export default class Iterable {
    * Flattens the source Iterable by removing a single layer of
    * nesting for the yielded Iterables.
    * @param {!Iterable} it
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @returns {Iterable}
    */
   static flat(it) {
@@ -181,9 +207,11 @@ export default class Iterable {
   }
 
   /**
-   * Creates an Iterable that yields the true if this
+   * Creates an Iterable that yields true if this
    * Iterable is empty.
    * @param {!Iterable} it
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @returns {Iterable}
    */
   static isEmpty(it) {
@@ -201,6 +229,7 @@ export default class Iterable {
 
   /**
    * Creates an Iterable that yields a single value.
+   * @param {any} value
    * @returns {Iterable}
    */
   static just(value) {
@@ -210,6 +239,8 @@ export default class Iterable {
   /**
    * Creates an Iterable that yields the last value of the source
    * Iterable.
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @returns {Iterable}
    */
   static last(it) {
@@ -231,6 +262,10 @@ export default class Iterable {
    * Iterable.
    * @param {!Iterable} it
    * @param {function(x: any):any} fn
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given mapper is not a function
    * @returns {Iterable}
    */
   static map(it, fn) {
@@ -240,8 +275,9 @@ export default class Iterable {
   /**
    * Applies a mapping function to each yielded value of this
    * Iterable.
-   * @param {!Iterable} it
    * @param {function(x: any):any} fn
+   * @throws {TypeError}
+   * throws error if the given predicate is not a function
    * @returns {Iterable}
    */
   map(fn) {
@@ -253,6 +289,10 @@ export default class Iterable {
    * amount.
    * @param {!Iterable} it
    * @param {!number} count
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given count is not a number.
    * @returns {Iterable}
    */
   static repeat(it, count) {
@@ -263,6 +303,8 @@ export default class Iterable {
    * Repeats the yielded values of this Iterable by a certain
    * amount.
    * @param {!number} count
+   * @throws {TypeError}
+   * throws error if the given count is not a number.
    * @returns {Iterable}
    */
   repeat(count) {
@@ -274,6 +316,10 @@ export default class Iterable {
    * the source Iterable and yields the remainder.
    * @param {!Iterable} it
    * @param {!number} count
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given count is not a number.
    * @returns {Iterable}
    */
   static skip(it, count) {
@@ -284,6 +330,8 @@ export default class Iterable {
    * Returns an Iterable that skips the first count items yielded by
    * the source Iterable and yields the remainder.
    * @param {!number} count
+   * @throws {TypeError}
+   * throws error if the given count is not a number.
    * @returns {Iterable}
    */
   skip(count) {
@@ -296,6 +344,10 @@ export default class Iterable {
    * Iterable.
    * @param {!Iterable} it
    * @param {!number} count
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given count is not a number.
    * @returns {Iterable}
    */
   static skipLast(it, count) {
@@ -306,6 +358,8 @@ export default class Iterable {
    * Returns an Iterable that drops a specified number of items
    * from the end of the sequence emitted by this Iterable.
    * @param {!number} count
+   * @throws {TypeError}
+   * throws error if the given count is not a number.
    * @returns {Iterable}
    */
   skipLast(count) {
@@ -318,6 +372,10 @@ export default class Iterable {
    * all further source items as soon as the condition becomes false.
    * @param {!Iterable} it
    * @param {!function(x: any):boolean} predicate
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given predicate is not a function
    * @returns {Iterable}
    */
   static skipWhile(it, predicate) {
@@ -329,6 +387,8 @@ export default class Iterable {
    * Iterable as long as a specified condition holds true, but yields
    * all further source items as soon as the condition becomes false.
    * @param {!function(x: any):boolean} predicate
+   * @throws {TypeError}
+   * throws error if the given predicate is not a function
    * @returns {Iterable}
    */
   skipWhile(predicate) {
@@ -341,6 +401,10 @@ export default class Iterable {
    * and the Iterable that follows them.
    * @param {!Iterable} it
    * @param {!number} count
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given count is not a number.
    * @returns {Array}
    */
   static split(it, count) {
@@ -352,6 +416,8 @@ export default class Iterable {
    * from the start of this Iterable,
    * and the Iterable that follows them.
    * @param {!number} count
+   * @throws {TypeError}
+   * throws error if the given count is not a number.
    * @returns {Array}
    */
   split(count) {
@@ -360,9 +426,15 @@ export default class Iterable {
 
   /**
    * Same to concat, except that it prefixes the source Iterable
-   * to a set of Iterables into a single Iterable.
+   * to a set of values into a single Iterable.
+   *
+   * If a value is an Iterable, startWith removes a single layer
+   * of nesting
+   *
    * @param {!Iterable} it
-   * @param  {...Iterable} its
+   * @param  {...any} its
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @returns {Iterable}
    */
   static startWith(it, ...its) {
@@ -371,9 +443,12 @@ export default class Iterable {
 
   /**
    * Same to concat, except that it prefixes this Iterable
-   * to a set of Iterables into a single Iterable.
-   * @param {!Iterable} it
-   * @param  {...Iterable} its
+   * to a set of values into a single Iterable.
+   *
+   * If a value is an Iterable, startWith removes a single layer
+   * of nesting
+   *
+   * @param  {...any} its
    * @returns {Iterable}
    */
   startWith(...its) {
@@ -385,6 +460,10 @@ export default class Iterable {
    * source Iterable.
    * @param {!Iterable} it
    * @param {!number} count
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given count is not a number.
    * @returns {Iterable}
    */
   static take(it, count) {
@@ -395,6 +474,8 @@ export default class Iterable {
    * Returns an Iterable that yields only the first count items yielded by
    * this Iterable.
    * @param {!number} count
+   * @throws {TypeError}
+   * throws error if the given count is not a number.
    * @returns {Iterable}
    */
   take(count) {
@@ -406,6 +487,10 @@ export default class Iterable {
    * items yielded by the source Iterable.
    * @param {!Iterable} it
    * @param {!number} count
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given count is not a number.
    * @returns {Single}
    */
   static takeLast(it, count) {
@@ -416,6 +501,8 @@ export default class Iterable {
    * Returns an Iterable that yields at most the last count
    * items yielded by the source Iterable.
    * @param {!number} count
+   * @throws {TypeError}
+   * throws error if the given count is not a number.
    * @returns {Single}
    */
   takeLast(count) {
@@ -428,6 +515,10 @@ export default class Iterable {
    * completes as soon as this condition is not satisfied.
    * @param {!Iterable} it
    * @param {!function(x: any):boolean} predicate
+   * @throws {TypeError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {TypeError}
+   * throws error if the given predicate is not a function
    * @returns {Single}
    */
   static takeWhile(it, predicate) {
@@ -439,6 +530,8 @@ export default class Iterable {
    * so long as each item satisfied a specified condition, and then
    * completes as soon as this condition is not satisfied.
    * @param {!function(x: any):boolean} predicate
+   * @throws {TypeError}
+   * throws error if the given predicate is not a function
    * @returns {Single}
    */
   takeWhile(predicate) {
@@ -448,8 +541,10 @@ export default class Iterable {
   /**
    * combine the yields of multiple Iterables together via a specified function and
    * yields single items for each combination based on the results of this function.
-   * @param {!Iterable} its
+   * @param {!Array} its
    * @param {!function(yields: Array):any} fn
+   * @throws {TypeError}
+   * throws error if the given predicate is not a function
    * @returns {Iterable}
    */
   static zip(its, fn) {
@@ -460,8 +555,10 @@ export default class Iterable {
    * combine the yields of this Iterable with multiple Iterables together via a specified
    * function and yields single items for each combination based on the results of this
    * function.
-   * @param {!Iterable} its
+   * @param {!Array} its
    * @param {!function(yields: Array):any} fn
+   * @throws {TypeError}
+   * throws error if the given predicate is not a function
    * @returns {Iterable}
    */
   zip(its, fn) {
