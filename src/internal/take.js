@@ -1,22 +1,16 @@
 /* eslint-disable func-names */
 /* eslint-disable no-restricted-syntax */
-import { isIterable, BadArgumentError, isNumber } from './utils';
 import Iterable from '../iterable';
-
+import { defineField, IterablePositiveNumberCheck } from './utils';
 /**
  * @ignore
  */
-const take = (iterable, count) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.take', 'Iterable');
-  }
-  if (!isNumber(count)) {
-    throw new BadArgumentError(2, 'Iterable.take', 'number');
-  }
-  if (count < 0) {
-    throw new BadArgumentError(2, 'Iterable.take', 'positive number');
-  }
-
+const FIELD = defineField('take');
+/**
+ * @ignore
+ */
+export default (iterable, count) => {
+  IterablePositiveNumberCheck(iterable, count, FIELD);
   return new Iterable(function* () {
     let c = count;
 
@@ -31,5 +25,3 @@ const take = (iterable, count) => {
     }
   });
 };
-
-export default take;
