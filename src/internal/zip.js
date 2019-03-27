@@ -2,8 +2,12 @@
 /* eslint-disable func-names */
 import Iterable from '../iterable';
 import {
-  isIterable, ITERATOR, BadArgumentError, isFunction, isUndefined,
+  isIterable, ITERATOR, BadArgumentError, isFunction, isUndefined, defineField, FunctionCheck,
 } from './utils';
+/**
+ * @ignore
+ */
+const FIELD = defineField('zip');
 /**
  * @ignore
  */
@@ -13,14 +17,14 @@ const defaultZipper = x => x;
  */
 const zip = (iterables, fn) => {
   if (!(iterables instanceof Array)) {
-    throw new BadArgumentError(1, 'Iterable.zip', 'Array');
+    throw new BadArgumentError(1, FIELD, 'Array');
   }
 
   let zipper = fn;
 
   if (!isUndefined(fn)) {
     if (!isFunction(fn)) {
-      throw new BadArgumentError(2, 'Iterable.zip', 'function or undefined');
+      FunctionCheck(fn, 2, FIELD);
     }
   } else {
     zipper = defaultZipper;
