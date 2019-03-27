@@ -1,12 +1,14 @@
-import { isIterable, BadArgumentError } from './utils';
-import { reduce } from './dependency';
+import { IterableCheck, defineField } from './utils';
+import reduce from './reduce';
 /**
  * @ignore
  */
-const intersperse = (iterable, value) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.intersperse', 'Iterable');
-  }
+const FIELD = defineField('intersperse');
+/**
+ * @ignore
+ */
+export default (iterable, value) => {
+  IterableCheck(iterable, 1, FIELD);
 
   return reduce(iterable, (acc, item) => {
     if (typeof acc === 'undefined') {
@@ -17,4 +19,3 @@ const intersperse = (iterable, value) => {
     return acc;
   });
 };
-export default intersperse;
