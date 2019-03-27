@@ -1,15 +1,17 @@
 /* eslint-disable func-names */
 /* eslint-disable no-restricted-syntax */
-import { BadArgumentError, isIterable } from './utils';
+import { IterableCheck, defineField } from './utils';
 import Iterable from '../iterable';
 
 /**
  * @ignore
  */
-const cache = (iterable) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.cache', 'Iterable');
-  }
+const FIELD = defineField('cache');
+/**
+ * @ignore
+ */
+export default (iterable) => {
+  IterableCheck(iterable, 1, FIELD);
 
   const c = [];
   let size = 0;
@@ -33,5 +35,3 @@ const cache = (iterable) => {
     }
   });
 };
-
-export default cache;
