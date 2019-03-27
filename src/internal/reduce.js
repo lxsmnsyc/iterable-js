@@ -1,18 +1,16 @@
 /* eslint-disable func-names */
 /* eslint-disable no-restricted-syntax */
-import { isIterable, BadArgumentError, isFunction } from './utils';
+import { defineField, IterablePredicateCheck } from './utils';
 import Iterable from '../iterable';
 /**
  * @ignore
  */
-const reduce = (iterable, predicate) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.reduce', 'Iterable');
-  }
-  if (!isFunction(predicate)) {
-    throw new BadArgumentError(2, 'Iterable.reduce', 'function');
-  }
-
+const FIELD = defineField('reduce');
+/**
+ * @ignore
+ */
+export default (iterable, predicate) => {
+  IterablePredicateCheck(iterable, predicate, FIELD);
   return new Iterable(function* () {
     let acc;
 
@@ -23,5 +21,3 @@ const reduce = (iterable, predicate) => {
     yield acc;
   });
 };
-
-export default reduce;
