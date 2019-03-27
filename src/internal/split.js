@@ -1,22 +1,14 @@
-import { isIterable, isNumber, BadArgumentError } from './utils';
 import take from './take';
 import skip from './skip';
-
+import { defineField, IterablePositiveNumberCheck } from './utils';
 /**
  * @ignore
  */
-const split = (iterable, count) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.split', 'Iterable');
-  }
-  if (!isNumber(count)) {
-    throw new BadArgumentError(2, 'Iterable.split', 'number');
-  }
-  if (count < 0) {
-    throw new BadArgumentError(2, 'Iterable.split', 'positive number');
-  }
-
+const FIELD = defineField('split');
+/**
+ * @ignore
+ */
+export default (iterable, count) => {
+  IterablePositiveNumberCheck(iterable, count, FIELD);
   return [take(iterable, count), skip(iterable, count)];
 };
-
-export default split;
