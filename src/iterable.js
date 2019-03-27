@@ -38,7 +38,7 @@ import {
   takeWhile, onYield, onDone, onStart, count, contains,
   indexOf, find, breakWith, spanWith, partition,
   flatMap, range, elementAt, replace, reverse,
-  cache, compose, buffer,
+  cache, compose, buffer, step, reduce,
 } from './internal/dependency';
 
 /**
@@ -121,7 +121,7 @@ export default class Iterable {
    * Returns an Iterable that yields true if all of the yields of the
    * source Iterable passes the predicate function, false if not.
    * @param {!Iterable} it
-   * @param {!function(x: any):boolean} predicate
+   * @param {!function(item: any):boolean} predicate
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {BadArgumentError}
@@ -135,7 +135,7 @@ export default class Iterable {
   /**
    * Returns an Iterable that yields true if all of the yields of
    * this Iterable passes the predicate function, false if not.
-   * @param {!function(x: any):boolean} predicate
+   * @param {!function(item: any):boolean} predicate
    * @throws {BadArgumentError}
    * throws error if the given predicate is not a function
    * @returns {Iterable}
@@ -148,7 +148,7 @@ export default class Iterable {
    * Returns an Iterable that yields true if any of the yields of the
    * source Iterable passes the predicate function, false if not.
    * @param {!Iterable} it
-   * @param {!function(x: any):boolean} predicate
+   * @param {!function(item: any):boolean} predicate
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {BadArgumentError}
@@ -162,7 +162,7 @@ export default class Iterable {
   /**
    * Returns an Iterable that yields true if any of the yields of
    * this Iterable passes the predicate function, false if not.
-   * @param {!function(x: any):boolean} predicate
+   * @param {!function(item: any):boolean} predicate
    * @throws {BadArgumentError}
    * throws error if the given predicate is not a function
    * @returns {Iterable}
@@ -172,11 +172,32 @@ export default class Iterable {
   }
 
   /**
+   * Returns an Iterable that yields Iterable buffers of items
+   * it collects from the source Iterable.
+   * @param {!Iterable} it
+   * @param {!number} amount
+   * @returns {Iterable}
+   */
+  static buffer(it, amount) {
+    return buffer(it, amount);
+  }
+
+  /**
+   * Returns an Iterable that yields Iterable buffers of items
+   * it collects from this Iterable.
+   * @param {!number} amount
+   * @returns {Iterable}
+   */
+  buffer(amount) {
+    return buffer(this.it, amount);
+  }
+
+  /**
    * Split an Iterable into a longest prefix such that all
    * the elements of it do not satisfy a given predicate,
    * and the rest of the Iterable following them.
    * @param {!Iterable} it
-   * @param {!function(x: any):boolean} predicate
+   * @param {!function(item: any):boolean} predicate
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {BadArgumentError}
@@ -191,7 +212,7 @@ export default class Iterable {
    * Split an Iterable into a longest prefix such that all
    * the elements of it do not satisfy a given predicate,
    * and the rest of the Iterable following them.
-   * @param {!function(x: any):boolean} predicate
+   * @param {!function(item: any):boolean} predicate
    * @throws {BadArgumentError}
    * throws error if the given predicate is not a function
    * @returns {Iterable}
@@ -217,7 +238,6 @@ export default class Iterable {
    * Caches all yields of this Iterable, for the purpose
    * of not re-running the computing function that yields
    * the result.
-   * @param {!Iterable} it
    * @returns {Iterable}
    */
   cache() {
@@ -361,7 +381,7 @@ export default class Iterable {
    * Filters the yields of a source Iterable with a filter function.
    *
    * @param {!Iterable} it
-   * @param {!function(x: any):boolean} fn
+   * @param {!function(item: any):boolean} fn
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {BadArgumentError}
@@ -374,7 +394,7 @@ export default class Iterable {
 
   /**
    * Filters the yields of this Iterable with a filter function.
-   * @param {!function(x: any):boolean} fn
+   * @param {!function(item: any):boolean} fn
    * @throws {BadArgumentError}
    * throws error if the given predicate is not a function
    * @returns {Iterable}
@@ -386,7 +406,7 @@ export default class Iterable {
   /**
    * Finds the index of the first element that satisfy a predicate.
    * @param {!Iterable} it
-   * @param {!function(x: any):boolean} predicate
+   * @param {!function(item: any):boolean} predicate
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @returns {Iterable}
@@ -397,7 +417,7 @@ export default class Iterable {
 
   /**
    * Finds the index of the first element that satisfy a predicate.
-   * @param {!function(x: any):boolean} predicate
+   * @param {!function(item: any):boolean} predicate
    * @returns {Iterable}
    */
   find(predicate) {
@@ -452,7 +472,7 @@ export default class Iterable {
    * Iterable, where that function returns an Iterable, and then
    * merging those resulting Iterable and yielding the results of this merger.
    * @param {!Iterable} it
-   * @param {!function(x: any):Iterable} mapper
+   * @param {!function(item: any):Iterable} mapper
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {BadArgumentError}
@@ -468,33 +488,13 @@ export default class Iterable {
    * function that you supply to each item yielded by this
    * Iterable, where that function returns an Iterable, and then
    * merging those resulting Iterable and yielding the results of this merger.
-   * @param {!function(x: any):Iterable} mapper
+   * @param {!function(item: any):Iterable} mapper
    * @throws {BadArgumentError}
    * throws error if the given mapper is not a function
    * @returns {Iterable}
    */
   flatMap(mapper) {
     return flatMap(this.it, mapper);
-  }
-
-  /**
-   * Returns an Iterable that yields Iterable buffers of items
-   * it collects from the source Iterable.
-   * @param {!Iterable} it
-   * @param {!number} amount
-   */
-  static buffer(it, amount) {
-    return buffer(it, amount);
-  }
-
-  /**
-   * Returns an Iterable that yields Iterable buffers of items
-   * it collects from this Iterable.
-   * @param {!Iterable} it
-   * @param {!number} amount
-   */
-  buffer(amount) {
-    return buffer(this.it, amount);
   }
 
   /**
@@ -578,7 +578,7 @@ export default class Iterable {
    * Applies a mapping function to each yielded value of the source
    * Iterable.
    * @param {!Iterable} it
-   * @param {!function(x: any):any} fn
+   * @param {!function(item: any):any} fn
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {BadArgumentError}
@@ -592,7 +592,7 @@ export default class Iterable {
   /**
    * Applies a mapping function to each yielded value of this
    * Iterable.
-   * @param {!function(x: any):any} fn
+   * @param {!function(item: any):any} fn
    * @throws {BadArgumentError}
    * throws error if the given predicate is not a function
    * @returns {Iterable}
@@ -606,7 +606,7 @@ export default class Iterable {
    * executed when the Iterable finishes the iteration
    * process.
    * @param {!Iterable} it
-   * @param {!function(x: any)} fn
+   * @param {!function} fn
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {BadArgumentError}
@@ -621,7 +621,7 @@ export default class Iterable {
    * Attaches a callback to this Iterable that is
    * executed when this Iterable finishes the iteration
    * process.
-   * @param {!function(x: any)} fn
+   * @param {!function} fn
    * @throws {BadArgumentError}
    * throws error if the given action is not a function
    * @returns {Iterable}
@@ -635,7 +635,7 @@ export default class Iterable {
    * executed when the Iterable finishes the iteration
    * process.
    * @param {!Iterable} it
-   * @param {!function(x: any)} fn
+   * @param {!function} fn
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {BadArgumentError}
@@ -650,7 +650,7 @@ export default class Iterable {
    * Attaches a callback to this Iterable that is
    * executed when this Iterable finishes the iteration
    * process.
-   * @param {!function(x: any)} fn
+   * @param {!function} fn
    * @throws {BadArgumentError}
    * throws error if the given action is not a function
    * @returns {Iterable}
@@ -664,7 +664,7 @@ export default class Iterable {
    * executed whenever the source Iterable yields
    * a value.
    * @param {!Iterable} it
-   * @param {!function(x: any)} fn
+   * @param {!function(item: any)} fn
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {BadArgumentError}
@@ -679,7 +679,7 @@ export default class Iterable {
    * Attaches a callback to this Iterable that is
    * executed whenever this Iterable yields
    * a value.
-   * @param {!function(x: any)} fn
+   * @param {!function(item: any)} fn
    * @throws {BadArgumentError}
    * throws error if the given consumer is not a function
    * @returns {Iterable}
@@ -692,7 +692,7 @@ export default class Iterable {
    * Given a predicate and an Iterable, return a pair of Iterables
    * which do and do not satisfy the predicate, respectively.
    * @param {!Iterable} it
-   * @param {!function(x: any):boolean} predicate
+   * @param {!function(item: any):boolean} predicate
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {BadArgumentError}
@@ -706,7 +706,7 @@ export default class Iterable {
   /**
    * Given a predicate and an Iterable, return a pair of Iterables
    * which do and do not satisfy the predicate, respectively.
-   * @param {!function(x: any):boolean} predicate
+   * @param {!function(item: any):boolean} predicate
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {BadArgumentError}
@@ -727,6 +727,41 @@ export default class Iterable {
    */
   static range(start, end, steps) {
     return range(start, end, steps);
+  }
+
+  /**
+   * Returns an Iterable that applies a specified accumulator function
+   * to the first item yielded by a source Iterable, then feeds the
+   * result of that function along with the second item yielded by
+   * the source Iterable into the same function, and so on until all
+   * items have been yielded by the finite source Iterable, and yields
+   * the final result from the final call to your function as its sole item.
+   * @param {!Iterable} it
+   * @param {!function(acc: any, item: any):any} reducer
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the given reducer is not a function
+   * @returns {Iterable}
+   */
+  static reduce(it, reducer) {
+    return reduce(it, reducer);
+  }
+
+  /**
+   * Returns an Iterable that applies a specified accumulator function
+   * to the first item yielded by a source Iterable, then feeds the
+   * result of that function along with the second item yielded by
+   * the source Iterable into the same function, and so on until all
+   * items have been yielded by the finite source Iterable, and yields
+   * the final result from the final call to your function as its sole item.
+   * @param {!function(acc: any, item: any):any} reducer
+   * @throws {BadArgumentError}
+   * throws error if the given reducer is not a function
+   * @returns {Iterable}
+   */
+  reduce(reducer) {
+    return reduce(this.it, reducer);
   }
 
   /**
@@ -866,7 +901,7 @@ export default class Iterable {
    * Iterable as long as a specified condition holds true, but yields
    * all further source items as soon as the condition becomes false.
    * @param {!Iterable} it
-   * @param {!function(x: any):boolean} predicate
+   * @param {!function(item: any):boolean} predicate
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {BadArgumentError}
@@ -881,7 +916,7 @@ export default class Iterable {
    * Returns an Iterable that skips all items yielded by the source
    * Iterable as long as a specified condition holds true, but yields
    * all further source items as soon as the condition becomes false.
-   * @param {!function(x: any):boolean} predicate
+   * @param {!function(item: any):boolean} predicate
    * @throws {BadArgumentError}
    * throws error if the given predicate is not a function
    * @returns {Iterable}
@@ -895,7 +930,7 @@ export default class Iterable {
    * the elements of it do satisfy a given predicate,
    * and the rest of the Iterable following them.
    * @param {!Iterable} it
-   * @param {!function(x: any):boolean} predicate
+   * @param {!function(item: any):boolean} predicate
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {BadArgumentError}
@@ -910,7 +945,7 @@ export default class Iterable {
    * Split an Iterable into a longest prefix such that all
    * the elements of it do satisfy a given predicate,
    * and the rest of the Iterable following them.
-   * @param {!function(x: any):boolean} predicate
+   * @param {!function(item: any):boolean} predicate
    * @throws {BadArgumentError}
    * throws error if the given predicate is not a function
    * @returns {Iterable}
@@ -980,6 +1015,33 @@ export default class Iterable {
   }
 
   /**
+   * Returns an Iterable that yields only the elements whose indices
+   * are divisible by the given amount
+   * @param {!Iterable} it
+   * @param {!number} amount
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the given amount is not a number.
+   * @returns {Iterable}
+   */
+  static step(it, amount) {
+    return step(it, amount);
+  }
+
+  /**
+   * Returns an Iterable that yields only the first count items yielded by
+   * this Iterable.
+   * @param {!number} amount
+   * @throws {BadArgumentError}
+   * throws error if the given amount is not a number.
+   * @returns {Iterable}
+   */
+  step(amount) {
+    return step(this.it, amount);
+  }
+
+  /**
    * Returns an Iterable that yields only the first count items yielded by the
    * source Iterable.
    * @param {!Iterable} it
@@ -1038,7 +1100,7 @@ export default class Iterable {
    * so long as each item satisfied a specified condition, and then
    * completes as soon as this condition is not satisfied.
    * @param {!Iterable} it
-   * @param {!function(x: any):boolean} predicate
+   * @param {!function(item: any):boolean} predicate
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {BadArgumentError}
@@ -1053,7 +1115,7 @@ export default class Iterable {
    * Returns an Iterable that yields items yielded by this Iterable
    * so long as each item satisfied a specified condition, and then
    * completes as soon as this condition is not satisfied.
-   * @param {!function(x: any):boolean} predicate
+   * @param {!function(item: any):boolean} predicate
    * @throws {BadArgumentError}
    * throws error if the given predicate is not a function
    * @returns {Iterable}
