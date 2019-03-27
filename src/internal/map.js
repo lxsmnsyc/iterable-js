@@ -1,23 +1,19 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable func-names */
 import Iterable from '../iterable';
-import { isIterable, BadArgumentError, isFunction } from './utils';
-
+import { defineField, IterablePredicateCheck } from './utils';
 /**
  * @ignore
  */
-const map = (iterable, mapper) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.map', 'Iterable');
-  }
-  if (!isFunction(mapper)) {
-    throw new BadArgumentError(2, 'Iterable.map', 'function');
-  }
+const FIELD = defineField('flatMap');
+/**
+ * @ignore
+ */
+export default (iterable, mapper) => {
+  IterablePredicateCheck(iterable, mapper, FIELD);
   return new Iterable(function* () {
     for (const i of iterable) {
       yield mapper(i);
     }
   });
 };
-
-export default map;
