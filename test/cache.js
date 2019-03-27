@@ -14,7 +14,7 @@ describe('#cache', () => {
     }
   });
   it('should cache the source Iterable', () => {
-    const cache1 = Iterable.cache([1, 2, 3, 4]);
+    const cache1 = new Iterable([1, 2, 3, 4]).cache();
 
     let flag = 2;
     for (const c of cache1) {
