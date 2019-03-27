@@ -1,10 +1,9 @@
 /* eslint-disable no-restricted-syntax */
 const Iterable = require('./index.js');
 
-for (const c of Iterable.range(1, 200)
-  .filter(x => x % 5 === 0)
-  .reverse()
-  .cache()
-  .all(x => x % 5 === 0)) {
-  console.log(c);
+const A = [1, 2, 2, 3, 4];
+const B = [6, 4, 4, 2];
+
+for (const i of Iterable.intersect(B, A)) {
+  console.log(i);
 }
