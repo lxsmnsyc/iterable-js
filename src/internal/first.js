@@ -1,14 +1,17 @@
 /* eslint-disable func-names */
 /* eslint-disable no-restricted-syntax */
 import Iterable from '../iterable';
-import { isIterable, BadArgumentError } from './utils';
+import { IterableCheck, defineField } from './utils';
 /**
  * @ignore
  */
-const first = (iterable) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.first', 'Iterable');
-  }
+const FIELD = defineField('first');
+/**
+ * @ignore
+ */
+export default (iterable) => {
+  IterableCheck(iterable, 1, FIELD);
+
   return new Iterable(function* () {
     for (const i of iterable) {
       yield i;
@@ -16,5 +19,3 @@ const first = (iterable) => {
     }
   });
 };
-
-export default first;
