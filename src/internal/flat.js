@@ -1,14 +1,16 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable func-names */
 import Iterable from '../iterable';
-import { isIterable, BadArgumentError } from './utils';
+import { isIterable, defineField, IterableCheck } from './utils';
 /**
  * @ignore
  */
-const flat = (iterable) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.flat', 'Iterable');
-  }
+const FIELD = defineField('flat');
+/**
+ * @ignore
+ */
+export default (iterable) => {
+  IterableCheck(iterable, 1, FIELD);
   return new Iterable(function* () {
     for (const i of iterable) {
       if (isIterable(i)) {
@@ -21,5 +23,3 @@ const flat = (iterable) => {
     }
   });
 };
-
-export default flat;
