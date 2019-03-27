@@ -32,9 +32,11 @@ describe('#elementAt', () => {
     assert(iterable instanceof Iterable);
   });
   it('should yield the correct value', () => {
-    const iterable = Iterable.elementAt([1, 2, 3, 4], 2);
+    const base = [1, 2, 3, 4];
+    const x = 2;
+    const iterable = new Iterable(base).elementAt(x);
     for (const c of iterable) {
-      assert(c === 3);
+      assert(c === base[x]);
     }
   });
 });
