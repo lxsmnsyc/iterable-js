@@ -7,5 +7,6 @@ import Iterable from '../src/iterable';
 describe('#concat', () => {
   it('should return an Iterable', () => {
     assert(Iterable.concat(1, 2, 3, 4) instanceof Iterable);
+    assert(new Iterable([1, 2]).concat(3, 4) instanceof Iterable);
   });
 });
