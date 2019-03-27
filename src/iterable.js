@@ -39,7 +39,9 @@ import {
   takeWhile, onYield, onDone, onStart, count, contains,
   indexOf, find, breakWith, spanWith, partition,
   flatMap, range, elementAt, replace, reverse,
-  cache, compose, buffer, step, reduce, intercalate, intersperse, toArray, intersect, distinct, distinctAdjacent, equal,
+  cache, compose, buffer, step, reduce, intercalate,
+  intersperse, toArray, intersect, distinct,
+  distinctAdjacent, equal, sort, sorted,
 } from './internal/dependency';
 
 /**
@@ -507,23 +509,29 @@ export default class Iterable {
 
   /**
    * Returns an Iterable that yields the first value of the source
-   * Iterable.
+   * Iterable that satisfy a predicate(optional).
    * @param {!Iterable} it
+   * @param {function(item: any):boolean} predicate
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function or undefined
    * @returns {Iterable}
    */
-  static first(it) {
-    return first(it);
+  static first(it, predicate) {
+    return first(it, predicate);
   }
 
   /**
-   * Returns an Iterable that yields the first value of this
-   * Iterable.
+   * Returns an Iterable that yields the first value of the source
+   * Iterable that satisfy a predicate(optional).
+   * @param {function(item: any):boolean} predicate
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function or undefined
    * @returns {Iterable}
    */
-  first() {
-    return first(this.it);
+  first(predicate) {
+    return first(this.it, predicate);
   }
 
   /**
@@ -658,31 +666,6 @@ export default class Iterable {
   }
 
   /**
-   * Intersects the yields of the source Iterable to the other Iterable.
-   * @param {!Iterable} it
-   * @param {!Iterable} other
-   * @throws {BadArgumentError}
-   * throws error if the given Iterable doesn't implement the Iteration Protocol
-   * @throws {BadArgumentError}
-   * throws error if the other given Iterable doesn't implement the Iteration Protocol
-   * @returns {Iterable}
-   */
-  static intersect(it, other) {
-    return intersect(it, other);
-  }
-
-  /**
-   * Intersects the yields of this Iterable to the other Iterable.
-   * @param {!Iterable} other
-   * @throws {BadArgumentError}
-   * throws error if the other given Iterable doesn't implement the Iteration Protocol
-   * @returns {Iterable}
-   */
-  intersect(other) {
-    return intersect(this.it, other);
-  }
-
-  /**
    * Inserts the given value in between
    * the source Iterable adjacent yields.
    * @param {!Iterable} it
@@ -741,25 +724,30 @@ export default class Iterable {
 
   /**
    * Returns an Iterable that yields the last value of the source
-   * Iterable.
+   * Iterable that satisfy a predicate(optional).
    * @param {!Iterable} it
+   * @param {function(item: any):boolean} predicate
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function or undefined
    * @returns {Iterable}
    */
-  static last(it) {
-    return last(it);
+  static last(it, predicate) {
+    return last(it, predicate);
   }
 
   /**
-   * Returns an Iterable that yields the last value of this
-   * Iterable.
+   * Returns an Iterable that yields the last value of the source
+   * Iterable that satisfy a predicate(optional).
+   * @param {function(item: any):boolean} predicate
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function or undefined
    * @returns {Iterable}
    */
-  last() {
-    return last(this.it);
+  last(predicate) {
+    return last(this.it, predicate);
   }
-
 
   /**
    * Applies a mapping function to each yielded value of the source
@@ -1110,6 +1098,60 @@ export default class Iterable {
    */
   skipWhile(predicate) {
     return skipWhile(this.it, predicate);
+  }
+
+  /**
+   * Returns a new sorted Iterable base from the source Iterable.
+   * which returns a signum can be provided.
+   * @param {!Array} its
+   * @param {!function(a: any, b: any):number} comparator
+   * @throws {BadArgumentError}
+   * throws error if the given iterables is not an array
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function or undefined
+   * @returns {Iterable}
+   */
+  static sort(it, comparator) {
+    return sort(it, comparator);
+  }
+
+  /**
+   * Returns a new sorted Iterable base from this Iterable.
+   * A comparator function which returns a signum can be provided.
+   * @param {!function(a: any, b: any):number} comparator
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function or undefined
+   * @returns {Iterable}
+   */
+  sort(comparator) {
+    return sort(this.it, comparator);
+  }
+
+  /**
+   * Returns an Iterable that yields true if the source Iterable
+   * (with an optional comparator) is sorted.
+   * @param {!Array} its
+   * @param {!function(a: any, b: any):number} comparator
+   * @throws {BadArgumentError}
+   * throws error if the given iterables is not an array
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function or undefined
+   * @returns {Iterable}
+   */
+  static sorted(it, comparator) {
+    return sorted(it, comparator);
+  }
+
+  /**
+   * Returns an Iterable that yields true if the source Iterable
+   * (with an optional comparator) is sorted.
+   * @param {!function(a: any, b: any):number} comparator
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function or undefined
+   * @returns {Iterable}
+   */
+  sorted(comparator) {
+    return sorted(this.it, comparator);
   }
 
   /**
