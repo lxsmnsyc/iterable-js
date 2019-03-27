@@ -1,9 +1,25 @@
-var Iterable = (function (util) {
+var Iterable = (function () {
   'use strict';
 
+  /* eslint-disable valid-typeof */
   /* eslint-disable func-names */
   /* eslint-disable no-restricted-syntax */
-
+  /**
+   * @ignore
+   */
+  const CLASS_NAME = 'Iterable';
+  /**
+   * @ignore
+   */
+  const TYPE_FUNC = 'function';
+  /**
+   * @ignore
+   */
+  const TYPE_NUM = 'number';
+  /**
+   * @ignore
+   */
+  const TYPE_POS_NUM = 'positive number';
   /**
    * @ignore
    */
@@ -11,20 +27,20 @@ var Iterable = (function (util) {
   /**
    * @ignore
    */
-  const isFunction = x => typeof x === 'function';
+  const isFunction = x => typeof x === TYPE_FUNC;
   /**
    * @ignore
    */
-  const isNumber = x => typeof x === 'number';
+  const isNumber = x => typeof x === TYPE_NUM;
   /**
    * @ignore
    */
-  const isUndefined = x => typeof x === 'undefined';
+  const isUndefined = x => typeof x === 'undefined' || x === null;
 
   /**
    * @ignore
    */
-  const isIterable = x => !isUndefined(x) && typeof x[ITERATOR] === 'function';
+  const isIterable = x => !isUndefined(x) && isFunction(x[ITERATOR]);
   /**
    * @ignore
    */
@@ -34,18 +50,76 @@ var Iterable = (function (util) {
       this.message = `bad argument #${argumentNo} to ${methodName} (${expectedType} expected)`;
     }
   }
-
-  /* eslint-disable no-restricted-syntax */
   /**
    * @ignore
    */
-  const all = (iterable, predicate) => {
+  const IterableCheck = (iterable, argNo, field) => {
     if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.all', 'Iterable');
+      throw new BadArgumentError(argNo, field, CLASS_NAME);
     }
+  };
+  /**
+   * @ignore
+   */
+  const FunctionCheck = (predicate, argNo, field) => {
     if (!isFunction(predicate)) {
-      throw new BadArgumentError(2, 'Iterable.all', 'function');
+      throw new BadArgumentError(argNo, field, TYPE_FUNC);
     }
+  };
+  /**
+   * @ignore
+   */
+  const NumberCheck = (num, argNo, field) => {
+    if (!isNumber(num)) {
+      throw new BadArgumentError(argNo, field, TYPE_NUM);
+    }
+  };
+  /**
+   * @ignore
+   */
+  const PositiveNumberCheck = (num, argNo, field) => {
+    NumberCheck(num, argNo, field);
+    if (num <= 0) {
+      throw new BadArgumentError(argNo, field, TYPE_POS_NUM);
+    }
+  };
+  /**
+   * @ignore
+   */
+  const IterablePredicateCheck = (iterable, predicate, field) => {
+    IterableCheck(iterable, 1, field);
+    FunctionCheck(predicate, 2, field);
+  };
+  /**
+   * @ignore
+   */
+  const IterablePositiveNumberCheck = (iterable, num, field) => {
+    IterableCheck(iterable, 1, field);
+    PositiveNumberCheck(num, 2, field);
+  };
+  /**
+   * @ignore
+   */
+  const DoubleIterableCheck = (iterable, other, field) => {
+    IterableCheck(iterable, 1, field);
+    IterableCheck(other, 2, field);
+  };
+  /**
+   * @ignore
+   */
+  const defineField = x => `${CLASS_NAME}.${x}`;
+
+  /* eslint-disable no-restricted-syntax */
+
+  /**
+   * @ignore
+   */
+  const FIELD = defineField('all');
+  /**
+   * @ignore
+   */
+  var all = (iterable, predicate) => {
+    IterablePredicateCheck(iterable, predicate, FIELD);
     return new Iterable(function* () {
       for (const i of iterable) {
         if (!predicate(i)) {
@@ -58,16 +132,16 @@ var Iterable = (function (util) {
   };
 
   /* eslint-disable no-restricted-syntax */
+
   /**
    * @ignore
    */
-  const any = (iterable, predicate) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.any', 'Iterable');
-    }
-    if (!isFunction(predicate)) {
-      throw new BadArgumentError(2, 'Iterable.any', 'function');
-    }
+  const FIELD$1 = defineField('any');
+  /**
+   * @ignore
+   */
+  var any = (iterable, predicate) => {
+    IterablePredicateCheck(iterable, predicate, FIELD$1);
     return new Iterable(function* () {
       for (const i of iterable) {
         if (predicate(i)) {
@@ -80,17 +154,15 @@ var Iterable = (function (util) {
   };
 
   /* eslint-disable func-names */
-
   /**
    * @ignore
    */
-  const takeUntil = (iterable, predicate) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.takeUntil', 'Iterable');
-    }
-    if (!isFunction(predicate)) {
-      throw new BadArgumentError(2, 'Iterable.takeUntil', 'function');
-    }
+  const FIELD$2 = defineField('takeUntil');
+  /**
+   * @ignore
+   */
+  var takeUntil = (iterable, predicate) => {
+    IterablePredicateCheck(iterable, predicate, FIELD$2);
     return new Iterable(function* () {
       for (const i of iterable) {
         if (!predicate(i)) {
@@ -103,17 +175,15 @@ var Iterable = (function (util) {
   };
 
   /* eslint-disable func-names */
-
   /**
    * @ignore
    */
-  const skipUntil = (iterable, predicate) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.skipUntil', 'Iterable');
-    }
-    if (!isFunction(predicate)) {
-      throw new BadArgumentError(2, 'Iterable.skipUntil', 'function');
-    }
+  const FIELD$3 = defineField('skipUntil');
+  /**
+   * @ignore
+   */
+  var skipUntil = (iterable, predicate) => {
+    IterablePredicateCheck(iterable, predicate, FIELD$3);
     return new Iterable(function* () {
       let flag = true;
       for (const i of iterable) {
@@ -130,13 +200,12 @@ var Iterable = (function (util) {
   /**
    * @ignore
    */
-  const breakWith = (iterable, predicate) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.breakWith', 'Iterable');
-    }
-    if (!isFunction(predicate)) {
-      throw new BadArgumentError(2, 'Iterable.breakWith', 'function');
-    }
+  const FIELD$4 = defineField('breakWith');
+  /**
+   * @ignore
+   */
+  var breakWith = (iterable, predicate) => {
+    IterablePredicateCheck(iterable, predicate, FIELD$4);
     return [
       takeUntil(iterable, predicate),
       skipUntil(iterable, predicate),
@@ -148,10 +217,40 @@ var Iterable = (function (util) {
   /**
    * @ignore
    */
-  const cache = (iterable) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.cache', 'Iterable');
-    }
+  const FIELD$5 = defineField('buffer');
+  /**
+   * @ignore
+   */
+  var buffer = (iterable, count) => {
+    IterablePositiveNumberCheck(iterable, count, FIELD$5);
+
+    return new Iterable(function* () {
+      let b = [];
+
+      for (const i of iterable) {
+        b.push(i);
+        if (b.length === count) {
+          yield b;
+          b = [];
+        }
+      }
+      if (b.length > 0) {
+        yield b;
+      }
+    });
+  };
+
+  /* eslint-disable func-names */
+
+  /**
+   * @ignore
+   */
+  const FIELD$6 = defineField('cache');
+  /**
+   * @ignore
+   */
+  var cache = (iterable) => {
+    IterableCheck(iterable, 1, FIELD$6);
 
     const c = [];
     let size = 0;
@@ -181,23 +280,22 @@ var Iterable = (function (util) {
   /**
    * @ignore
    */
-  const compose = (iterable, ...composers) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.compose', 'Iterable');
-    }
+  const FIELD$7 = defineField('compose');
+  /**
+   * @ignore
+   */
+  var compose = (iterable, ...composers) => {
+    IterableCheck(iterable, 1, FIELD$7);
     let i = 1;
 
     let result = iterable;
     for (const c of composers) {
       i += 1;
-      if (!isFunction(c)) {
-        throw new BadArgumentError(i, 'Iterable.compose', 'function');
-      } else {
-        result = c(result);
+      FunctionCheck(c, i, FIELD$7);
+      result = c(result);
 
-        if (!isIterable(result)) {
-          throw new TypeError('Iterable.compose: a composer function returned a non-Iterable.');
-        }
+      if (!isIterable(result)) {
+        throw new TypeError('Iterable.compose: a composer function returned a non-Iterable.');
       }
     }
 
@@ -211,10 +309,12 @@ var Iterable = (function (util) {
   /**
    * @ignore
    */
-  const flat = (iterable) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.flat', 'Iterable');
-    }
+  const FIELD$8 = defineField('flat');
+  /**
+   * @ignore
+   */
+  var flat = (iterable) => {
+    IterableCheck(iterable, 1, FIELD$8);
     return new Iterable(function* () {
       for (const i of iterable) {
         if (isIterable(i)) {
@@ -232,20 +332,18 @@ var Iterable = (function (util) {
   /**
    * @ignore
    */
-  const concat = (...iterables) => flat(new Iterable(iterables));
+  var concat = (...iterables) => flat(new Iterable(iterables));
 
   /* eslint-disable no-restricted-syntax */
-
   /**
    * @ignore
    */
-  const map = (iterable, mapper) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.map', 'Iterable');
-    }
-    if (!isFunction(mapper)) {
-      throw new BadArgumentError(2, 'Iterable.map', 'function');
-    }
+  const FIELD$9 = defineField('flatMap');
+  /**
+   * @ignore
+   */
+  var map = (iterable, mapper) => {
+    IterablePredicateCheck(iterable, mapper, FIELD$9);
     return new Iterable(function* () {
       for (const i of iterable) {
         yield mapper(i);
@@ -257,13 +355,12 @@ var Iterable = (function (util) {
   /**
    * @ignore
    */
-  const find = (iterable, predicate) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.find', 'Iterable');
-    }
-    if (!isFunction(predicate)) {
-      throw new BadArgumentError(2, 'Iterable.find', 'function');
-    }
+  const FIELD$a = defineField('find');
+  /**
+   * @ignore
+   */
+  var find = (iterable, predicate) => {
+    IterablePredicateCheck(iterable, predicate, FIELD$a);
     return new Iterable(function* () {
       let c = 0;
       for (const i of iterable) {
@@ -281,21 +378,26 @@ var Iterable = (function (util) {
   /**
    * @ignore
    */
-  const indexOf = (iterable, value) => {
-    if (!isIterable(iterable)) {
-      throw new TypeError('bad argument #1 to Iterable.indexOf (Iterable expected)');
-    }
+  const FIELD$b = defineField('indexOf');
+  /**
+   * @ignore
+   */
+  var indexOf = (iterable, value) => {
+    IterableCheck(iterable, 1, FIELD$b);
     return find(iterable, x => x === value);
   };
 
   /* eslint-disable func-names */
+
   /**
    * @ignore
    */
-  const contains = (iterable, value) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.contains', 'Iterable');
-    }
+  const FIELD$c = defineField('contains');
+  /**
+   * @ignore
+   */
+  var contains = (iterable, value) => {
+    IterableCheck(iterable, 1, FIELD$c);
     return map(indexOf(iterable, value), x => x > -1);
   };
 
@@ -304,10 +406,12 @@ var Iterable = (function (util) {
   /**
    * @ignore
    */
-  const count = (iterable) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.count', 'Iterable');
-    }
+  const FIELD$d = defineField('count');
+  /**
+   * @ignore
+   */
+  var count = (iterable) => {
+    IterableCheck(iterable, 1, FIELD$d);
 
     return new Iterable(function* () {
       let c = 0;
@@ -319,20 +423,64 @@ var Iterable = (function (util) {
     });
   };
 
+  /* eslint-disable func-names */
+
+  /**
+   * @ignore
+   */
+  const FIELD$e = defineField('distinct');
+  /**
+   * @ignore
+   */
+  var distinct = (iterable) => {
+    IterableCheck(iterable, 1, FIELD$e);
+    return new Iterable(function* () {
+      const buffer = [];
+      for (const i of iterable) {
+        if (!buffer.includes(i)) {
+          yield i;
+        }
+        buffer.push(i);
+      }
+    });
+  };
+
+  /* eslint-disable func-names */
+
+  /**
+   * @ignore
+   */
+  const FIELD$f = defineField('distinctAdjacent');
+  /**
+   * @ignore
+   */
+  var distinctAdjacent = (iterable) => {
+    IterableCheck(iterable, 1, FIELD$f);
+    return new Iterable(function* () {
+      let first = true;
+      let prev;
+      for (const i of iterable) {
+        if (first) {
+          yield i;
+          first = false;
+        } else if (prev !== i) {
+          yield i;
+        }
+        prev = i;
+      }
+    });
+  };
+
   /* eslint-disable no-restricted-syntax */
   /**
    * @ignore
    */
-  const elementAt = (iterable, index) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.elementAt', 'Iterable');
-    }
-    if (!isNumber(index)) {
-      throw new BadArgumentError(2, 'Iterable.elementAt', 'number');
-    }
-    if (index < 0) {
-      throw new BadArgumentError(2, 'Iterable.elementAt', 'positive number');
-    }
+  const FIELD$g = defineField('elementAt');
+  /**
+   * @ignore
+   */
+  var elementAt = (iterable, index) => {
+    IterablePositiveNumberCheck(iterable, index, FIELD$g);
 
     return new Iterable(function* () {
       let c = 0;
@@ -350,20 +498,63 @@ var Iterable = (function (util) {
   /**
    * @ignore
    */
-  const empty = () => new Iterable([]);
+  var empty = () => new Iterable([]);
+
+  /* eslint-disable no-restricted-syntax */
+  /**
+   * @ignore
+   */
+  const FIELD$h = defineField('toArray');
+  /**
+   * @ignore
+   */
+  var toArray = (iterable) => {
+    IterableCheck(iterable, 1, FIELD$h);
+    const buffer = [];
+
+    for (const i of iterable) {
+      buffer.push(i);
+    }
+
+    return buffer;
+  };
+
+  /* eslint-disable func-names */
+  /**
+   * @ignore
+   */
+  const FIELD$i = defineField('equal');
+  /**
+   * @ignore
+   */
+  var equal = (iterable, other) => {
+    DoubleIterableCheck(iterable, other, FIELD$i);
+
+    return new Iterable(function* () {
+      const arr = toArray(iterable);
+
+      for (const i of other) {
+        if (i !== arr.shift()) {
+          yield i;
+          return;
+        }
+      }
+
+      yield arr.length === 0;
+    });
+  };
 
   /* eslint-disable func-names */
 
   /**
    * @ignore
    */
-  const filter = (iterable, predicate) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.filter', 'Iterable');
-    }
-    if (!isFunction(predicate)) {
-      throw new BadArgumentError(2, 'Iterable.filter', 'function');
-    }
+  const FIELD$j = defineField('filter');
+  /**
+   * @ignore
+   */
+  var filter = (iterable, predicate) => {
+    IterablePredicateCheck(iterable, predicate, FIELD$j);
     return new Iterable(function* () {
       for (const i of iterable) {
         if (predicate(i)) {
@@ -377,10 +568,13 @@ var Iterable = (function (util) {
   /**
    * @ignore
    */
-  const first = (iterable) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.first', 'Iterable');
-    }
+  const FIELD$k = defineField('first');
+  /**
+   * @ignore
+   */
+  var first = (iterable) => {
+    IterableCheck(iterable, 1, FIELD$k);
+
     return new Iterable(function* () {
       for (const i of iterable) {
         yield i;
@@ -392,42 +586,98 @@ var Iterable = (function (util) {
   /**
    * @ignore
    */
-  const flatMap = (iterable, mapper) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.flatMap', 'Iterable');
-    }
-    if (!isFunction(mapper)) {
-      throw new BadArgumentError(2, 'Iterable.flatMap', 'function');
-    }
+  const FIELD$l = defineField('flatMap');
+  /**
+   * @ignore
+   */
+  var flatMap = (iterable, mapper) => {
+    IterablePredicateCheck(iterable, mapper, FIELD$l);
     return flat(map(iterable, mapper));
   };
 
   /* eslint-disable func-names */
-
-  const buffer = (iterable, count) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.buffer', 'Iterable');
-    }
-    if (!isNumber(count)) {
-      throw new BadArgumentError(2, 'Iterable.buffer', 'number');
-    }
-    if (count <= 0) {
-      throw new BadArgumentError(2, 'Iterable.buffer', 'positive number');
-    }
-
+  /**
+   * @ignore
+   */
+  const FIELD$m = defineField('reduce');
+  /**
+   * @ignore
+   */
+  var reduce = (iterable, predicate) => {
+    IterablePredicateCheck(iterable, predicate, FIELD$m);
     return new Iterable(function* () {
-      let b = [];
+      let acc;
 
       for (const i of iterable) {
-        b.push(i);
-        if (b.length === count) {
-          yield b;
-          b = [];
+        acc = predicate(acc, i);
+      }
+
+      yield acc;
+    });
+  };
+
+  /* eslint-disable no-restricted-syntax */
+  /**
+   * @ignore
+   */
+  const FIELD$n = defineField('intercalate');
+  /**
+   * @ignore
+   */
+  var intercalate = (iterable, other) => {
+    DoubleIterableCheck(iterable, other, FIELD$n);
+
+    return reduce(iterable, (acc, item) => {
+      if (typeof acc === 'undefined') {
+        return [item];
+      }
+      for (const i of iterable) {
+        acc.push(i);
+      }
+      acc.push(item);
+      return acc;
+    });
+  };
+
+  /* eslint-disable func-names */
+  /**
+   * @ignore
+   */
+  const FIELD$o = defineField('intersect');
+  /**
+   * @ignore
+   */
+  var intersect = (iterable, other) => {
+    DoubleIterableCheck(iterable, other, FIELD$o);
+
+    return new Iterable(function* () {
+      for (const i of iterable) {
+        for (const o of other) {
+          if (i === o) {
+            yield i;
+          }
         }
       }
-      if (b.length > 0) {
-        yield b;
+    });
+  };
+
+  /**
+   * @ignore
+   */
+  const FIELD$p = defineField('intersperse');
+  /**
+   * @ignore
+   */
+  var intersperse = (iterable, value) => {
+    IterableCheck(iterable, 1, FIELD$p);
+
+    return reduce(iterable, (acc, item) => {
+      if (typeof acc === 'undefined') {
+        return [item];
       }
+      acc.push(value);
+      acc.push(item);
+      return acc;
     });
   };
 
@@ -435,10 +685,13 @@ var Iterable = (function (util) {
   /**
    * @ignore
    */
-  const isEmpty = (iterable) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.isEmpty', 'Iterable');
-    }
+  const FIELD$q = defineField('isEmpty');
+  /**
+   * @ignore
+   */
+  var isEmpty = (iterable) => {
+    IterableCheck(iterable, 1, FIELD$q);
+
     return new Iterable(function* () {
       for (const i of iterable) {
         yield false;
@@ -451,17 +704,18 @@ var Iterable = (function (util) {
   /**
    * @ignore
    */
-  const just = x => new Iterable([x]);
+  var just = x => new Iterable([x]);
 
   /* eslint-disable func-names */
-
   /**
    * @ignore
    */
-  const last = (iterable) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.last', 'Iterable');
-    }
+  const FIELD$r = defineField('last');
+  /**
+   * @ignore
+   */
+  var last = (iterable) => {
+    IterableCheck(iterable, 1, FIELD$r);
     return new Iterable(function* () {
       let v;
       for (const i of iterable) {
@@ -472,18 +726,15 @@ var Iterable = (function (util) {
   };
 
   /* eslint-disable no-restricted-syntax */
-
   /**
    * @ignore
    */
-  const onDone = (iterable, fn) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.onDone', 'Iterable');
-    }
-    if (!isFunction(fn)) {
-      throw new BadArgumentError(2, 'Iterable.onDone', 'function');
-    }
-
+  const FIELD$s = defineField('onDone');
+  /**
+   * @ignore
+   */
+  var onDone = (iterable, fn) => {
+    IterablePredicateCheck(iterable, fn, FIELD$s);
     return new Iterable(function* () {
       for (const i of iterable) {
         yield i;
@@ -493,18 +744,15 @@ var Iterable = (function (util) {
   };
 
   /* eslint-disable no-restricted-syntax */
-
   /**
    * @ignore
    */
-  const onStart = (iterable, fn) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.onStart', 'Iterable');
-    }
-    if (!isFunction(fn)) {
-      throw new BadArgumentError(2, 'Iterable.onStart', 'function');
-    }
-
+  const FIELD$t = defineField('onStart');
+  /**
+   * @ignore
+   */
+  var onStart = (iterable, fn) => {
+    IterablePredicateCheck(iterable, fn, FIELD$t);
     return new Iterable(function* () {
       fn();
       for (const i of iterable) {
@@ -514,18 +762,15 @@ var Iterable = (function (util) {
   };
 
   /* eslint-disable no-restricted-syntax */
-
   /**
    * @ignore
    */
-  const onYield = (iterable, fn) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.onYield', 'Iterable');
-    }
-    if (!isFunction(fn)) {
-      throw new BadArgumentError(2, 'Iterable.onYield', 'function');
-    }
-
+  const FIELD$u = defineField('onYield');
+  /**
+   * @ignore
+   */
+  var onYield = (iterable, fn) => {
+    IterablePredicateCheck(iterable, fn, FIELD$u);
     return new Iterable(function* () {
       for (const i of iterable) {
         fn(i);
@@ -537,14 +782,12 @@ var Iterable = (function (util) {
   /**
    * @ignore
    */
-  const partition = (iterable, predicate) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.partition', 'Iterable');
-    }
-    if (!isFunction(predicate)) {
-      throw new BadArgumentError(2, 'Iterable.partition', 'function');
-    }
-
+  const FIELD$v = defineField('partition');
+  /**
+   * @ignore
+   */
+  var partition = (iterable, predicate) => {
+    IterablePredicateCheck(iterable, predicate, FIELD$v);
     return [
       filter(iterable, predicate),
       filter(iterable, x => !predicate(x)),
@@ -552,21 +795,21 @@ var Iterable = (function (util) {
   };
 
   /* eslint-disable func-names */
-
+  /**
+   * @ignore
+   */
+  const FIELD$w = defineField('range');
+  /**
+   * @ignore
+   */
   const range = (start, end, steps) => {
-    if (!util.isNumber(start)) {
-      throw new BadArgumentError(1, 'Iterable.range', 'number');
-    }
-    if (!util.isNumber(end)) {
-      throw new BadArgumentError(2, 'Iterable.range', 'number');
-    }
+    NumberCheck(start, 1, FIELD$w);
+    NumberCheck(end, 2, FIELD$w);
 
     let step = steps;
 
-    if (!util.isUndefined(steps)) {
-      if (!util.isNumber(steps)) {
-        throw new BadArgumentError(3, 'Iterable.range', 'number or undefined');
-      }
+    if (!isUndefined(steps)) {
+      NumberCheck(steps, 3, FIELD$w);
     } else {
       step = 1;
     }
@@ -584,17 +827,12 @@ var Iterable = (function (util) {
   /**
    * @ignore
    */
-  const repeat = (iterable, count) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.repeat', 'Iterable');
-    }
-    if (!isNumber(count)) {
-      throw new BadArgumentError(2, 'Iterable.repeat', 'number');
-    }
-    if (count < 0) {
-      throw new BadArgumentError(2, 'Iterable.repeat', 'positive number');
-    }
-
+  const FIELD$x = defineField('repeat');
+  /**
+   * @ignore
+   */
+  var repeat = (iterable, count) => {
+    IterablePositiveNumberCheck(iterable, count, FIELD$x);
     return new Iterable(function* () {
       for (let c = count; c > 0; c -= 1) {
         for (const i of iterable) {
@@ -605,21 +843,15 @@ var Iterable = (function (util) {
   };
 
   /* eslint-disable no-restricted-syntax */
-
   /**
    * @ignore
    */
-  const replace = (iterable, index, value) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.replace', 'Iterable');
-    }
-    if (!isNumber(index)) {
-      throw new BadArgumentError(2, 'Iterable.replace', 'number');
-    }
-    if (index < 0) {
-      throw new BadArgumentError(2, 'Iterable.replace', 'positive number');
-    }
-
+  const FIELD$y = defineField('replace');
+  /**
+   * @ignore
+   */
+  var replace = (iterable, index, value) => {
+    IterablePositiveNumberCheck(iterable, index, FIELD$y);
     return new Iterable(function* () {
       let c = 0;
 
@@ -639,11 +871,12 @@ var Iterable = (function (util) {
   /**
    * @ignore
    */
-  const reverse = (iterable) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.reverse', 'Iterable');
-    }
-
+  const FIELD$z = defineField('reverse');
+  /**
+   * @ignore
+   */
+  var reverse = (iterable) => {
+    IterableCheck(iterable, 1, FIELD$z);
     return new Iterable(function* () {
       const buffer = [];
 
@@ -658,20 +891,16 @@ var Iterable = (function (util) {
 
   /* eslint-disable func-names */
 
+  /* eslint-disable func-names */
   /**
    * @ignore
    */
-  const skip = (iterable, count) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.skip', 'Iterable');
-    }
-    if (!isNumber(count)) {
-      throw new BadArgumentError(2, 'Iterable.skip', 'number');
-    }
-    if (count < 0) {
-      throw new BadArgumentError(2, 'Iterable.skip', 'positive number');
-    }
-
+  const FIELD$A = defineField('skip');
+  /**
+   * @ignore
+   */
+  var skip = (iterable, count) => {
+    IterablePositiveNumberCheck(iterable, count, FIELD$A);
     return new Iterable(function* () {
       let c = count;
 
@@ -686,21 +915,15 @@ var Iterable = (function (util) {
   };
 
   /* eslint-disable func-names */
-
   /**
    * @ignore
    */
-  const skipLast = (iterable, count) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.skipLast', 'Iterable');
-    }
-    if (!isNumber(count)) {
-      throw new BadArgumentError(2, 'Iterable.skipLast', 'number');
-    }
-    if (count < 0) {
-      throw new BadArgumentError(2, 'Iterable.skipLast', 'positive number');
-    }
-
+  const FIELD$B = defineField('skipLast');
+  /**
+   * @ignore
+   */
+  var skipLast = (iterable, count) => {
+    IterablePositiveNumberCheck(iterable, count, FIELD$B);
     return new Iterable(function* () {
       const buffer = [];
       let c = 0;
@@ -720,17 +943,15 @@ var Iterable = (function (util) {
   };
 
   /* eslint-disable func-names */
-
   /**
    * @ignore
    */
-  const skipWhile = (iterable, predicate) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.skipUntil', 'Iterable');
-    }
-    if (!isFunction(predicate)) {
-      throw new BadArgumentError(2, 'Iterable.skipUntil', 'function');
-    }
+  const FIELD$C = defineField('skipWhile');
+  /**
+   * @ignore
+   */
+  var skipWhile = (iterable, predicate) => {
+    IterablePredicateCheck(iterable, predicate, FIELD$C);
     return new Iterable(function* () {
       let flag = true;
       for (const i of iterable) {
@@ -746,16 +967,16 @@ var Iterable = (function (util) {
 
   /* eslint-disable func-names */
 
+  /* eslint-disable func-names */
   /**
    * @ignore
    */
-  const takeWhile = (iterable, predicate) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.takeWhile', 'Iterable');
-    }
-    if (!isFunction(predicate)) {
-      throw new BadArgumentError(2, 'Iterable.takeWhile', 'function');
-    }
+  const FIELD$D = defineField('takeWhile');
+  /**
+   * @ignore
+   */
+  var takeWhile = (iterable, predicate) => {
+    IterablePredicateCheck(iterable, predicate, FIELD$D);
     return new Iterable(function* () {
       for (const i of iterable) {
         if (predicate(i)) {
@@ -770,14 +991,12 @@ var Iterable = (function (util) {
   /**
    * @ignore
    */
-  const spanWith = (iterable, predicate) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.spanWith', 'Iterable');
-    }
-    if (!isFunction(predicate)) {
-      throw new BadArgumentError(2, 'Iterable.spanWith', 'function');
-    }
-
+  const FIELD$E = defineField('spanWith');
+  /**
+   * @ignore
+   */
+  var spanWith = (iterable, predicate) => {
+    IterablePredicateCheck(iterable, predicate, FIELD$E);
     return [
       takeWhile(iterable, predicate),
       skipWhile(iterable, predicate),
@@ -785,21 +1004,15 @@ var Iterable = (function (util) {
   };
 
   /* eslint-disable func-names */
-
   /**
    * @ignore
    */
-  const take = (iterable, count) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.take', 'Iterable');
-    }
-    if (!isNumber(count)) {
-      throw new BadArgumentError(2, 'Iterable.take', 'number');
-    }
-    if (count < 0) {
-      throw new BadArgumentError(2, 'Iterable.take', 'positive number');
-    }
-
+  const FIELD$F = defineField('take');
+  /**
+   * @ignore
+   */
+  var take = (iterable, count) => {
+    IterablePositiveNumberCheck(iterable, count, FIELD$F);
     return new Iterable(function* () {
       let c = count;
 
@@ -818,47 +1031,58 @@ var Iterable = (function (util) {
   /**
    * @ignore
    */
-  const split = (iterable, count) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.split', 'Iterable');
-    }
-    if (!isNumber(count)) {
-      throw new BadArgumentError(2, 'Iterable.split', 'number');
-    }
-    if (count < 0) {
-      throw new BadArgumentError(2, 'Iterable.split', 'positive number');
-    }
-
+  const FIELD$G = defineField('split');
+  /**
+   * @ignore
+   */
+  var split = (iterable, count) => {
+    IterablePositiveNumberCheck(iterable, count, FIELD$G);
     return [take(iterable, count), skip(iterable, count)];
   };
 
   /**
    * @ignore
    */
-  const startWith = (iterable, ...iterables) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.startWith', 'Iterable');
-    }
-
-    return concat(...iterables, iterable);
-  };
-
-  /* eslint-disable func-names */
-
+  const FIELD$H = defineField('startWith');
   /**
    * @ignore
    */
-  const takeLast = (iterable, count) => {
-    if (!isIterable(iterable)) {
-      throw new BadArgumentError(1, 'Iterable.takeLast', 'Iterable');
-    }
-    if (!isNumber(count)) {
-      throw new BadArgumentError(2, 'Iterable.takeLast', 'number');
-    }
-    if (count < 0) {
-      throw new BadArgumentError(2, 'Iterable.takeLast', 'positive number');
-    }
+  var startWith = (iterable, ...iterables) => {
+    IterableCheck(iterable, 1, FIELD$H);
+    return concat(...iterables, iterable);
+  };
 
+  /* eslint-disable no-restricted-syntax */
+  /**
+   * @ignore
+   */
+  const FIELD$I = defineField('step');
+  /**
+   * @ignore
+   */
+  var step = (iterable, count) => {
+    IterablePositiveNumberCheck(iterable, count, FIELD$I);
+    return new Iterable(function* () {
+      let c = 0;
+      for (const i of iterable) {
+        if (c % count === 0) {
+          yield i;
+        }
+        c += 1;
+      }
+    });
+  };
+
+  /* eslint-disable func-names */
+  /**
+   * @ignore
+   */
+  const FIELD$J = defineField('takeLast');
+  /**
+   * @ignore
+   */
+  var takeLast = (iterable, count) => {
+    IterablePositiveNumberCheck(iterable, count, FIELD$J);
     return new Iterable(function* () {
       const buffer = [];
 
@@ -880,20 +1104,24 @@ var Iterable = (function (util) {
   /**
    * @ignore
    */
+  const FIELD$K = defineField('zip');
+  /**
+   * @ignore
+   */
   const defaultZipper = x => x;
   /**
    * @ignore
    */
   const zip = (iterables, fn) => {
     if (!(iterables instanceof Array)) {
-      throw new BadArgumentError(1, 'Iterable.zip', 'Array');
+      throw new BadArgumentError(1, FIELD$K, 'Array');
     }
 
     let zipper = fn;
 
     if (!isUndefined(fn)) {
       if (!isFunction(fn)) {
-        throw new BadArgumentError(2, 'Iterable.zip', 'function or undefined');
+        FunctionCheck(fn, 2, FIELD$K);
       }
     } else {
       zipper = defaultZipper;
@@ -968,8 +1196,14 @@ var Iterable = (function (util) {
       const it = iterable;
       if (it.constructor.name === 'GeneratorFunction') {
         it[ITERATOR] = it;
+        /**
+         * @ignore
+         */
         this.it = it;
       } else if (isIterable(it)) {
+        /**
+         * @ignore
+         */
         this.it = it;
       } else {
         throw new BadArgumentError(1, 'Iterable.<constructor>', 'Iterable or Generator');
@@ -984,7 +1218,7 @@ var Iterable = (function (util) {
           if (index in target) {
             return target[index];
           }
-          if (util.isNumber(index)) {
+          if (isNumber(index)) {
             return target.get(index);
           }
           return undefined;
@@ -1000,12 +1234,12 @@ var Iterable = (function (util) {
      */
     get(index) {
       const { it } = this;
-      let step = 0;
+      let s = 0;
       for (const i of it) {
-        if (step === index) {
+        if (s === index) {
           return i;
         }
-        step += 1;
+        s += 1;
       }
       return undefined;
     }
@@ -1023,7 +1257,7 @@ var Iterable = (function (util) {
      * Returns an Iterable that yields true if all of the yields of the
      * source Iterable passes the predicate function, false if not.
      * @param {!Iterable} it
-     * @param {!function(x: any):boolean} predicate
+     * @param {!function(item: any):boolean} predicate
      * @throws {BadArgumentError}
      * throws error if the given Iterable doesn't implement the Iteration Protocol
      * @throws {BadArgumentError}
@@ -1037,7 +1271,7 @@ var Iterable = (function (util) {
     /**
      * Returns an Iterable that yields true if all of the yields of
      * this Iterable passes the predicate function, false if not.
-     * @param {!function(x: any):boolean} predicate
+     * @param {!function(item: any):boolean} predicate
      * @throws {BadArgumentError}
      * throws error if the given predicate is not a function
      * @returns {Iterable}
@@ -1050,7 +1284,7 @@ var Iterable = (function (util) {
      * Returns an Iterable that yields true if any of the yields of the
      * source Iterable passes the predicate function, false if not.
      * @param {!Iterable} it
-     * @param {!function(x: any):boolean} predicate
+     * @param {!function(item: any):boolean} predicate
      * @throws {BadArgumentError}
      * throws error if the given Iterable doesn't implement the Iteration Protocol
      * @throws {BadArgumentError}
@@ -1064,7 +1298,7 @@ var Iterable = (function (util) {
     /**
      * Returns an Iterable that yields true if any of the yields of
      * this Iterable passes the predicate function, false if not.
-     * @param {!function(x: any):boolean} predicate
+     * @param {!function(item: any):boolean} predicate
      * @throws {BadArgumentError}
      * throws error if the given predicate is not a function
      * @returns {Iterable}
@@ -1074,11 +1308,32 @@ var Iterable = (function (util) {
     }
 
     /**
+     * Returns an Iterable that yields Iterable buffers of items
+     * it collects from the source Iterable.
+     * @param {!Iterable} it
+     * @param {!number} amount
+     * @returns {Iterable}
+     */
+    static buffer(it, amount) {
+      return buffer(it, amount);
+    }
+
+    /**
+     * Returns an Iterable that yields Iterable buffers of items
+     * it collects from this Iterable.
+     * @param {!number} amount
+     * @returns {Iterable}
+     */
+    buffer(amount) {
+      return buffer(this.it, amount);
+    }
+
+    /**
      * Split an Iterable into a longest prefix such that all
      * the elements of it do not satisfy a given predicate,
      * and the rest of the Iterable following them.
      * @param {!Iterable} it
-     * @param {!function(x: any):boolean} predicate
+     * @param {!function(item: any):boolean} predicate
      * @throws {BadArgumentError}
      * throws error if the given Iterable doesn't implement the Iteration Protocol
      * @throws {BadArgumentError}
@@ -1093,7 +1348,7 @@ var Iterable = (function (util) {
      * Split an Iterable into a longest prefix such that all
      * the elements of it do not satisfy a given predicate,
      * and the rest of the Iterable following them.
-     * @param {!function(x: any):boolean} predicate
+     * @param {!function(item: any):boolean} predicate
      * @throws {BadArgumentError}
      * throws error if the given predicate is not a function
      * @returns {Iterable}
@@ -1119,7 +1374,6 @@ var Iterable = (function (util) {
      * Caches all yields of this Iterable, for the purpose
      * of not re-running the computing function that yields
      * the result.
-     * @param {!Iterable} it
      * @returns {Iterable}
      */
     cache() {
@@ -1209,6 +1463,8 @@ var Iterable = (function (util) {
      * Returns an Iterable that counts the total number of items
      * yielded by the source Iterable and yields this count.
      * @param {!Iterable} it
+     * @throws {BadArgumentError}
+     * throws error if the given Iterable doesn't implement the Iteration Protocol
      * @returns {Iterable}
      */
     static count(it) {
@@ -1222,6 +1478,51 @@ var Iterable = (function (util) {
      */
     count() {
       return count(this.it);
+    }
+
+    /**
+     * Returns an Iterable that yields all items yielded by the
+     * source Iterable that are distinct based on the strict equality
+     * comparison.
+     * @param {!Iterable} it
+     * @throws {BadArgumentError}
+     * throws error if the given Iterable doesn't implement the Iteration Protocol
+     * @returns {Iterable}
+     */
+    static distinct(it) {
+      return distinct(it);
+    }
+
+    /**
+     * Returns an Iterable that yields all items yielded by this Iterable
+     * that are distinct based on the strict equality comparison.
+     * @returns {Iterable}
+     */
+    distinct() {
+      return distinct(this.it);
+    }
+
+    /**
+     * Returns an Iterable that yields all items yielded by the
+     * source Iterable that are distinct from their immediate
+     * predecessors based on strict equality comparison.
+     * @param {!Iterable} it
+     * @throws {BadArgumentError}
+     * throws error if the given Iterable doesn't implement the Iteration Protocol
+     * @returns {Iterable}
+     */
+    static distinctAdjacent(it) {
+      return distinctAdjacent(it);
+    }
+
+    /**
+     * Returns an Iterable that yields all items yielded by this
+     * Iterable that are distinct from their immediate predecessors
+     * based on strict equality comparison.
+     * @returns {Iterable}
+     */
+    distinctAdjacent() {
+      return distinctAdjacent(this.it);
     }
 
     /**
@@ -1260,10 +1561,37 @@ var Iterable = (function (util) {
     }
 
     /**
+     * Returns an Iterable that yields true if the source Iterable
+     * has the same exact sequence as the other Iterable.
+     * @param {!Iterable} it
+     * @param {!Iterable} other
+     * @throws {BadArgumentError}
+     * throws error if the given Iterable doesn't implement the Iteration Protocol
+     * @throws {BadArgumentError}
+     * throws error if the other given Iterable doesn't implement the Iteration Protocol
+     * @returns {Iterable}
+     */
+    static equal(it, other) {
+      return equal(it, other);
+    }
+
+    /**
+     * Returns an Iterable that yields true if the source Iterable
+     * has the same exact sequence as the other Iterable.
+     * @param {!Iterable} other
+     * @throws {BadArgumentError}
+     * throws error if the other given Iterable doesn't implement the Iteration Protocol
+     * @returns {Iterable}
+     */
+    equal(other) {
+      return equal(this.it, other);
+    }
+
+    /**
      * Filters the yields of a source Iterable with a filter function.
      *
      * @param {!Iterable} it
-     * @param {!function(x: any):boolean} fn
+     * @param {!function(item: any):boolean} fn
      * @throws {BadArgumentError}
      * throws error if the given Iterable doesn't implement the Iteration Protocol
      * @throws {BadArgumentError}
@@ -1276,7 +1604,7 @@ var Iterable = (function (util) {
 
     /**
      * Filters the yields of this Iterable with a filter function.
-     * @param {!function(x: any):boolean} fn
+     * @param {!function(item: any):boolean} fn
      * @throws {BadArgumentError}
      * throws error if the given predicate is not a function
      * @returns {Iterable}
@@ -1288,7 +1616,7 @@ var Iterable = (function (util) {
     /**
      * Finds the index of the first element that satisfy a predicate.
      * @param {!Iterable} it
-     * @param {!function(x: any):boolean} predicate
+     * @param {!function(item: any):boolean} predicate
      * @throws {BadArgumentError}
      * throws error if the given Iterable doesn't implement the Iteration Protocol
      * @returns {Iterable}
@@ -1299,7 +1627,7 @@ var Iterable = (function (util) {
 
     /**
      * Finds the index of the first element that satisfy a predicate.
-     * @param {!function(x: any):boolean} predicate
+     * @param {!function(item: any):boolean} predicate
      * @returns {Iterable}
      */
     find(predicate) {
@@ -1354,7 +1682,7 @@ var Iterable = (function (util) {
      * Iterable, where that function returns an Iterable, and then
      * merging those resulting Iterable and yielding the results of this merger.
      * @param {!Iterable} it
-     * @param {!function(x: any):Iterable} mapper
+     * @param {!function(item: any):Iterable} mapper
      * @throws {BadArgumentError}
      * throws error if the given Iterable doesn't implement the Iteration Protocol
      * @throws {BadArgumentError}
@@ -1370,33 +1698,13 @@ var Iterable = (function (util) {
      * function that you supply to each item yielded by this
      * Iterable, where that function returns an Iterable, and then
      * merging those resulting Iterable and yielding the results of this merger.
-     * @param {!function(x: any):Iterable} mapper
+     * @param {!function(item: any):Iterable} mapper
      * @throws {BadArgumentError}
      * throws error if the given mapper is not a function
      * @returns {Iterable}
      */
     flatMap(mapper) {
       return flatMap(this.it, mapper);
-    }
-
-    /**
-     * Returns an Iterable that yields Iterable buffers of items
-     * it collects from the source Iterable.
-     * @param {!Iterable} it
-     * @param {!number} amount
-     */
-    static buffer(it, amount) {
-      return buffer(it, amount);
-    }
-
-    /**
-     * Returns an Iterable that yields Iterable buffers of items
-     * it collects from this Iterable.
-     * @param {!Iterable} it
-     * @param {!number} amount
-     */
-    buffer(amount) {
-      return buffer(this.it, amount);
     }
 
     /**
@@ -1422,6 +1730,112 @@ var Iterable = (function (util) {
      */
     indexOf(value) {
       return indexOf(this.it, value);
+    }
+
+    /**
+     * Inserts the yields of the other Iterable in between
+     * the source Iterable adjacent yields.
+     * @param {!Iterable} it
+     * @param {!Iterable} other
+     * @throws {BadArgumentError}
+     * throws error if the given Iterable doesn't implement the Iteration Protocol
+     * @throws {BadArgumentError}
+     * throws error if the other given Iterable doesn't implement the Iteration Protocol
+     * @returns {Iterable}
+     */
+    static intercalate(it, other) {
+      return intercalate(it, other);
+    }
+
+    /**
+     * Inserts the yields of the other Iterable in between
+     * this Iterable adjacent yields.
+     * @param {!Iterable} other
+     * @throws {BadArgumentError}
+     * throws error if the other given Iterable doesn't implement the Iteration Protocol
+     * @returns {Iterable}
+     */
+    intercalate(other) {
+      return intercalate(this.it, other);
+    }
+
+    /**
+     * Returns an Iterable that yields the items that the source Iterable
+     * and the other Iterable has in common.
+     * @param {!Iterable} it
+     * @param {!Iterable} other
+     * @throws {BadArgumentError}
+     * throws error if the given Iterable doesn't implement the Iteration Protocol
+     * @throws {BadArgumentError}
+     * throws error if the other given Iterable doesn't implement the Iteration Protocol
+     * @returns {Iterable}
+     */
+    static intersect(it, other) {
+      return intersect(it, other);
+    }
+
+    /**
+     * Returns an Iterable that yields the items that the source Iterable
+     * and the other Iterable has in common.
+     * @param {!Iterable} other
+     * @throws {BadArgumentError}
+     * throws error if the other given Iterable doesn't implement the Iteration Protocol
+     * @returns {Iterable}
+     */
+    intersect(other) {
+      return intersect(this.it, other);
+    }
+
+    /**
+     * Intersects the yields of the source Iterable to the other Iterable.
+     * @param {!Iterable} it
+     * @param {!Iterable} other
+     * @throws {BadArgumentError}
+     * throws error if the given Iterable doesn't implement the Iteration Protocol
+     * @throws {BadArgumentError}
+     * throws error if the other given Iterable doesn't implement the Iteration Protocol
+     * @returns {Iterable}
+     */
+    static intersect(it, other) {
+      return intersect(it, other);
+    }
+
+    /**
+     * Intersects the yields of this Iterable to the other Iterable.
+     * @param {!Iterable} other
+     * @throws {BadArgumentError}
+     * throws error if the other given Iterable doesn't implement the Iteration Protocol
+     * @returns {Iterable}
+     */
+    intersect(other) {
+      return intersect(this.it, other);
+    }
+
+    /**
+     * Inserts the given value in between
+     * the source Iterable adjacent yields.
+     * @param {!Iterable} it
+     * @param {any} value
+     * @throws {BadArgumentError}
+     * throws error if the given Iterable doesn't implement the Iteration Protocol
+     * @throws {BadArgumentError}
+     * throws error if the other given Iterable doesn't implement the Iteration Protocol
+     * @returns {Iterable}
+     */
+    static intersperse(it, value) {
+      return intersperse(it, value);
+    }
+
+    /**
+     * Inserts the yields of the other Iterable in between
+     * this Iterable adjacent yields.
+     * @param {any} value
+     * @throws {BadArgumentError}
+     * throws error if the other given Iterable doesn't implement the Iteration Protocol
+     * @returns {Iterable}
+     */
+    intersperse(value) {
+      return intersperse(this.it, value);
     }
 
     /**
@@ -1480,7 +1894,7 @@ var Iterable = (function (util) {
      * Applies a mapping function to each yielded value of the source
      * Iterable.
      * @param {!Iterable} it
-     * @param {!function(x: any):any} fn
+     * @param {!function(item: any):any} fn
      * @throws {BadArgumentError}
      * throws error if the given Iterable doesn't implement the Iteration Protocol
      * @throws {BadArgumentError}
@@ -1494,7 +1908,7 @@ var Iterable = (function (util) {
     /**
      * Applies a mapping function to each yielded value of this
      * Iterable.
-     * @param {!function(x: any):any} fn
+     * @param {!function(item: any):any} fn
      * @throws {BadArgumentError}
      * throws error if the given predicate is not a function
      * @returns {Iterable}
@@ -1508,7 +1922,7 @@ var Iterable = (function (util) {
      * executed when the Iterable finishes the iteration
      * process.
      * @param {!Iterable} it
-     * @param {!function(x: any)} fn
+     * @param {!function} fn
      * @throws {BadArgumentError}
      * throws error if the given Iterable doesn't implement the Iteration Protocol
      * @throws {BadArgumentError}
@@ -1523,7 +1937,7 @@ var Iterable = (function (util) {
      * Attaches a callback to this Iterable that is
      * executed when this Iterable finishes the iteration
      * process.
-     * @param {!function(x: any)} fn
+     * @param {!function} fn
      * @throws {BadArgumentError}
      * throws error if the given action is not a function
      * @returns {Iterable}
@@ -1537,7 +1951,7 @@ var Iterable = (function (util) {
      * executed when the Iterable finishes the iteration
      * process.
      * @param {!Iterable} it
-     * @param {!function(x: any)} fn
+     * @param {!function} fn
      * @throws {BadArgumentError}
      * throws error if the given Iterable doesn't implement the Iteration Protocol
      * @throws {BadArgumentError}
@@ -1552,7 +1966,7 @@ var Iterable = (function (util) {
      * Attaches a callback to this Iterable that is
      * executed when this Iterable finishes the iteration
      * process.
-     * @param {!function(x: any)} fn
+     * @param {!function} fn
      * @throws {BadArgumentError}
      * throws error if the given action is not a function
      * @returns {Iterable}
@@ -1566,7 +1980,7 @@ var Iterable = (function (util) {
      * executed whenever the source Iterable yields
      * a value.
      * @param {!Iterable} it
-     * @param {!function(x: any)} fn
+     * @param {!function(item: any)} fn
      * @throws {BadArgumentError}
      * throws error if the given Iterable doesn't implement the Iteration Protocol
      * @throws {BadArgumentError}
@@ -1581,7 +1995,7 @@ var Iterable = (function (util) {
      * Attaches a callback to this Iterable that is
      * executed whenever this Iterable yields
      * a value.
-     * @param {!function(x: any)} fn
+     * @param {!function(item: any)} fn
      * @throws {BadArgumentError}
      * throws error if the given consumer is not a function
      * @returns {Iterable}
@@ -1594,7 +2008,7 @@ var Iterable = (function (util) {
      * Given a predicate and an Iterable, return a pair of Iterables
      * which do and do not satisfy the predicate, respectively.
      * @param {!Iterable} it
-     * @param {!function(x: any):boolean} predicate
+     * @param {!function(item: any):boolean} predicate
      * @throws {BadArgumentError}
      * throws error if the given Iterable doesn't implement the Iteration Protocol
      * @throws {BadArgumentError}
@@ -1608,7 +2022,7 @@ var Iterable = (function (util) {
     /**
      * Given a predicate and an Iterable, return a pair of Iterables
      * which do and do not satisfy the predicate, respectively.
-     * @param {!function(x: any):boolean} predicate
+     * @param {!function(item: any):boolean} predicate
      * @throws {BadArgumentError}
      * throws error if the given Iterable doesn't implement the Iteration Protocol
      * @throws {BadArgumentError}
@@ -1629,6 +2043,41 @@ var Iterable = (function (util) {
      */
     static range(start, end, steps) {
       return range(start, end, steps);
+    }
+
+    /**
+     * Returns an Iterable that applies a specified accumulator function
+     * to the first item yielded by a source Iterable, then feeds the
+     * result of that function along with the second item yielded by
+     * the source Iterable into the same function, and so on until all
+     * items have been yielded by the finite source Iterable, and yields
+     * the final result from the final call to your function as its sole item.
+     * @param {!Iterable} it
+     * @param {!function(acc: any, item: any):any} reducer
+     * @throws {BadArgumentError}
+     * throws error if the given Iterable doesn't implement the Iteration Protocol
+     * @throws {BadArgumentError}
+     * throws error if the given reducer is not a function
+     * @returns {Iterable}
+     */
+    static reduce(it, reducer) {
+      return reduce(it, reducer);
+    }
+
+    /**
+     * Returns an Iterable that applies a specified accumulator function
+     * to the first item yielded by a source Iterable, then feeds the
+     * result of that function along with the second item yielded by
+     * the source Iterable into the same function, and so on until all
+     * items have been yielded by the finite source Iterable, and yields
+     * the final result from the final call to your function as its sole item.
+     * @param {!function(acc: any, item: any):any} reducer
+     * @throws {BadArgumentError}
+     * throws error if the given reducer is not a function
+     * @returns {Iterable}
+     */
+    reduce(reducer) {
+      return reduce(this.it, reducer);
     }
 
     /**
@@ -1768,7 +2217,7 @@ var Iterable = (function (util) {
      * Iterable as long as a specified condition holds true, but yields
      * all further source items as soon as the condition becomes false.
      * @param {!Iterable} it
-     * @param {!function(x: any):boolean} predicate
+     * @param {!function(item: any):boolean} predicate
      * @throws {BadArgumentError}
      * throws error if the given Iterable doesn't implement the Iteration Protocol
      * @throws {BadArgumentError}
@@ -1783,7 +2232,7 @@ var Iterable = (function (util) {
      * Returns an Iterable that skips all items yielded by the source
      * Iterable as long as a specified condition holds true, but yields
      * all further source items as soon as the condition becomes false.
-     * @param {!function(x: any):boolean} predicate
+     * @param {!function(item: any):boolean} predicate
      * @throws {BadArgumentError}
      * throws error if the given predicate is not a function
      * @returns {Iterable}
@@ -1797,7 +2246,7 @@ var Iterable = (function (util) {
      * the elements of it do satisfy a given predicate,
      * and the rest of the Iterable following them.
      * @param {!Iterable} it
-     * @param {!function(x: any):boolean} predicate
+     * @param {!function(item: any):boolean} predicate
      * @throws {BadArgumentError}
      * throws error if the given Iterable doesn't implement the Iteration Protocol
      * @throws {BadArgumentError}
@@ -1812,7 +2261,7 @@ var Iterable = (function (util) {
      * Split an Iterable into a longest prefix such that all
      * the elements of it do satisfy a given predicate,
      * and the rest of the Iterable following them.
-     * @param {!function(x: any):boolean} predicate
+     * @param {!function(item: any):boolean} predicate
      * @throws {BadArgumentError}
      * throws error if the given predicate is not a function
      * @returns {Iterable}
@@ -1882,6 +2331,33 @@ var Iterable = (function (util) {
     }
 
     /**
+     * Returns an Iterable that yields only the elements whose indices
+     * are divisible by the given amount
+     * @param {!Iterable} it
+     * @param {!number} amount
+     * @throws {BadArgumentError}
+     * throws error if the given Iterable doesn't implement the Iteration Protocol
+     * @throws {BadArgumentError}
+     * throws error if the given amount is not a number.
+     * @returns {Iterable}
+     */
+    static step(it, amount) {
+      return step(it, amount);
+    }
+
+    /**
+     * Returns an Iterable that yields only the first count items yielded by
+     * this Iterable.
+     * @param {!number} amount
+     * @throws {BadArgumentError}
+     * throws error if the given amount is not a number.
+     * @returns {Iterable}
+     */
+    step(amount) {
+      return step(this.it, amount);
+    }
+
+    /**
      * Returns an Iterable that yields only the first count items yielded by the
      * source Iterable.
      * @param {!Iterable} it
@@ -1940,7 +2416,7 @@ var Iterable = (function (util) {
      * so long as each item satisfied a specified condition, and then
      * completes as soon as this condition is not satisfied.
      * @param {!Iterable} it
-     * @param {!function(x: any):boolean} predicate
+     * @param {!function(item: any):boolean} predicate
      * @throws {BadArgumentError}
      * throws error if the given Iterable doesn't implement the Iteration Protocol
      * @throws {BadArgumentError}
@@ -1955,13 +2431,34 @@ var Iterable = (function (util) {
      * Returns an Iterable that yields items yielded by this Iterable
      * so long as each item satisfied a specified condition, and then
      * completes as soon as this condition is not satisfied.
-     * @param {!function(x: any):boolean} predicate
+     * @param {!function(item: any):boolean} predicate
      * @throws {BadArgumentError}
      * throws error if the given predicate is not a function
      * @returns {Iterable}
      */
     takeWhile(predicate) {
       return takeWhile(this.it, predicate);
+    }
+
+    /**
+     * Converts the source Iterable into an array of its yield
+     * sequence.
+     * @param {!Iterable} it
+     * @throws {BadArgumentError}
+     * throws error if the given Iterable doesn't implement the Iteration Protocol
+     * @returns {Array}
+     */
+    static toArray(it) {
+      return toArray(it);
+    }
+
+    /**
+     * Converts this Iterable into an array of its yield
+     * sequence.
+     * @returns {Array}
+     */
+    toArray() {
+      return toArray(this.it);
     }
 
     /**
@@ -1997,6 +2494,7 @@ var Iterable = (function (util) {
 
     /**
      * Implements the Iterator Protocol for this Iterable.
+     * @ignore
      */
     [ITERATOR]() {
       return this.it[ITERATOR]();
@@ -2005,4 +2503,4 @@ var Iterable = (function (util) {
 
   return Iterable;
 
-}(util));
+}());
