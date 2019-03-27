@@ -1,16 +1,17 @@
 /* eslint-disable func-names */
 /* eslint-disable no-restricted-syntax */
-import { isIterable, BadArgumentError } from './utils';
+import { IterableCheck, defineField } from './utils';
 import map from './map';
 import indexOf from './indexOf';
+
 /**
  * @ignore
  */
-const contains = (iterable, value) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.contains', 'Iterable');
-  }
+const FIELD = defineField('contains');
+/**
+ * @ignore
+ */
+export default (iterable, value) => {
+  IterableCheck(iterable, 1, FIELD);
   return map(indexOf(iterable, value), x => x > -1);
 };
-
-export default contains;
