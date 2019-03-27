@@ -1,10 +1,14 @@
 /* eslint-disable no-restricted-syntax */
-import { isIterable, BadArgumentError } from './utils';
-
-const toArray = (iterable) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.toArray', 'Iterable');
-  }
+import { defineField, IterableCheck } from './utils';
+/**
+ * @ignore
+ */
+const FIELD = defineField('toArray');
+/**
+ * @ignore
+ */
+export default (iterable) => {
+  IterableCheck(iterable, 1, FIELD);
   const buffer = [];
 
   for (const i of iterable) {
@@ -13,5 +17,3 @@ const toArray = (iterable) => {
 
   return buffer;
 };
-
-export default toArray;
