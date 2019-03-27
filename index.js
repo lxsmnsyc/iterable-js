@@ -1,5 +1,9 @@
 'use strict';
 
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var Iterable$1 = _interopDefault(require('..'));
+
 /* eslint-disable valid-typeof */
 /* eslint-disable func-names */
 /* eslint-disable no-restricted-syntax */
@@ -156,12 +160,37 @@ var any = (iterable, predicate) => {
 /**
  * @ignore
  */
-const FIELD$2 = defineField('takeUntil');
+const FIELD$2 = defineField('average');
+/**
+ * @ignore
+ */
+var average = (iterable) => {
+  IterableCheck(iterable, FIELD$2);
+  return new Iterable(function* () {
+    let acc = 0;
+    let c = 0;
+
+    for (const i of iterable) {
+      acc += i;
+      c += 1;
+    }
+
+    yield acc / c;
+  });
+};
+
+/* eslint-disable func-names */
+
+/* eslint-disable func-names */
+/**
+ * @ignore
+ */
+const FIELD$3 = defineField('takeUntil');
 /**
  * @ignore
  */
 var takeUntil = (iterable, predicate) => {
-  IterablePredicateCheck(iterable, predicate, FIELD$2);
+  IterablePredicateCheck(iterable, predicate, FIELD$3);
   return new Iterable(function* () {
     for (const i of iterable) {
       if (!predicate(i)) {
@@ -177,12 +206,12 @@ var takeUntil = (iterable, predicate) => {
 /**
  * @ignore
  */
-const FIELD$3 = defineField('skipUntil');
+const FIELD$4 = defineField('skipUntil');
 /**
  * @ignore
  */
 var skipUntil = (iterable, predicate) => {
-  IterablePredicateCheck(iterable, predicate, FIELD$3);
+  IterablePredicateCheck(iterable, predicate, FIELD$4);
   return new Iterable(function* () {
     let flag = true;
     for (const i of iterable) {
@@ -199,12 +228,12 @@ var skipUntil = (iterable, predicate) => {
 /**
  * @ignore
  */
-const FIELD$4 = defineField('breakWith');
+const FIELD$5 = defineField('breakWith');
 /**
  * @ignore
  */
 var breakWith = (iterable, predicate) => {
-  IterablePredicateCheck(iterable, predicate, FIELD$4);
+  IterablePredicateCheck(iterable, predicate, FIELD$5);
   return [
     takeUntil(iterable, predicate),
     skipUntil(iterable, predicate),
@@ -216,12 +245,12 @@ var breakWith = (iterable, predicate) => {
 /**
  * @ignore
  */
-const FIELD$5 = defineField('buffer');
+const FIELD$6 = defineField('buffer');
 /**
  * @ignore
  */
 var buffer = (iterable, count) => {
-  IterablePositiveNumberCheck(iterable, count, FIELD$5);
+  IterablePositiveNumberCheck(iterable, count, FIELD$6);
 
   return new Iterable(function* () {
     let b = [];
@@ -244,12 +273,12 @@ var buffer = (iterable, count) => {
 /**
  * @ignore
  */
-const FIELD$6 = defineField('cache');
+const FIELD$7 = defineField('cache');
 /**
  * @ignore
  */
 var cache = (iterable) => {
-  IterableCheck(iterable, 1, FIELD$6);
+  IterableCheck(iterable, 1, FIELD$7);
 
   const c = [];
   let size = 0;
@@ -279,18 +308,18 @@ var cache = (iterable) => {
 /**
  * @ignore
  */
-const FIELD$7 = defineField('compose');
+const FIELD$8 = defineField('compose');
 /**
  * @ignore
  */
 var compose = (iterable, ...composers) => {
-  IterableCheck(iterable, 1, FIELD$7);
+  IterableCheck(iterable, 1, FIELD$8);
   let i = 1;
 
   let result = iterable;
   for (const c of composers) {
     i += 1;
-    FunctionCheck(c, i, FIELD$7);
+    FunctionCheck(c, i, FIELD$8);
     result = c(result);
 
     if (!isIterable(result)) {
@@ -308,12 +337,12 @@ var compose = (iterable, ...composers) => {
 /**
  * @ignore
  */
-const FIELD$8 = defineField('flat');
+const FIELD$9 = defineField('flat');
 /**
  * @ignore
  */
 var flat = (iterable) => {
-  IterableCheck(iterable, 1, FIELD$8);
+  IterableCheck(iterable, 1, FIELD$9);
   return new Iterable(function* () {
     for (const i of iterable) {
       if (isIterable(i)) {
@@ -337,12 +366,12 @@ var concat = (...iterables) => flat(new Iterable(iterables));
 /**
  * @ignore
  */
-const FIELD$9 = defineField('flatMap');
+const FIELD$a = defineField('flatMap');
 /**
  * @ignore
  */
 var map = (iterable, mapper) => {
-  IterablePredicateCheck(iterable, mapper, FIELD$9);
+  IterablePredicateCheck(iterable, mapper, FIELD$a);
   return new Iterable(function* () {
     for (const i of iterable) {
       yield mapper(i);
@@ -354,12 +383,12 @@ var map = (iterable, mapper) => {
 /**
  * @ignore
  */
-const FIELD$a = defineField('find');
+const FIELD$b = defineField('find');
 /**
  * @ignore
  */
 var find = (iterable, predicate) => {
-  IterablePredicateCheck(iterable, predicate, FIELD$a);
+  IterablePredicateCheck(iterable, predicate, FIELD$b);
   return new Iterable(function* () {
     let c = 0;
     for (const i of iterable) {
@@ -377,12 +406,12 @@ var find = (iterable, predicate) => {
 /**
  * @ignore
  */
-const FIELD$b = defineField('indexOf');
+const FIELD$c = defineField('indexOf');
 /**
  * @ignore
  */
 var indexOf = (iterable, value) => {
-  IterableCheck(iterable, 1, FIELD$b);
+  IterableCheck(iterable, 1, FIELD$c);
   return find(iterable, x => x === value);
 };
 
@@ -391,12 +420,12 @@ var indexOf = (iterable, value) => {
 /**
  * @ignore
  */
-const FIELD$c = defineField('contains');
+const FIELD$d = defineField('contains');
 /**
  * @ignore
  */
 var contains = (iterable, value) => {
-  IterableCheck(iterable, 1, FIELD$c);
+  IterableCheck(iterable, 1, FIELD$d);
   return map(indexOf(iterable, value), x => x > -1);
 };
 
@@ -405,12 +434,12 @@ var contains = (iterable, value) => {
 /**
  * @ignore
  */
-const FIELD$d = defineField('count');
+const FIELD$e = defineField('count');
 /**
  * @ignore
  */
 var count = (iterable) => {
-  IterableCheck(iterable, 1, FIELD$d);
+  IterableCheck(iterable, 1, FIELD$e);
 
   return new Iterable(function* () {
     let c = 0;
@@ -424,15 +453,36 @@ var count = (iterable) => {
 
 /* eslint-disable func-names */
 
+const FIELD$f = defineField('defaultIfEmpty');
+
+var defaultIfEmpty = (iterable, value) => {
+  IterableCheck(iterable, 1, FIELD$f);
+  return new Iterable$1(function* () {
+    let flag = true;
+
+    for (const i of iterable) {
+      yield i;
+      flag = false;
+    }
+    if (flag) {
+      yield value;
+    }
+  });
+};
+
+/* eslint-disable func-names */
+
+/* eslint-disable func-names */
+
 /**
  * @ignore
  */
-const FIELD$e = defineField('distinct');
+const FIELD$g = defineField('distinct');
 /**
  * @ignore
  */
 var distinct = (iterable) => {
-  IterableCheck(iterable, 1, FIELD$e);
+  IterableCheck(iterable, 1, FIELD$g);
   return new Iterable(function* () {
     const buffer = [];
     for (const i of iterable) {
@@ -449,12 +499,12 @@ var distinct = (iterable) => {
 /**
  * @ignore
  */
-const FIELD$f = defineField('distinctAdjacent');
+const FIELD$h = defineField('distinctAdjacent');
 /**
  * @ignore
  */
 var distinctAdjacent = (iterable) => {
-  IterableCheck(iterable, 1, FIELD$f);
+  IterableCheck(iterable, 1, FIELD$h);
   return new Iterable(function* () {
     let first = true;
     let prev;
@@ -474,12 +524,12 @@ var distinctAdjacent = (iterable) => {
 /**
  * @ignore
  */
-const FIELD$g = defineField('elementAt');
+const FIELD$i = defineField('elementAt');
 /**
  * @ignore
  */
 var elementAt = (iterable, index) => {
-  IterablePositiveNumberCheck(iterable, index, FIELD$g);
+  IterablePositiveNumberCheck(iterable, index, FIELD$i);
 
   return new Iterable(function* () {
     let c = 0;
@@ -503,12 +553,12 @@ var empty = () => new Iterable([]);
 /**
  * @ignore
  */
-const FIELD$h = defineField('toArray');
+const FIELD$j = defineField('toArray');
 /**
  * @ignore
  */
 var toArray = (iterable) => {
-  IterableCheck(iterable, 1, FIELD$h);
+  IterableCheck(iterable, 1, FIELD$j);
   const buffer = [];
 
   for (const i of iterable) {
@@ -522,19 +572,19 @@ var toArray = (iterable) => {
 /**
  * @ignore
  */
-const FIELD$i = defineField('equal');
+const FIELD$k = defineField('equal');
 /**
  * @ignore
  */
 var equal = (iterable, other) => {
-  DoubleIterableCheck(iterable, other, FIELD$i);
+  DoubleIterableCheck(iterable, other, FIELD$k);
 
   return new Iterable(function* () {
     const arr = toArray(iterable);
 
     for (const i of other) {
       if (i !== arr.shift()) {
-        yield i;
+        yield false;
         return;
       }
     }
@@ -548,12 +598,12 @@ var equal = (iterable, other) => {
 /**
  * @ignore
  */
-const FIELD$j = defineField('filter');
+const FIELD$l = defineField('filter');
 /**
  * @ignore
  */
 var filter = (iterable, predicate) => {
-  IterablePredicateCheck(iterable, predicate, FIELD$j);
+  IterablePredicateCheck(iterable, predicate, FIELD$l);
   return new Iterable(function* () {
     for (const i of iterable) {
       if (predicate(i)) {
@@ -567,17 +617,31 @@ var filter = (iterable, predicate) => {
 /**
  * @ignore
  */
-const FIELD$k = defineField('first');
+const FIELD$m = defineField('first');
 /**
  * @ignore
  */
-var first = (iterable) => {
-  IterableCheck(iterable, 1, FIELD$k);
+const defaultTest = () => true;
+/**
+ * @ignore
+ */
+var first = (iterable, predicate) => {
+  IterableCheck(iterable, 1, FIELD$m);
+
+  let fn = predicate;
+
+  if (!isUndefined(fn)) {
+    FunctionCheck(predicate, 2, FIELD$m);
+  } else {
+    fn = defaultTest;
+  }
 
   return new Iterable(function* () {
     for (const i of iterable) {
-      yield i;
-      return;
+      if (fn(i)) {
+        yield i;
+        return;
+      }
     }
   });
 };
@@ -585,12 +649,12 @@ var first = (iterable) => {
 /**
  * @ignore
  */
-const FIELD$l = defineField('flatMap');
+const FIELD$n = defineField('flatMap');
 /**
  * @ignore
  */
 var flatMap = (iterable, mapper) => {
-  IterablePredicateCheck(iterable, mapper, FIELD$l);
+  IterablePredicateCheck(iterable, mapper, FIELD$n);
   return flat(map(iterable, mapper));
 };
 
@@ -598,12 +662,12 @@ var flatMap = (iterable, mapper) => {
 /**
  * @ignore
  */
-const FIELD$m = defineField('reduce');
+const FIELD$o = defineField('reduce');
 /**
  * @ignore
  */
 var reduce = (iterable, predicate) => {
-  IterablePredicateCheck(iterable, predicate, FIELD$m);
+  IterablePredicateCheck(iterable, predicate, FIELD$o);
   return new Iterable(function* () {
     let acc;
 
@@ -619,12 +683,12 @@ var reduce = (iterable, predicate) => {
 /**
  * @ignore
  */
-const FIELD$n = defineField('intercalate');
+const FIELD$p = defineField('intercalate');
 /**
  * @ignore
  */
 var intercalate = (iterable, other) => {
-  DoubleIterableCheck(iterable, other, FIELD$n);
+  DoubleIterableCheck(iterable, other, FIELD$p);
 
   return reduce(iterable, (acc, item) => {
     if (typeof acc === 'undefined') {
@@ -642,12 +706,12 @@ var intercalate = (iterable, other) => {
 /**
  * @ignore
  */
-const FIELD$o = defineField('intersect');
+const FIELD$q = defineField('intersect');
 /**
  * @ignore
  */
 var intersect = (iterable, other) => {
-  DoubleIterableCheck(iterable, other, FIELD$o);
+  DoubleIterableCheck(iterable, other, FIELD$q);
 
   return new Iterable(function* () {
     for (const i of iterable) {
@@ -663,12 +727,12 @@ var intersect = (iterable, other) => {
 /**
  * @ignore
  */
-const FIELD$p = defineField('intersperse');
+const FIELD$r = defineField('intersperse');
 /**
  * @ignore
  */
 var intersperse = (iterable, value) => {
-  IterableCheck(iterable, 1, FIELD$p);
+  IterableCheck(iterable, 1, FIELD$r);
 
   return reduce(iterable, (acc, item) => {
     if (typeof acc === 'undefined') {
@@ -684,12 +748,12 @@ var intersperse = (iterable, value) => {
 /**
  * @ignore
  */
-const FIELD$q = defineField('isEmpty');
+const FIELD$s = defineField('isEmpty');
 /**
  * @ignore
  */
 var isEmpty = (iterable) => {
-  IterableCheck(iterable, 1, FIELD$q);
+  IterableCheck(iterable, 1, FIELD$s);
 
   return new Iterable(function* () {
     for (const i of iterable) {
@@ -709,31 +773,99 @@ var just = x => new Iterable([x]);
 /**
  * @ignore
  */
-const FIELD$r = defineField('last');
+const FIELD$t = defineField('last');
 /**
  * @ignore
  */
-var last = (iterable) => {
-  IterableCheck(iterable, 1, FIELD$r);
+const defaultTest$1 = () => true;
+/**
+ * @ignore
+ */
+var last = (iterable, predicate) => {
+  IterableCheck(iterable, 1, FIELD$t);
+
+  let fn = predicate;
+
+  if (!isUndefined(fn)) {
+    FunctionCheck(predicate, 2, FIELD$t);
+  } else {
+    fn = defaultTest$1;
+  }
   return new Iterable(function* () {
     let v;
     for (const i of iterable) {
-      v = i;
+      if (fn(i)) {
+        v = i;
+      }
     }
     yield v;
   });
 };
 
+/* eslint-disable func-names */
+
+const { max } = Math;
+/**
+ * @ignore
+ */
+const FIELD$u = defineField('max');
+/**
+ * @ignore
+ */
+var max$1 = (iterable) => {
+  IterableCheck(iterable, FIELD$u);
+  return new Iterable(function* () {
+    let acc;
+
+    for (const i of iterable) {
+      if (isUndefined(acc)) {
+        acc = i;
+      } else {
+        acc = max(acc, i);
+      }
+    }
+
+    yield acc;
+  });
+};
+
+/* eslint-disable func-names */
+
+const { min } = Math;
+/**
+ * @ignore
+ */
+const FIELD$v = defineField('min');
+/**
+ * @ignore
+ */
+var min$1 = (iterable) => {
+  IterableCheck(iterable, FIELD$v);
+  return new Iterable(function* () {
+    let acc;
+
+    for (const i of iterable) {
+      if (isUndefined(acc)) {
+        acc = i;
+      } else {
+        acc = min(acc, i);
+      }
+    }
+
+    yield acc;
+  });
+};
+
 /* eslint-disable no-restricted-syntax */
 /**
  * @ignore
  */
-const FIELD$s = defineField('onDone');
+const FIELD$w = defineField('onDone');
 /**
  * @ignore
  */
 var onDone = (iterable, fn) => {
-  IterablePredicateCheck(iterable, fn, FIELD$s);
+  IterablePredicateCheck(iterable, fn, FIELD$w);
   return new Iterable(function* () {
     for (const i of iterable) {
       yield i;
@@ -746,12 +878,12 @@ var onDone = (iterable, fn) => {
 /**
  * @ignore
  */
-const FIELD$t = defineField('onStart');
+const FIELD$x = defineField('onStart');
 /**
  * @ignore
  */
 var onStart = (iterable, fn) => {
-  IterablePredicateCheck(iterable, fn, FIELD$t);
+  IterablePredicateCheck(iterable, fn, FIELD$x);
   return new Iterable(function* () {
     fn();
     for (const i of iterable) {
@@ -764,12 +896,12 @@ var onStart = (iterable, fn) => {
 /**
  * @ignore
  */
-const FIELD$u = defineField('onYield');
+const FIELD$y = defineField('onYield');
 /**
  * @ignore
  */
 var onYield = (iterable, fn) => {
-  IterablePredicateCheck(iterable, fn, FIELD$u);
+  IterablePredicateCheck(iterable, fn, FIELD$y);
   return new Iterable(function* () {
     for (const i of iterable) {
       fn(i);
@@ -781,12 +913,12 @@ var onYield = (iterable, fn) => {
 /**
  * @ignore
  */
-const FIELD$v = defineField('partition');
+const FIELD$z = defineField('partition');
 /**
  * @ignore
  */
 var partition = (iterable, predicate) => {
-  IterablePredicateCheck(iterable, predicate, FIELD$v);
+  IterablePredicateCheck(iterable, predicate, FIELD$z);
   return [
     filter(iterable, predicate),
     filter(iterable, x => !predicate(x)),
@@ -797,18 +929,18 @@ var partition = (iterable, predicate) => {
 /**
  * @ignore
  */
-const FIELD$w = defineField('range');
+const FIELD$A = defineField('range');
 /**
  * @ignore
  */
 const range = (start, end, steps) => {
-  NumberCheck(start, 1, FIELD$w);
-  NumberCheck(end, 2, FIELD$w);
+  NumberCheck(start, 1, FIELD$A);
+  NumberCheck(end, 2, FIELD$A);
 
   let step = steps;
 
   if (!isUndefined(steps)) {
-    NumberCheck(steps, 3, FIELD$w);
+    NumberCheck(steps, 3, FIELD$A);
   } else {
     step = 1;
   }
@@ -826,12 +958,12 @@ const range = (start, end, steps) => {
 /**
  * @ignore
  */
-const FIELD$x = defineField('repeat');
+const FIELD$B = defineField('repeat');
 /**
  * @ignore
  */
 var repeat = (iterable, count) => {
-  IterablePositiveNumberCheck(iterable, count, FIELD$x);
+  IterablePositiveNumberCheck(iterable, count, FIELD$B);
   return new Iterable(function* () {
     for (let c = count; c > 0; c -= 1) {
       for (const i of iterable) {
@@ -845,12 +977,12 @@ var repeat = (iterable, count) => {
 /**
  * @ignore
  */
-const FIELD$y = defineField('replace');
+const FIELD$C = defineField('replace');
 /**
  * @ignore
  */
 var replace = (iterable, index, value) => {
-  IterablePositiveNumberCheck(iterable, index, FIELD$y);
+  IterablePositiveNumberCheck(iterable, index, FIELD$C);
   return new Iterable(function* () {
     let c = 0;
 
@@ -870,12 +1002,12 @@ var replace = (iterable, index, value) => {
 /**
  * @ignore
  */
-const FIELD$z = defineField('reverse');
+const FIELD$D = defineField('reverse');
 /**
  * @ignore
  */
 var reverse = (iterable) => {
-  IterableCheck(iterable, 1, FIELD$z);
+  IterableCheck(iterable, 1, FIELD$D);
   return new Iterable(function* () {
     const buffer = [];
 
@@ -889,17 +1021,35 @@ var reverse = (iterable) => {
 };
 
 /* eslint-disable func-names */
+/**
+ * @ignore
+ */
+const FIELD$E = defineField('scan');
+/**
+ * @ignore
+ */
+var scan = (iterable, predicate) => {
+  IterablePredicateCheck(iterable, predicate, FIELD$E);
+  return new Iterable(function* () {
+    let acc;
+
+    for (const i of iterable) {
+      acc = predicate(acc, i);
+      yield acc;
+    }
+  });
+};
 
 /* eslint-disable func-names */
 /**
  * @ignore
  */
-const FIELD$A = defineField('skip');
+const FIELD$F = defineField('skip');
 /**
  * @ignore
  */
 var skip = (iterable, count) => {
-  IterablePositiveNumberCheck(iterable, count, FIELD$A);
+  IterablePositiveNumberCheck(iterable, count, FIELD$F);
   return new Iterable(function* () {
     let c = count;
 
@@ -917,12 +1067,12 @@ var skip = (iterable, count) => {
 /**
  * @ignore
  */
-const FIELD$B = defineField('skipLast');
+const FIELD$G = defineField('skipLast');
 /**
  * @ignore
  */
 var skipLast = (iterable, count) => {
-  IterablePositiveNumberCheck(iterable, count, FIELD$B);
+  IterablePositiveNumberCheck(iterable, count, FIELD$G);
   return new Iterable(function* () {
     const buffer = [];
     let c = 0;
@@ -945,12 +1095,12 @@ var skipLast = (iterable, count) => {
 /**
  * @ignore
  */
-const FIELD$C = defineField('skipWhile');
+const FIELD$H = defineField('skipWhile');
 /**
  * @ignore
  */
 var skipWhile = (iterable, predicate) => {
-  IterablePredicateCheck(iterable, predicate, FIELD$C);
+  IterablePredicateCheck(iterable, predicate, FIELD$H);
   return new Iterable(function* () {
     let flag = true;
     for (const i of iterable) {
@@ -964,18 +1114,78 @@ var skipWhile = (iterable, predicate) => {
   });
 };
 
-/* eslint-disable func-names */
+/**
+ * @ignore
+ */
+const FIELD$I = defineField('sort');
+/**
+ * @ignore
+ */
+const defaultComparator = (a, b) => a - b;
+/**
+ * @ignore
+ */
+var sort = (iterable, comparator) => {
+  IterableCheck(iterable, 1, FIELD$I);
+
+  let fn = comparator;
+
+  if (!isUndefined(fn)) {
+    FunctionCheck(comparator, 2, FIELD$I);
+  } else {
+    fn = defaultComparator;
+  }
+
+  return new Iterable(toArray(iterable).sort(fn));
+};
 
 /* eslint-disable func-names */
 /**
  * @ignore
  */
-const FIELD$D = defineField('takeWhile');
+const FIELD$J = defineField('sorted');
+/**
+ * @ignore
+ */
+const defaultComparator$1 = (a, b) => a - b;
+/**
+ * @ignore
+ */
+var sorted = (iterable, comparator) => {
+  IterableCheck(iterable, 1, FIELD$J);
+
+  let fn = comparator;
+
+  if (!isUndefined(fn)) {
+    FunctionCheck(comparator, 2, FIELD$J);
+  } else {
+    fn = defaultComparator$1;
+  }
+
+  return new Iterable(function* () {
+    let prev;
+
+    for (const i of iterable) {
+      if (typeof prev !== 'undefined' && comparator(prev, i) > 0) {
+        yield false;
+        return;
+      }
+      prev = i;
+    }
+    yield true;
+  });
+};
+
+/* eslint-disable func-names */
+/**
+ * @ignore
+ */
+const FIELD$K = defineField('takeWhile');
 /**
  * @ignore
  */
 var takeWhile = (iterable, predicate) => {
-  IterablePredicateCheck(iterable, predicate, FIELD$D);
+  IterablePredicateCheck(iterable, predicate, FIELD$K);
   return new Iterable(function* () {
     for (const i of iterable) {
       if (predicate(i)) {
@@ -990,12 +1200,12 @@ var takeWhile = (iterable, predicate) => {
 /**
  * @ignore
  */
-const FIELD$E = defineField('spanWith');
+const FIELD$L = defineField('spanWith');
 /**
  * @ignore
  */
 var spanWith = (iterable, predicate) => {
-  IterablePredicateCheck(iterable, predicate, FIELD$E);
+  IterablePredicateCheck(iterable, predicate, FIELD$L);
   return [
     takeWhile(iterable, predicate),
     skipWhile(iterable, predicate),
@@ -1006,12 +1216,12 @@ var spanWith = (iterable, predicate) => {
 /**
  * @ignore
  */
-const FIELD$F = defineField('take');
+const FIELD$M = defineField('take');
 /**
  * @ignore
  */
 var take = (iterable, count) => {
-  IterablePositiveNumberCheck(iterable, count, FIELD$F);
+  IterablePositiveNumberCheck(iterable, count, FIELD$M);
   return new Iterable(function* () {
     let c = count;
 
@@ -1030,24 +1240,24 @@ var take = (iterable, count) => {
 /**
  * @ignore
  */
-const FIELD$G = defineField('split');
+const FIELD$N = defineField('split');
 /**
  * @ignore
  */
 var split = (iterable, count) => {
-  IterablePositiveNumberCheck(iterable, count, FIELD$G);
+  IterablePositiveNumberCheck(iterable, count, FIELD$N);
   return [take(iterable, count), skip(iterable, count)];
 };
 
 /**
  * @ignore
  */
-const FIELD$H = defineField('startWith');
+const FIELD$O = defineField('startWith');
 /**
  * @ignore
  */
 var startWith = (iterable, ...iterables) => {
-  IterableCheck(iterable, 1, FIELD$H);
+  IterableCheck(iterable, 1, FIELD$O);
   return concat(...iterables, iterable);
 };
 
@@ -1055,12 +1265,12 @@ var startWith = (iterable, ...iterables) => {
 /**
  * @ignore
  */
-const FIELD$I = defineField('step');
+const FIELD$P = defineField('step');
 /**
  * @ignore
  */
 var step = (iterable, count) => {
-  IterablePositiveNumberCheck(iterable, count, FIELD$I);
+  IterablePositiveNumberCheck(iterable, count, FIELD$P);
   return new Iterable(function* () {
     let c = 0;
     for (const i of iterable) {
@@ -1076,12 +1286,33 @@ var step = (iterable, count) => {
 /**
  * @ignore
  */
-const FIELD$J = defineField('takeLast');
+const FIELD$Q = defineField('sum');
+/**
+ * @ignore
+ */
+var sum = (iterable) => {
+  IterableCheck(iterable, FIELD$Q);
+  return new Iterable(function* () {
+    let acc = 0;
+
+    for (const i of iterable) {
+      acc += i;
+    }
+
+    yield acc;
+  });
+};
+
+/* eslint-disable func-names */
+/**
+ * @ignore
+ */
+const FIELD$R = defineField('takeLast');
 /**
  * @ignore
  */
 var takeLast = (iterable, count) => {
-  IterablePositiveNumberCheck(iterable, count, FIELD$J);
+  IterablePositiveNumberCheck(iterable, count, FIELD$R);
   return new Iterable(function* () {
     const buffer = [];
 
@@ -1103,7 +1334,7 @@ var takeLast = (iterable, count) => {
 /**
  * @ignore
  */
-const FIELD$K = defineField('zip');
+const FIELD$S = defineField('zip');
 /**
  * @ignore
  */
@@ -1113,14 +1344,14 @@ const defaultZipper = x => x;
  */
 const zip = (iterables, fn) => {
   if (!(iterables instanceof Array)) {
-    throw new BadArgumentError(1, FIELD$K, 'Array');
+    throw new BadArgumentError(1, FIELD$S, 'Array');
   }
 
   let zipper = fn;
 
   if (!isUndefined(fn)) {
     if (!isFunction(fn)) {
-      FunctionCheck(fn, 2, FIELD$K);
+      FunctionCheck(fn, 2, FIELD$S);
     }
   } else {
     zipper = defaultZipper;
@@ -1307,6 +1538,27 @@ class Iterable {
   }
 
   /**
+   * Returns an Iterable that yields the average value of
+   * the source Iterable's yields.
+   * @param {!Iterable} it
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static average(it) {
+    return average(it);
+  }
+
+  /**
+   * Returns an Iterable that yields the average value of
+   * this Iterable's yields.
+   * @returns {Iterable}
+   */
+  average() {
+    return average(this.it);
+  }
+
+  /**
    * Returns an Iterable that yields Iterable buffers of items
    * it collects from the source Iterable.
    * @param {!Iterable} it
@@ -1480,6 +1732,33 @@ class Iterable {
   }
 
   /**
+   * Returns an Iterable that yields the items yielded by
+   * the source Iterable or a specified default item if
+   * the source Iterable is empty.
+   * @param {!Iterable} it
+   * @param {any} value
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static defaultIfEmpty(it, value) {
+    return defaultIfEmpty(it, value);
+  }
+
+  /**
+   * Returns an Iterable that yields the items yielded by
+   * the source Iterable or a specified default item if
+   * the source Iterable is empty.
+   * @param {any} value
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  defaultIfEmpty(value) {
+    return defaultIfEmpty(this.it, value);
+  }
+
+  /**
    * Returns an Iterable that yields all items yielded by the
    * source Iterable that are distinct based on the strict equality
    * comparison.
@@ -1560,6 +1839,14 @@ class Iterable {
   }
 
   /**
+   * Returns an Iterable that doesn't yield any value.
+   * @returns {Iterable}
+   */
+  empty() {
+    return empty(this);
+  }
+
+  /**
    * Returns an Iterable that yields true if the source Iterable
    * has the same exact sequence as the other Iterable.
    * @param {!Iterable} it
@@ -1635,23 +1922,29 @@ class Iterable {
 
   /**
    * Returns an Iterable that yields the first value of the source
-   * Iterable.
+   * Iterable that satisfy a predicate(optional).
    * @param {!Iterable} it
+   * @param {function(item: any):boolean} predicate
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function or undefined
    * @returns {Iterable}
    */
-  static first(it) {
-    return first(it);
+  static first(it, predicate) {
+    return first(it, predicate);
   }
 
   /**
-   * Returns an Iterable that yields the first value of this
-   * Iterable.
+   * Returns an Iterable that yields the first value of the source
+   * Iterable that satisfy a predicate(optional).
+   * @param {function(item: any):boolean} predicate
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function or undefined
    * @returns {Iterable}
    */
-  first() {
-    return first(this.it);
+  first(predicate) {
+    return first(this.it, predicate);
   }
 
   /**
@@ -1786,31 +2079,6 @@ class Iterable {
   }
 
   /**
-   * Intersects the yields of the source Iterable to the other Iterable.
-   * @param {!Iterable} it
-   * @param {!Iterable} other
-   * @throws {BadArgumentError}
-   * throws error if the given Iterable doesn't implement the Iteration Protocol
-   * @throws {BadArgumentError}
-   * throws error if the other given Iterable doesn't implement the Iteration Protocol
-   * @returns {Iterable}
-   */
-  static intersect(it, other) {
-    return intersect(it, other);
-  }
-
-  /**
-   * Intersects the yields of this Iterable to the other Iterable.
-   * @param {!Iterable} other
-   * @throws {BadArgumentError}
-   * throws error if the other given Iterable doesn't implement the Iteration Protocol
-   * @returns {Iterable}
-   */
-  intersect(other) {
-    return intersect(this.it, other);
-  }
-
-  /**
    * Inserts the given value in between
    * the source Iterable adjacent yields.
    * @param {!Iterable} it
@@ -1869,25 +2137,30 @@ class Iterable {
 
   /**
    * Returns an Iterable that yields the last value of the source
-   * Iterable.
+   * Iterable that satisfy a predicate(optional).
    * @param {!Iterable} it
+   * @param {function(item: any):boolean} predicate
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function or undefined
    * @returns {Iterable}
    */
-  static last(it) {
-    return last(it);
+  static last(it, predicate) {
+    return last(it, predicate);
   }
 
   /**
-   * Returns an Iterable that yields the last value of this
-   * Iterable.
+   * Returns an Iterable that yields the last value of the source
+   * Iterable that satisfy a predicate(optional).
+   * @param {function(item: any):boolean} predicate
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function or undefined
    * @returns {Iterable}
    */
-  last() {
-    return last(this.it);
+  last(predicate) {
+    return last(this.it, predicate);
   }
-
 
   /**
    * Applies a mapping function to each yielded value of the source
@@ -1914,6 +2187,48 @@ class Iterable {
    */
   map(fn) {
     return map(this.it, fn);
+  }
+
+  /**
+   * Returns an Iterable that yields the maximum value of
+   * the source Iterable's yields.
+   * @param {!Iterable} it
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static max(it) {
+    return max$1(it);
+  }
+
+  /**
+   * Returns an Iterable that yields the maximum value of
+   * this Iterable's yields.
+   * @returns {Iterable}
+   */
+  max() {
+    return max$1(this.it);
+  }
+
+  /**
+   * Returns an Iterable that yields the minimum value of
+   * the source Iterable's yields.
+   * @param {!Iterable} it
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static min(it) {
+    return min$1(it);
+  }
+
+  /**
+   * Returns an Iterable that yields the minimum value of
+   * this Iterable's yields.
+   * @returns {Iterable}
+   */
+  min() {
+    return min$1(this.it);
   }
 
   /**
@@ -2157,6 +2472,39 @@ class Iterable {
   }
 
   /**
+   * Returns an Iterable that applies a specified accumulator function
+   * to the first item yielded by a source Iterable, then feeds the result
+   * of that function along with the second item yielded by the source
+   * Iterable into the same function, and so on until all items have been
+   * yielded by the source Iterable, yielding the result of each of these iterations.
+   * @param {!Iterable} it
+   * @param {!function(acc: any, item: any):any} reducer
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the given reducer is not a function
+   * @returns {Iterable}
+   */
+  static scan(it, reducer) {
+    return scan(it, reducer);
+  }
+
+  /**
+   * Returns an Iterable that applies a specified accumulator function
+   * to the first item yielded by a source Iterable, then feeds the result
+   * of that function along with the second item yielded by the source
+   * Iterable into the same function, and so on until all items have been
+   * yielded by the source Iterable, yielding the result of each of these iterations.
+   * @param {!function(acc: any, item: any):any} reducer
+   * @throws {BadArgumentError}
+   * throws error if the given reducer is not a function
+   * @returns {Iterable}
+   */
+  scan(reducer) {
+    return scan(this.it, reducer);
+  }
+
+  /**
    * Returns an Iterable that skips the first count items yielded by
    * the source Iterable and yields the remainder.
    * @param {!Iterable} it
@@ -2238,6 +2586,60 @@ class Iterable {
    */
   skipWhile(predicate) {
     return skipWhile(this.it, predicate);
+  }
+
+  /**
+   * Returns a new sorted Iterable base from the source Iterable.
+   * which returns a signum can be provided.
+   * @param {!Iterable} it
+   * @param {!function(a: any, b: any):number} comparator
+   * @throws {BadArgumentError}
+   * throws error if the given iterables is not an array
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function or undefined
+   * @returns {Iterable}
+   */
+  static sort(it, comparator) {
+    return sort(it, comparator);
+  }
+
+  /**
+   * Returns a new sorted Iterable base from this Iterable.
+   * A comparator function which returns a signum can be provided.
+   * @param {!function(a: any, b: any):number} comparator
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function or undefined
+   * @returns {Iterable}
+   */
+  sort(comparator) {
+    return sort(this.it, comparator);
+  }
+
+  /**
+   * Returns an Iterable that yields true if the source Iterable
+   * (with an optional comparator) is sorted.
+   * @param {!Iterable} it
+   * @param {!function(a: any, b: any):number} comparator
+   * @throws {BadArgumentError}
+   * throws error if the given iterables is not an array
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function or undefined
+   * @returns {Iterable}
+   */
+  static sorted(it, comparator) {
+    return sorted(it, comparator);
+  }
+
+  /**
+   * Returns an Iterable that yields true if the source Iterable
+   * (with an optional comparator) is sorted.
+   * @param {!function(a: any, b: any):number} comparator
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function or undefined
+   * @returns {Iterable}
+   */
+  sorted(comparator) {
+    return sorted(this.it, comparator);
   }
 
   /**
@@ -2354,6 +2756,27 @@ class Iterable {
    */
   step(amount) {
     return step(this.it, amount);
+  }
+
+  /**
+   * Returns an Iterable that yields the summation of
+   * the source Iterable's yields.
+   * @param {!Iterable} it
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static sum(it) {
+    return sum(it);
+  }
+
+  /**
+   * Returns an Iterable that yields the summation of
+   * this Iterable's yields.
+   * @returns {Iterable}
+   */
+  sum() {
+    return sum(this.it);
   }
 
   /**
