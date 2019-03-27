@@ -36,12 +36,13 @@ import {
   map, filter, concat, just, first, last, repeat,
   startWith, zip, flat, all, any, isEmpty, empty,
   skip, take, takeLast, skipLast, split, skipWhile,
-  takeWhile, onYield, onDone, onStart, count, contains,
-  indexOf, find, breakWith, spanWith, partition,
-  flatMap, range, elementAt, replace, reverse,
-  cache, compose, buffer, step, reduce, intercalate,
-  intersperse, toArray, intersect, distinct,
-  distinctAdjacent, equal, sort, sorted,
+  takeWhile, onYield, onDone, onStart, count,
+  contains, indexOf, find, breakWith, spanWith,
+  partition, flatMap, range, elementAt, replace,
+  reverse, cache, compose, buffer, step, reduce,
+  intercalate, intersperse, toArray, intersect,
+  distinct, distinctAdjacent, equal, sort, sorted,
+  scan, average, max, min, sum, defaultIfEmpty,
 } from './internal/dependency';
 
 /**
@@ -178,6 +179,27 @@ export default class Iterable {
    */
   any(predicate) {
     return any(this.it, predicate);
+  }
+
+  /**
+   * Returns an Iterable that yields the average value of
+   * the source Iterable's yields.
+   * @param {!Iterable} it
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static average(it) {
+    return average(it);
+  }
+
+  /**
+   * Returns an Iterable that yields the average value of
+   * this Iterable's yields.
+   * @returns {Iterable}
+   */
+  average() {
+    return average(this.it);
   }
 
   /**
@@ -354,6 +376,33 @@ export default class Iterable {
   }
 
   /**
+   * Returns an Iterable that yields the items yielded by
+   * the source Iterable or a specified default item if
+   * the source Iterable is empty.
+   * @param {!Iterable} it
+   * @param {any} value
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static defaultIfEmpty(it, value) {
+    return defaultIfEmpty(it, value);
+  }
+
+  /**
+   * Returns an Iterable that yields the items yielded by
+   * the source Iterable or a specified default item if
+   * the source Iterable is empty.
+   * @param {any} value
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  defaultIfEmpty(value) {
+    return defaultIfEmpty(this.it, value);
+  }
+
+  /**
    * Returns an Iterable that yields all items yielded by the
    * source Iterable that are distinct based on the strict equality
    * comparison.
@@ -431,6 +480,14 @@ export default class Iterable {
    */
   static empty() {
     return empty();
+  }
+
+  /**
+   * Returns an Iterable that doesn't yield any value.
+   * @returns {Iterable}
+   */
+  empty() {
+    return empty(this);
   }
 
   /**
@@ -777,6 +834,48 @@ export default class Iterable {
   }
 
   /**
+   * Returns an Iterable that yields the maximum value of
+   * the source Iterable's yields.
+   * @param {!Iterable} it
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static max(it) {
+    return max(it);
+  }
+
+  /**
+   * Returns an Iterable that yields the maximum value of
+   * this Iterable's yields.
+   * @returns {Iterable}
+   */
+  max() {
+    return max(this.it);
+  }
+
+  /**
+   * Returns an Iterable that yields the minimum value of
+   * the source Iterable's yields.
+   * @param {!Iterable} it
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static min(it) {
+    return min(it);
+  }
+
+  /**
+   * Returns an Iterable that yields the minimum value of
+   * this Iterable's yields.
+   * @returns {Iterable}
+   */
+  min() {
+    return min(this.it);
+  }
+
+  /**
    * Attaches a callback to a source Iterable that is
    * executed when the Iterable finishes the iteration
    * process.
@@ -1017,6 +1116,39 @@ export default class Iterable {
   }
 
   /**
+   * Returns an Iterable that applies a specified accumulator function
+   * to the first item yielded by a source Iterable, then feeds the result
+   * of that function along with the second item yielded by the source
+   * Iterable into the same function, and so on until all items have been
+   * yielded by the source Iterable, yielding the result of each of these iterations.
+   * @param {!Iterable} it
+   * @param {!function(acc: any, item: any):any} reducer
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the given reducer is not a function
+   * @returns {Iterable}
+   */
+  static scan(it, reducer) {
+    return scan(it, reducer);
+  }
+
+  /**
+   * Returns an Iterable that applies a specified accumulator function
+   * to the first item yielded by a source Iterable, then feeds the result
+   * of that function along with the second item yielded by the source
+   * Iterable into the same function, and so on until all items have been
+   * yielded by the source Iterable, yielding the result of each of these iterations.
+   * @param {!function(acc: any, item: any):any} reducer
+   * @throws {BadArgumentError}
+   * throws error if the given reducer is not a function
+   * @returns {Iterable}
+   */
+  scan(reducer) {
+    return scan(this.it, reducer);
+  }
+
+  /**
    * Returns an Iterable that skips the first count items yielded by
    * the source Iterable and yields the remainder.
    * @param {!Iterable} it
@@ -1103,7 +1235,7 @@ export default class Iterable {
   /**
    * Returns a new sorted Iterable base from the source Iterable.
    * which returns a signum can be provided.
-   * @param {!Array} its
+   * @param {!Iterable} it
    * @param {!function(a: any, b: any):number} comparator
    * @throws {BadArgumentError}
    * throws error if the given iterables is not an array
@@ -1130,7 +1262,7 @@ export default class Iterable {
   /**
    * Returns an Iterable that yields true if the source Iterable
    * (with an optional comparator) is sorted.
-   * @param {!Array} its
+   * @param {!Iterable} it
    * @param {!function(a: any, b: any):number} comparator
    * @throws {BadArgumentError}
    * throws error if the given iterables is not an array
@@ -1268,6 +1400,27 @@ export default class Iterable {
    */
   step(amount) {
     return step(this.it, amount);
+  }
+
+  /**
+   * Returns an Iterable that yields the summation of
+   * the source Iterable's yields.
+   * @param {!Iterable} it
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static sum(it) {
+    return sum(it);
+  }
+
+  /**
+   * Returns an Iterable that yields the summation of
+   * this Iterable's yields.
+   * @returns {Iterable}
+   */
+  sum() {
+    return sum(this.it);
   }
 
   /**
