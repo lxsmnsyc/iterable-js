@@ -7,13 +7,13 @@ import Iterable from '../iterable';
  */
 const step = (iterable, count) => {
   if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.take', 'Iterable');
+    throw new BadArgumentError(1, 'Iterable.step', 'Iterable');
   }
   if (!isNumber(count)) {
-    throw new BadArgumentError(2, 'Iterable.take', 'number');
+    throw new BadArgumentError(2, 'Iterable.step', 'number');
   }
   if (count < 0) {
-    throw new BadArgumentError(2, 'Iterable.take', 'positive number');
+    throw new BadArgumentError(2, 'Iterable.step', 'positive number');
   }
   return new Iterable(function* () {
     let c = 0;
