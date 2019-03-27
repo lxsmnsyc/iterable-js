@@ -1,21 +1,16 @@
-import { isIterable, BadArgumentError, isFunction } from './utils';
+import { defineField, IterablePredicateCheck } from './utils';
 import filter from './filter';
-
 /**
  * @ignore
  */
-const partition = (iterable, predicate) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.partition', 'Iterable');
-  }
-  if (!isFunction(predicate)) {
-    throw new BadArgumentError(2, 'Iterable.partition', 'function');
-  }
-
+const FIELD = defineField('partition');
+/**
+ * @ignore
+ */
+export default (iterable, predicate) => {
+  IterablePredicateCheck(iterable, predicate, FIELD);
   return [
     filter(iterable, predicate),
     filter(iterable, x => !predicate(x)),
   ];
 };
-
-export default partition;
