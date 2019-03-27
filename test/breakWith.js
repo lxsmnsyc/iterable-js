@@ -21,7 +21,7 @@ describe('#breakWith', () => {
     }
   });
   it('should return an Array of 2 Iterables if no errors.', () => {
-    const iterable = Iterable.breakWith([1, 2, 3], x => typeof x === 'number');
+    const iterable = new Iterable([1, 2, 3]).breakWith(x => typeof x === 'number');
     assert(iterable instanceof Array);
     assert(iterable.length === 2);
     assert(iterable[0] instanceof Iterable);
