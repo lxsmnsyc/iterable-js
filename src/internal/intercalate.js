@@ -1,16 +1,15 @@
 /* eslint-disable no-restricted-syntax */
-import { isIterable, BadArgumentError } from './utils';
-import { reduce } from './dependency';
+import { DoubleIterableCheck, defineField } from './utils';
+import reduce from './reduce';
 /**
  * @ignore
  */
-const intercalate = (iterable, other) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.intercalate', 'Iterable');
-  }
-  if (!isIterable(other)) {
-    throw new BadArgumentError(2, 'Iterable.intercalate', 'Iterable');
-  }
+const FIELD = defineField('intercalate');
+/**
+ * @ignore
+ */
+export default (iterable, other) => {
+  DoubleIterableCheck(iterable, other, FIELD);
 
   return reduce(iterable, (acc, item) => {
     if (typeof acc === 'undefined') {
@@ -23,4 +22,3 @@ const intercalate = (iterable, other) => {
     return acc;
   });
 };
-export default intercalate;
