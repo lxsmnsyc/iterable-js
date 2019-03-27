@@ -2,18 +2,16 @@
 /* eslint-disable no-restricted-syntax */
 
 import Iterable from '../iterable';
-import { isIterable, BadArgumentError, isFunction } from './utils';
-
+import { defineField, IterablePredicateCheck } from './utils';
 /**
  * @ignore
  */
-const skipUntil = (iterable, predicate) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.skipUntil', 'Iterable');
-  }
-  if (!isFunction(predicate)) {
-    throw new BadArgumentError(2, 'Iterable.skipUntil', 'function');
-  }
+const FIELD = defineField('skipUntil');
+/**
+ * @ignore
+ */
+export default (iterable, predicate) => {
+  IterablePredicateCheck(iterable, predicate, FIELD);
   return new Iterable(function* () {
     let flag = true;
     for (const i of iterable) {
@@ -26,5 +24,3 @@ const skipUntil = (iterable, predicate) => {
     }
   });
 };
-
-export default skipUntil;
