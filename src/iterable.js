@@ -29,8 +29,9 @@
 /**
  * @external {Iteration Protocol} https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols
  */
-import { isNumber } from 'util';
-import { isIterable, ITERATOR, BadArgumentError } from './internal/utils';
+import {
+  isNumber, isIterable, ITERATOR, BadArgumentError,
+} from './internal/utils';
 import {
   map, filter, concat, just, first, last, repeat,
   startWith, zip, flat, all, any, isEmpty, empty,
@@ -38,7 +39,7 @@ import {
   takeWhile, onYield, onDone, onStart, count, contains,
   indexOf, find, breakWith, spanWith, partition,
   flatMap, range, elementAt, replace, reverse,
-  cache, compose, buffer, step, reduce, intercalate, intersperse, toArray,
+  cache, compose, buffer, step, reduce, intercalate, intersperse, toArray, intersect, distinct, distinctAdjacent, equal,
 } from './internal/dependency';
 
 /**
@@ -104,12 +105,12 @@ export default class Iterable {
    */
   get(index) {
     const { it } = this;
-    let step = 0;
+    let s = 0;
     for (const i of it) {
-      if (step === index) {
+      if (s === index) {
         return i;
       }
-      step += 1;
+      s += 1;
     }
     return undefined;
   }
@@ -333,6 +334,8 @@ export default class Iterable {
    * Returns an Iterable that counts the total number of items
    * yielded by the source Iterable and yields this count.
    * @param {!Iterable} it
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @returns {Iterable}
    */
   static count(it) {
@@ -346,6 +349,51 @@ export default class Iterable {
    */
   count() {
     return count(this.it);
+  }
+
+  /**
+   * Returns an Iterable that yields all items yielded by the
+   * source Iterable that are distinct based on the strict equality
+   * comparison.
+   * @param {!Iterable} it
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static distinct(it) {
+    return distinct(it);
+  }
+
+  /**
+   * Returns an Iterable that yields all items yielded by this Iterable
+   * that are distinct based on the strict equality comparison.
+   * @returns {Iterable}
+   */
+  distinct() {
+    return distinct(this.it);
+  }
+
+  /**
+   * Returns an Iterable that yields all items yielded by the
+   * source Iterable that are distinct from their immediate
+   * predecessors based on strict equality comparison.
+   * @param {!Iterable} it
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static distinctAdjacent(it) {
+    return distinctAdjacent(it);
+  }
+
+  /**
+   * Returns an Iterable that yields all items yielded by this
+   * Iterable that are distinct from their immediate predecessors
+   * based on strict equality comparison.
+   * @returns {Iterable}
+   */
+  distinctAdjacent() {
+    return distinctAdjacent(this.it);
   }
 
   /**
@@ -381,6 +429,33 @@ export default class Iterable {
    */
   static empty() {
     return empty();
+  }
+
+  /**
+   * Returns an Iterable that yields true if the source Iterable
+   * has the same exact sequence as the other Iterable.
+   * @param {!Iterable} it
+   * @param {!Iterable} other
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the other given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static equal(it, other) {
+    return equal(it, other);
+  }
+
+  /**
+   * Returns an Iterable that yields true if the source Iterable
+   * has the same exact sequence as the other Iterable.
+   * @param {!Iterable} other
+   * @throws {BadArgumentError}
+   * throws error if the other given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  equal(other) {
+    return equal(this.it, other);
   }
 
   /**
@@ -553,6 +628,58 @@ export default class Iterable {
    */
   intercalate(other) {
     return intercalate(this.it, other);
+  }
+
+  /**
+   * Returns an Iterable that yields the items that the source Iterable
+   * and the other Iterable has in common.
+   * @param {!Iterable} it
+   * @param {!Iterable} other
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the other given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static intersect(it, other) {
+    return intersect(it, other);
+  }
+
+  /**
+   * Returns an Iterable that yields the items that the source Iterable
+   * and the other Iterable has in common.
+   * @param {!Iterable} other
+   * @throws {BadArgumentError}
+   * throws error if the other given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  intersect(other) {
+    return intersect(this.it, other);
+  }
+
+  /**
+   * Intersects the yields of the source Iterable to the other Iterable.
+   * @param {!Iterable} it
+   * @param {!Iterable} other
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the other given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static intersect(it, other) {
+    return intersect(it, other);
+  }
+
+  /**
+   * Intersects the yields of this Iterable to the other Iterable.
+   * @param {!Iterable} other
+   * @throws {BadArgumentError}
+   * throws error if the other given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  intersect(other) {
+    return intersect(this.it, other);
   }
 
   /**
