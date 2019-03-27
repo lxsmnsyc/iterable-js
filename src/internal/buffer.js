@@ -2,7 +2,9 @@
 /* eslint-disable no-restricted-syntax */
 import { isIterable, BadArgumentError, isNumber } from './utils';
 import Iterable from '../iterable';
-
+/**
+ * @ignore
+ */
 const buffer = (iterable, count) => {
   if (!isIterable(iterable)) {
     throw new BadArgumentError(1, 'Iterable.buffer', 'Iterable');
