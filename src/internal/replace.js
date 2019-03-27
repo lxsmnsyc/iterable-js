@@ -1,22 +1,16 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable func-names */
-import { isIterable, BadArgumentError, isNumber } from './utils';
+import { defineField, IterablePositiveNumberCheck } from './utils';
 import Iterable from '../iterable';
-
 /**
  * @ignore
  */
-const replace = (iterable, index, value) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.replace', 'Iterable');
-  }
-  if (!isNumber(index)) {
-    throw new BadArgumentError(2, 'Iterable.replace', 'number');
-  }
-  if (index < 0) {
-    throw new BadArgumentError(2, 'Iterable.replace', 'positive number');
-  }
-
+const FIELD = defineField('replace');
+/**
+ * @ignore
+ */
+export default (iterable, index, value) => {
+  IterablePositiveNumberCheck(iterable, index, FIELD);
   return new Iterable(function* () {
     let c = 0;
 
@@ -30,5 +24,3 @@ const replace = (iterable, index, value) => {
     }
   });
 };
-
-export default replace;
