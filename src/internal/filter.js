@@ -2,18 +2,17 @@
 /* eslint-disable no-restricted-syntax */
 
 import Iterable from '../iterable';
-import { isIterable, BadArgumentError, isFunction } from './utils';
+import { defineField, IterablePredicateCheck } from './utils';
 
 /**
  * @ignore
  */
-const filter = (iterable, predicate) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.filter', 'Iterable');
-  }
-  if (!isFunction(predicate)) {
-    throw new BadArgumentError(2, 'Iterable.filter', 'function');
-  }
+const FIELD = defineField('filter');
+/**
+ * @ignore
+ */
+export default (iterable, predicate) => {
+  IterablePredicateCheck(iterable, predicate, FIELD);
   return new Iterable(function* () {
     for (const i of iterable) {
       if (predicate(i)) {
@@ -22,5 +21,3 @@ const filter = (iterable, predicate) => {
     }
   });
 };
-
-export default filter;
