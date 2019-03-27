@@ -1,19 +1,16 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable func-names */
-import { isIterable, BadArgumentError, isFunction } from './utils';
+import { defineField, IterablePredicateCheck } from './utils';
 import Iterable from '../iterable';
-
 /**
  * @ignore
  */
-const onYield = (iterable, fn) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.onYield', 'Iterable');
-  }
-  if (!isFunction(fn)) {
-    throw new BadArgumentError(2, 'Iterable.onYield', 'function');
-  }
-
+const FIELD = defineField('onYield');
+/**
+ * @ignore
+ */
+export default (iterable, fn) => {
+  IterablePredicateCheck(iterable, fn, FIELD);
   return new Iterable(function* () {
     for (const i of iterable) {
       fn(i);
@@ -21,5 +18,3 @@ const onYield = (iterable, fn) => {
     }
   });
 };
-
-export default onYield;
