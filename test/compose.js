@@ -31,6 +31,6 @@ describe('#compose', () => {
     assert(Iterable.compose([1, 2, 3, 4], Iterable.reverse) instanceof Iterable);
   });
   it('should return an Iterable (Iteration Protocol)', () => {
-    assert(Iterable.is(Iterable.compose([1, 2, 3, 4], () => [1, 2, 3, 4])));
+    assert(Iterable.is(new Iterable([1, 2, 3, 4]).compose(() => [1, 2, 3, 4])));
   });
 });
