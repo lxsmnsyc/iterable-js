@@ -1,27 +1,28 @@
 /* eslint-disable no-restricted-syntax */
-import { isIterable, BadArgumentError, isFunction } from './utils';
+import {
+  isIterable, FunctionCheck, IterableCheck, defineField,
+} from './utils';
 import Iterable from '../iterable';
 
 /**
  * @ignore
  */
-const compose = (iterable, ...composers) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.compose', 'Iterable');
-  }
+const FIELD = defineField('compose');
+/**
+ * @ignore
+ */
+export default (iterable, ...composers) => {
+  IterableCheck(iterable, 1, FIELD);
   let i = 1;
 
   let result = iterable;
   for (const c of composers) {
     i += 1;
-    if (!isFunction(c)) {
-      throw new BadArgumentError(i, 'Iterable.compose', 'function');
-    } else {
-      result = c(result);
+    FunctionCheck(c, i, FIELD);
+    result = c(result);
 
-      if (!isIterable(result)) {
-        throw new TypeError('Iterable.compose: a composer function returned a non-Iterable.');
-      }
+    if (!isIterable(result)) {
+      throw new TypeError('Iterable.compose: a composer function returned a non-Iterable.');
     }
   }
 
@@ -30,5 +31,3 @@ const compose = (iterable, ...composers) => {
   }
   return new Iterable(result);
 };
-
-export default compose;
