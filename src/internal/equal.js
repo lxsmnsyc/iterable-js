@@ -18,7 +18,7 @@ export default (iterable, other) => {
 
     for (const i of other) {
       if (i !== arr.shift()) {
-        yield i;
+        yield false;
         return;
       }
     }
