@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-empty */
 /* eslint-disable no-restricted-syntax */
 import '@babel/polyfill';
 import assert from 'assert';
