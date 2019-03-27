@@ -2,7 +2,9 @@
 import { isNumber, isUndefined } from 'util';
 import { BadArgumentError } from './utils';
 import Iterable from '../iterable';
-
+/**
+ * @ignore
+ */
 const range = (start, end, steps) => {
   if (!isNumber(start)) {
     throw new BadArgumentError(1, 'Iterable.range', 'number');
