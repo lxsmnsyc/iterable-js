@@ -17,7 +17,7 @@ describe('#count', () => {
     assert(Iterable.count([1, 2, 3, 4]) instanceof Iterable);
   });
   it('should yield the correct size if the Iterable yields the value', () => {
-    for (const c of Iterable.count([1, 2, 3, 4])) {
+    for (const c of new Iterable([1, 2, 3, 4]).count()) {
       assert(c === 4);
     }
   });
