@@ -39,7 +39,7 @@ describe('#buffer', () => {
     }
   });
   it('should yield Arrays of the given length along with an excess.', () => {
-    const iterable = Iterable.buffer([1, 2, 3, 4, 5], 2);
+    const iterable = new Iterable([1, 2, 3, 4, 5]).buffer(2);
     for (const i of iterable) {
       assert(i instanceof Array);
     }
