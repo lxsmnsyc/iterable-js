@@ -1,17 +1,16 @@
 /* eslint-disable func-names */
 /* eslint-disable no-restricted-syntax */
 import Iterable from '../iterable';
-import { isIterable, BadArgumentError, isFunction } from './utils';
+import { IterablePredicateCheck, defineField } from './utils';
 /**
  * @ignore
  */
-const find = (iterable, predicate) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.find', 'Iterable');
-  }
-  if (!isFunction(predicate)) {
-    throw new BadArgumentError(2, 'Iterable.find', 'function');
-  }
+const FIELD = defineField('find');
+/**
+ * @ignore
+ */
+export default (iterable, predicate) => {
+  IterablePredicateCheck(iterable, predicate, FIELD);
   return new Iterable(function* () {
     let c = 0;
     for (const i of iterable) {
@@ -24,5 +23,3 @@ const find = (iterable, predicate) => {
     yield -1;
   });
 };
-
-export default find;
