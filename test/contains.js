@@ -22,7 +22,7 @@ describe('#contains', () => {
     }
   });
   it('should yield false if the Iterable does not yield the value', () => {
-    for (const c of Iterable.contains([1, 2, 3, 4], 5)) {
+    for (const c of new Iterable([1, 2, 3, 4]).contains(5)) {
       assert(c === false);
     }
   });
