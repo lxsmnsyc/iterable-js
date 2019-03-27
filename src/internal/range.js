@@ -1,24 +1,21 @@
 /* eslint-disable func-names */
-import { isNumber, isUndefined } from 'util';
-import { BadArgumentError } from './utils';
+import { isUndefined, NumberCheck, defineField } from './utils';
 import Iterable from '../iterable';
 /**
  * @ignore
  */
+const FIELD = defineField('range');
+/**
+ * @ignore
+ */
 const range = (start, end, steps) => {
-  if (!isNumber(start)) {
-    throw new BadArgumentError(1, 'Iterable.range', 'number');
-  }
-  if (!isNumber(end)) {
-    throw new BadArgumentError(2, 'Iterable.range', 'number');
-  }
+  NumberCheck(start, 1, FIELD);
+  NumberCheck(end, 2, FIELD);
 
   let step = steps;
 
   if (!isUndefined(steps)) {
-    if (!isNumber(steps)) {
-      throw new BadArgumentError(3, 'Iterable.range', 'number or undefined');
-    }
+    NumberCheck(steps, 3, FIELD);
   } else {
     step = 1;
   }
