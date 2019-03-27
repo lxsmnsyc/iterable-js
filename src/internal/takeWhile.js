@@ -2,18 +2,16 @@
 /* eslint-disable no-restricted-syntax */
 
 import Iterable from '../iterable';
-import { isIterable, BadArgumentError, isFunction } from './utils';
-
+import { defineField, IterablePredicateCheck } from './utils';
 /**
  * @ignore
  */
-const takeWhile = (iterable, predicate) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.takeWhile', 'Iterable');
-  }
-  if (!isFunction(predicate)) {
-    throw new BadArgumentError(2, 'Iterable.takeWhile', 'function');
-  }
+const FIELD = defineField('takeWhile');
+/**
+ * @ignore
+ */
+export default (iterable, predicate) => {
+  IterablePredicateCheck(iterable, predicate, FIELD);
   return new Iterable(function* () {
     for (const i of iterable) {
       if (predicate(i)) {
@@ -24,5 +22,3 @@ const takeWhile = (iterable, predicate) => {
     }
   });
 };
-
-export default takeWhile;
