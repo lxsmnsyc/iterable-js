@@ -31,7 +31,7 @@ describe('#any', () => {
     }
   });
   it('should yield false if the Iterable fails the predicate.', () => {
-    const iterable = Iterable.any([1, 2, 3], x => typeof x === 'string');
+    const iterable = new Iterable([1, 2, 3]).any(x => typeof x === 'string');
     for (const i of iterable) {
       assert(i === false);
     }
