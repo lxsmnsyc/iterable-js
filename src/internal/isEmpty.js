@@ -1,15 +1,18 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable func-names */
-import { isIterable, BadArgumentError } from './utils';
+import { IterableCheck, defineField } from './utils';
 import Iterable from '../iterable';
 /**
  * @ignore
  */
-const isEmpty = (iterable) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.isEmpty', 'Iterable');
-  }
+const FIELD = defineField('isEmpty');
+/**
+ * @ignore
+ */
+export default (iterable) => {
+  IterableCheck(iterable, 1, FIELD);
+
   return new Iterable(function* () {
     for (const i of iterable) {
       yield false;
@@ -18,5 +21,3 @@ const isEmpty = (iterable) => {
     yield true;
   });
 };
-
-export default isEmpty;
