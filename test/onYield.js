@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-empty */
 /* eslint-disable no-restricted-syntax */
 import '@babel/polyfill';
 import assert from 'assert';
@@ -27,7 +29,9 @@ describe('#onYield', () => {
   it('should yield the correct result.', () => {
     let flag = true;
     const base = [1, 2, 3];
-    const iterable = new Iterable(base.slice(0)).onYield((x) => { flag = flag && x === base.shift(); });
+    const iterable = new Iterable(base.slice(0)).onYield((x) => {
+      flag = flag && x === base.shift();
+    });
 
     for (const i of iterable) {
     }
