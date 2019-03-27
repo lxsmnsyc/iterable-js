@@ -2,18 +2,16 @@
 /* eslint-disable no-restricted-syntax */
 
 import Iterable from '../iterable';
-import { isIterable, BadArgumentError, isFunction } from './utils';
-
+import { defineField, IterablePredicateCheck } from './utils';
 /**
  * @ignore
  */
-const takeUntil = (iterable, predicate) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.takeUntil', 'Iterable');
-  }
-  if (!isFunction(predicate)) {
-    throw new BadArgumentError(2, 'Iterable.takeUntil', 'function');
-  }
+const FIELD = defineField('takeUntil');
+/**
+ * @ignore
+ */
+export default (iterable, predicate) => {
+  IterablePredicateCheck(iterable, predicate, FIELD);
   return new Iterable(function* () {
     for (const i of iterable) {
       if (!predicate(i)) {
@@ -24,5 +22,3 @@ const takeUntil = (iterable, predicate) => {
     }
   });
 };
-
-export default takeUntil;
