@@ -1,17 +1,17 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable func-names */
 import Iterable from '../iterable';
-import { isIterable, BadArgumentError, isFunction } from './utils';
+import { IterablePredicateCheck, defineField } from './utils';
+
 /**
  * @ignore
  */
-const all = (iterable, predicate) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.all', 'Iterable');
-  }
-  if (!isFunction(predicate)) {
-    throw new BadArgumentError(2, 'Iterable.all', 'function');
-  }
+const FIELD = defineField('all');
+/**
+ * @ignore
+ */
+export default (iterable, predicate) => {
+  IterablePredicateCheck(iterable, predicate, FIELD);
   return new Iterable(function* () {
     for (const i of iterable) {
       if (!predicate(i)) {
@@ -22,5 +22,3 @@ const all = (iterable, predicate) => {
     yield true;
   });
 };
-
-export default all;
