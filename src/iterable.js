@@ -38,7 +38,7 @@ import {
   takeWhile, onYield, onDone, onStart, count, contains,
   indexOf, find, breakWith, spanWith, partition,
   flatMap, range, elementAt, replace, reverse,
-  cache, compose, buffer, step, reduce,
+  cache, compose, buffer, step, reduce, intercalate, intersperse, toArray,
 } from './internal/dependency';
 
 /**
@@ -66,8 +66,14 @@ export default class Iterable {
     const it = iterable;
     if (it.constructor.name === 'GeneratorFunction') {
       it[ITERATOR] = it;
+      /**
+       * @ignore
+       */
       this.it = it;
     } else if (isIterable(it)) {
+      /**
+       * @ignore
+       */
       this.it = it;
     } else {
       throw new BadArgumentError(1, 'Iterable.<constructor>', 'Iterable or Generator');
@@ -520,6 +526,60 @@ export default class Iterable {
    */
   indexOf(value) {
     return indexOf(this.it, value);
+  }
+
+  /**
+   * Inserts the yields of the other Iterable in between
+   * the source Iterable adjacent yields.
+   * @param {!Iterable} it
+   * @param {!Iterable} other
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the other given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static intercalate(it, other) {
+    return intercalate(it, other);
+  }
+
+  /**
+   * Inserts the yields of the other Iterable in between
+   * this Iterable adjacent yields.
+   * @param {!Iterable} other
+   * @throws {BadArgumentError}
+   * throws error if the other given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  intercalate(other) {
+    return intercalate(this.it, other);
+  }
+
+  /**
+   * Inserts the given value in between
+   * the source Iterable adjacent yields.
+   * @param {!Iterable} it
+   * @param {any} value
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the other given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static intersperse(it, value) {
+    return intersperse(it, value);
+  }
+
+  /**
+   * Inserts the yields of the other Iterable in between
+   * this Iterable adjacent yields.
+   * @param {any} value
+   * @throws {BadArgumentError}
+   * throws error if the other given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  intersperse(value) {
+    return intersperse(this.it, value);
   }
 
   /**
@@ -1125,6 +1185,27 @@ export default class Iterable {
   }
 
   /**
+   * Converts the source Iterable into an array of its yield
+   * sequence.
+   * @param {!Iterable} it
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @returns {Array}
+   */
+  static toArray(it) {
+    return toArray(it);
+  }
+
+  /**
+   * Converts this Iterable into an array of its yield
+   * sequence.
+   * @returns {Array}
+   */
+  toArray() {
+    return toArray(this.it);
+  }
+
+  /**
    * combine the yields of multiple Iterables together via a specified function and
    * yields single items for each combination based on the results of this function.
    * @param {!Array} its
@@ -1157,6 +1238,7 @@ export default class Iterable {
 
   /**
    * Implements the Iterator Protocol for this Iterable.
+   * @ignore
    */
   [ITERATOR]() {
     return this.it[ITERATOR]();
