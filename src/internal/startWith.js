@@ -1,14 +1,13 @@
 import concat from './concat';
-import { isIterable, BadArgumentError } from './utils';
+import { defineField, IterableCheck } from './utils';
 /**
  * @ignore
  */
-const startWith = (iterable, ...iterables) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.startWith', 'Iterable');
-  }
-
+const FIELD = defineField('startWith');
+/**
+ * @ignore
+ */
+export default (iterable, ...iterables) => {
+  IterableCheck(iterable, 1, FIELD);
   return concat(...iterables, iterable);
 };
-
-export default startWith;
