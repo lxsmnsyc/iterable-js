@@ -1,17 +1,14 @@
-import { isIterable, BadArgumentError, isFunction } from './utils';
+import { IterablePredicateCheck, defineField } from './utils';
 import flat from './flat';
 import map from './map';
-
 /**
  * @ignore
  */
-const flatMap = (iterable, mapper) => {
-  if (!isIterable(iterable)) {
-    throw new BadArgumentError(1, 'Iterable.flatMap', 'Iterable');
-  }
-  if (!isFunction(mapper)) {
-    throw new BadArgumentError(2, 'Iterable.flatMap', 'function');
-  }
+const FIELD = defineField('flatMap');
+/**
+ * @ignore
+ */
+export default (iterable, mapper) => {
+  IterablePredicateCheck(iterable, mapper, FIELD);
   return flat(map(iterable, mapper));
 };
-export default flatMap;
