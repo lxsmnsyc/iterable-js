@@ -44,7 +44,7 @@ import {
   distinct, distinctAdjacent, equal, sort, sorted,
   scan, average, max, min, sum, defaultIfEmpty,
   scanRight, reduceRight, breadthFirst, depthFirst,
-  slice, diff, innerJoin, outerJoin, leftJoin, skipUntil, takeUntil,
+  slice, diff, innerJoin, outerJoin, leftJoin, skipUntil, takeUntil, ignoreElements,
 } from './internal/dependency';
 
 const { isNaN } = Number;
@@ -551,14 +551,6 @@ export default class Iterable {
   }
 
   /**
-   * Returns an Iterable that doesn't yield any value.
-   * @returns {Iterable}
-   */
-  ignoreElements() {
-    return empty(this);
-  }
-
-  /**
    * Returns an Iterable that yields true if the source Iterable
    * has the same exact sequence as the other Iterable.
    * @param {!Iterable} it
@@ -709,6 +701,25 @@ export default class Iterable {
    */
   flatMap(mapper) {
     return flatMap(this.it, mapper);
+  }
+
+  /**
+   * Returns an Iterable that ignores the source Iterable's yields;
+   * @param {!Iterable} it
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static ignoreElements(it) {
+    return ignoreElements(it);
+  }
+
+  /**
+   * Returns an Iterable that doesn't yield any value.
+   * @returns {Iterable}
+   */
+  ignoreElements() {
+    return ignoreElements(this.it);
   }
 
   /**
