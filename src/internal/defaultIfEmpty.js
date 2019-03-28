@@ -1,6 +1,6 @@
 /* eslint-disable func-names */
 /* eslint-disable no-restricted-syntax */
-import Iterable from '..';
+import Iterable from '../iterable';
 import { IterableCheck, defineField } from './utils';
 
 const FIELD = defineField('defaultIfEmpty');
