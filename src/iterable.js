@@ -30,7 +30,7 @@
  * @external {Iteration Protocol} https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols
  */
 import {
-  isNumber, isIterable, ITERATOR, BadArgumentError,
+  isIterable, ITERATOR, BadArgumentError, isUndefined,
 } from './internal/utils';
 import {
   map, filter, concat, just, first, last, repeat,
@@ -47,6 +47,7 @@ import {
   slice, diff, innerJoin, outerJoin, leftJoin, skipUntil, takeUntil,
 } from './internal/dependency';
 
+const { isNaN } = Number;
 /**
  * The Iterable class serves as a super set of all objects
  * that implements the Iteration Protocol.
@@ -70,13 +71,15 @@ export default class Iterable {
    */
   constructor(iterable) {
     const it = iterable;
-    if (it.constructor.name === 'GeneratorFunction') {
+
+    const exists = !isUndefined(it);
+    if (exists && it.constructor.name === 'GeneratorFunction') {
       it[ITERATOR] = it;
       /**
        * @ignore
        */
       this.it = it;
-    } else if (isIterable(it)) {
+    } else if (exists && isIterable(it)) {
       /**
        * @ignore
        */
@@ -90,15 +93,7 @@ export default class Iterable {
     this.it = it;
 
     return new Proxy(this, {
-      get(target, index) {
-        if (index in target) {
-          return target[index];
-        }
-        if (isNumber(index)) {
-          return target.get(index);
-        }
-        return undefined;
-      },
+      get: (t, k) => ((k in t && t[k]) || (!isNaN(k) ? this.get(k) : undefined)),
     });
   }
 
@@ -112,7 +107,7 @@ export default class Iterable {
     const { it } = this;
     let s = 0;
     for (const i of it) {
-      if (s === index) {
+      if (`${s}` === index) {
         return i;
       }
       s += 1;
