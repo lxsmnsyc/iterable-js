@@ -23,6 +23,7 @@ export { default as find } from './find';
 export { default as first } from './first';
 export { default as flat } from './flat';
 export { default as flatMap } from './flatMap';
+export { default as ignoreElements } from './ignoreElements';
 export { default as indexOf } from './indexOf';
 export { default as innerJoin } from './innerJoin';
 export { default as intercalate } from './intercalate';
