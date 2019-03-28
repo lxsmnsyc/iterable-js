@@ -44,7 +44,8 @@ import {
   distinct, distinctAdjacent, equal, sort, sorted,
   scan, average, max, min, sum, defaultIfEmpty,
   scanRight, reduceRight, breadthFirst, depthFirst,
-  slice, diff, innerJoin, outerJoin, leftJoin, skipUntil, takeUntil, ignoreElements,
+  slice, diff, innerJoin, outerJoin, leftJoin, skipUntil,
+  takeUntil, ignoreElements, doWhile, whileDo,
 } from './internal/dependency';
 
 const { isNaN } = Number;
@@ -513,6 +514,36 @@ export default class Iterable {
    */
   distinctAdjacent() {
     return distinctAdjacent(this.it);
+  }
+
+  /**
+   * Returns an Iterable that yields the values of the source Iterable
+   * and repeats the sequence as long as the given predicate supplies a truthy
+   * value.
+   * @param {!Iterable} it
+   * @param {!function():boolean} predicate
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function
+   * @returns {Iterable}
+   */
+  static doWhile(it, predicate) {
+    return doWhile(it, predicate);
+  }
+
+
+  /**
+   * Returns an Iterable that yields the values of the source Iterable
+   * and repeats the sequence as long as the given predicate supplies a truthy
+   * value.
+   * @param {!function():boolean} predicate
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function
+   * @returns {Iterable}
+   */
+  doWhile(predicate) {
+    return doWhile(this.it, predicate);
   }
 
   /**
@@ -1845,6 +1876,36 @@ export default class Iterable {
    */
   toArray() {
     return toArray(this.it);
+  }
+
+  /**
+   * Returns an Iterable that repeats the yields of the source
+   * Iterable as long as the given predicate supplies a truthy
+   * value.
+   * @param {!Iterable} it
+   * @param {!function():boolean} predicate
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function
+   * @returns {Iterable}
+   */
+  static whileDo(it, predicate) {
+    return whileDo(it, predicate);
+  }
+
+
+  /**
+   * Returns an Iterable that repeats the yields of this
+   * Iterable as long as the given predicate supplies a truthy
+   * value.
+   * @param {!function():boolean} predicate
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function
+   * @returns {Iterable}
+   */
+  whileDo(predicate) {
+    return whileDo(this.it, predicate);
   }
 
   /**
