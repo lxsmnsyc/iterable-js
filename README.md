@@ -2,6 +2,8 @@
 
 An extensions for objects with Iteration Protocol for JS
 
+[![](https://data.jsdelivr.com/v1/package/npm/@lxsmnsyc/iterable-js/badge)](https://www.jsdelivr.com/package/npm/@lxsmnsyc/iterable-js)
+
 | Platform | Build Status |
 | --- | --- |
 | Linux | [![Build Status](https://travis-ci.org/LXSMNSYC/iterable-js.svg?branch=master)](https://travis-ci.org/LXSMNSYC/iterable-js) |
@@ -181,7 +183,7 @@ Method Counterparts
 
 NPM
 ```
-npm install iterable-js
+npm install @lxsmnsyc/iterable-js
 ```
 
 CDN
@@ -189,13 +191,13 @@ CDN
 * jsDelivr
   
 ```html
-<script src="https://cdn.jsdelivr.net/npm/iterable-js/dist/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@lxsmnsyc/iterable-js/dist/index.min.js"></script>
 ```
 
 * unpkg
   
 ```html
-<script src="https://unpkg.com/iterable-js/dist/index.min.js"></script>
+<script src="https://unpkg.com/@lxsmnsyc/iterable-js/dist/index.min.js"></script>
 ```
 
 
