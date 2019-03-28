@@ -19,7 +19,7 @@ describe('#last', () => {
   });
   it('should yield the correct result.', () => {
     const base = [1, 2, 3];
-    const iterable = new Iterable(base.slice(0)).last();
+    const iterable = new Iterable(base.slice(0)).last(x => typeof x === 'number');
 
     for (const i of iterable) {
       assert(base.pop() === i);
