@@ -3,6 +3,9 @@ import skip from './skip';
 import take from './take';
 
 const FIELD = defineField('slice');
+/**
+ * @ignore
+ */
 export default (iterable, start, end) => {
   IterableCheck(iterable, 1, FIELD);
   PositiveNumberCheck(start, 2, FIELD);
