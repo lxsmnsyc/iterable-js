@@ -12,6 +12,9 @@ const FIELD = defineField('step');
 export default (iterable, count) => {
   IterablePositiveNumberCheck(iterable, count, FIELD);
   return new Iterable(function* () {
+    if (count < 1) {
+      return;
+    }
     let c = 0;
     for (const i of iterable) {
       if (c % count === 0) {
