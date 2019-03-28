@@ -4,7 +4,9 @@ import Iterable from '../iterable';
 import { IterableCheck, defineField, isIterable } from './utils';
 
 const FIELD = defineField('breadthFirst');
-
+/**
+ * @ignore
+ */
 export default (iterable) => {
   IterableCheck(iterable, 1, FIELD);
 
