@@ -27,7 +27,7 @@ describe('#equal', () => {
   });
 
   it('should yield the true if both iterables yield the same sequence', () => {
-    for (const c of Iterable.equal([10], [11])) {
+    for (const c of new Iterable([10]).equal([11])) {
       assert(c === false);
     }
   });
