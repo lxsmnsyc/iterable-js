@@ -76,7 +76,7 @@ export const NumberCheck = (num, argNo, field) => {
  */
 export const PositiveNumberCheck = (num, argNo, field) => {
   NumberCheck(num, argNo, field);
-  if (num <= 0) {
+  if (num < 0) {
     throw new BadArgumentError(argNo, field, TYPE_POS_NUM);
   }
 };
