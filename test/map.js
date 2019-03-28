@@ -29,8 +29,10 @@ describe('#map', () => {
     const expected = [2, 4, 6];
     const iterable = new Iterable(base).map(x => x * 2);
 
+    let acc = true;
     for (const i of iterable) {
-      assert(expected.shift() === i);
+      acc = acc && i === expected.shift();
     }
+    assert(acc && expected.length === 0);
   });
 });
