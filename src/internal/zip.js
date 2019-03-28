@@ -30,42 +30,27 @@ const zip = (iterables, fn) => {
     zipper = defaultZipper;
   }
 
-  const count = iterables.length;
-
   return new Iterable(function* () {
-    const generators = [];
-    let undef = count;
-    let c = 0;
+    const buffer = [];
 
     for (const iterable of iterables) {
-      if (isIterable(iterable)) {
-        generators[c] = iterable[ITERATOR]();
-      } else {
-        undef -= 1;
+      let c = 0;
+      for (const i of iterable) {
+        let current = buffer[c];
+
+        if (isUndefined(current)) {
+          current = [];
+          buffer[c] = current;
+        }
+
+        current.push(i);
+
+        c += 1;
       }
-      c += 1;
     }
 
-    while (undef > 0) {
-      const values = [];
-
-      for (let i = 0; i < count; i += 1) {
-        const g = generators[i];
-        if (typeof g !== 'undefined') {
-          const { value, done } = g.next();
-
-          values.push(value);
-
-          if (done) {
-            generators[i] = undefined;
-            undef -= 1;
-          }
-        } else {
-          values.push(undefined);
-        }
-      }
-
-      yield zipper(values);
+    for (const i of buffer) {
+      yield zipper(i);
     }
   });
 };
