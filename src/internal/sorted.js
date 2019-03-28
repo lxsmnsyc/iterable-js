@@ -30,7 +30,7 @@ export default (iterable, comparator) => {
     let prev;
 
     for (const i of iterable) {
-      if (typeof prev !== 'undefined' && comparator(prev, i) > 0) {
+      if (typeof prev !== 'undefined' && fn(prev, i) > 0) {
         yield false;
         return;
       }
