@@ -13,7 +13,7 @@ export default (iterable, predicate, seed) => {
   IterablePredicateCheck(iterable, predicate, FIELD);
   return new Iterable(function* () {
     let acc = seed;
-    let flag = seed != null;
+    let flag = seed == null;
 
     for (const i of iterable) {
       if (flag) {
@@ -21,8 +21,8 @@ export default (iterable, predicate, seed) => {
         flag = false;
       } else {
         acc = predicate(acc, i);
-        yield acc;
       }
+      yield acc;
     }
   });
 };
