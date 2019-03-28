@@ -21,8 +21,10 @@ describe('#distinctAdjacent', () => {
     const base = [1, 2, 2, 3, 3, 4];
     const expected = [1, 2, 3, 4];
     const iterable = new Iterable(base).distinctAdjacent();
-    for (const c of iterable) {
-      assert(c === expected.shift());
+    let acc = true;
+    for (const i of iterable) {
+      acc = acc && i === expected.shift();
     }
+    assert(acc && expected.length === 0);
   });
 });
