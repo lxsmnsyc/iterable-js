@@ -13,6 +13,13 @@ describe('#last', () => {
       assert(e instanceof BadArgumentError);
     }
   });
+  it('should throw a BadArgumentError if there is a non-function provided (except undefined)', () => {
+    try {
+      Iterable.last([1, 2, 3], 1);
+    } catch (e) {
+      assert(e instanceof BadArgumentError);
+    }
+  });
   it('should return an Iterable if no errors.', () => {
     const iterable = Iterable.last([1, 2, 3]);
     assert(iterable instanceof Iterable);
