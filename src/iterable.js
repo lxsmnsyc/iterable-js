@@ -42,7 +42,7 @@ import {
   reverse, cache, compose, buffer, step, reduce,
   intercalate, intersperse, toArray, intersect,
   distinct, distinctAdjacent, equal, sort, sorted,
-  scan, average, max, min, sum, defaultIfEmpty,
+  scan, average, max, min, sum, defaultIfEmpty, scanRight, reduceRight,
 } from './internal/dependency';
 
 /**
@@ -1012,14 +1012,15 @@ export default class Iterable {
    * the final result from the final call to your function as its sole item.
    * @param {!Iterable} it
    * @param {!function(acc: any, item: any):any} reducer
+   * @param {any} seed
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {BadArgumentError}
    * throws error if the given reducer is not a function
    * @returns {Iterable}
    */
-  static reduce(it, reducer) {
-    return reduce(it, reducer);
+  static reduce(it, reducer, seed) {
+    return reduce(it, reducer, seed);
   }
 
   /**
@@ -1030,12 +1031,50 @@ export default class Iterable {
    * items have been yielded by the finite source Iterable, and yields
    * the final result from the final call to your function as its sole item.
    * @param {!function(acc: any, item: any):any} reducer
+   * @param {any} seed
    * @throws {BadArgumentError}
    * throws error if the given reducer is not a function
    * @returns {Iterable}
    */
-  reduce(reducer) {
-    return reduce(this.it, reducer);
+  reduce(reducer, seed) {
+    return reduce(this.it, reducer, seed);
+  }
+
+  /**
+   * Returns an Iterable that applies a specified accumulator function
+   * to the last item yielded by a source Iterable, then feeds the
+   * result of that function along with the second last item yielded by
+   * the source Iterable into the same function, and so on until all
+   * items have been yielded by the finite source Iterable, and yields
+   * the final result from the final call to your function as its sole item.
+   * @param {!Iterable} it
+   * @param {!function(acc: any, item: any):any} reducer
+   * @param {any} seed
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the given reducer is not a function
+   * @returns {Iterable}
+   */
+  static reduceRight(it, reducer, seed) {
+    return reduceRight(it, reducer, seed);
+  }
+
+  /**
+   * Returns an Iterable that applies a specified accumulator function
+   * to the last item yielded by a source Iterable, then feeds the
+   * result of that function along with the second last item yielded by
+   * the source Iterable into the same function, and so on until all
+   * items have been yielded by the finite source Iterable, and yields
+   * the final result from the final call to your function as its sole item.
+   * @param {!function(acc: any, item: any):any} reducer
+   * @param {any} seed
+   * @throws {BadArgumentError}
+   * throws error if the given reducer is not a function
+   * @returns {Iterable}
+   */
+  reduceRight(reducer, seed) {
+    return reduceRight(this.it, reducer, seed);
   }
 
   /**
@@ -1123,14 +1162,15 @@ export default class Iterable {
    * yielded by the source Iterable, yielding the result of each of these iterations.
    * @param {!Iterable} it
    * @param {!function(acc: any, item: any):any} reducer
+   * @param {any} seed
    * @throws {BadArgumentError}
    * throws error if the given Iterable doesn't implement the Iteration Protocol
    * @throws {BadArgumentError}
    * throws error if the given reducer is not a function
    * @returns {Iterable}
    */
-  static scan(it, reducer) {
-    return scan(it, reducer);
+  static scan(it, reducer, seed) {
+    return scan(it, reducer, seed);
   }
 
   /**
@@ -1140,12 +1180,48 @@ export default class Iterable {
    * Iterable into the same function, and so on until all items have been
    * yielded by the source Iterable, yielding the result of each of these iterations.
    * @param {!function(acc: any, item: any):any} reducer
+   * @param {any} seed
    * @throws {BadArgumentError}
    * throws error if the given reducer is not a function
    * @returns {Iterable}
    */
-  scan(reducer) {
-    return scan(this.it, reducer);
+  scan(reducer, seed) {
+    return scan(this.it, reducer, seed);
+  }
+
+  /**
+   * Returns an Iterable that applies a specified accumulator function
+   * to the last item yielded by a source Iterable, then feeds the result
+   * of that function along with the second last item yielded by the source
+   * Iterable into the same function, and so on until all items have been
+   * yielded by the source Iterable, yielding the result of each of these iterations.
+   * @param {!Iterable} it
+   * @param {!function(acc: any, item: any):any} reducer
+   * @param {any} seed
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the given reducer is not a function
+   * @returns {Iterable}
+   */
+  static scanRight(it, reducer, seed) {
+    return scanRight(it, reducer, seed);
+  }
+
+  /**
+   * Returns an Iterable that applies a specified accumulator function
+   * to the last item yielded by a source Iterable, then feeds the result
+   * of that function along with the second last item yielded by the source
+   * Iterable into the same function, and so on until all items have been
+   * yielded by the source Iterable, yielding the result of each of these iterations.
+   * @param {!function(acc: any, item: any):any} reducer
+   * @param {any} seed
+   * @throws {BadArgumentError}
+   * throws error if the given reducer is not a function
+   * @returns {Iterable}
+   */
+  scanRight(reducer, seed) {
+    return scanRight(this.it, reducer, seed);
   }
 
   /**
