@@ -2,29 +2,45 @@
 
 An extensions for objects with Iteration Protocol for JS
 
-## What is Iterable
+### Introduction
 
-Iterable serves as the superset of all objects/values which implements the [Iteration Protocol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols), with this, Iterable aims to unify these objects.
+### Iterations Protocol
 
-Iterable provides operators that allows the user to transform and provide a new Iterable instance which is derived from its source, making Iterable an immutable class.
+ES2015 introduces a new feature, namely the [Iterations Protocol](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols). The protocol consists of 2 protocols:
 
-For example, the snippet below iterates from numbers 1 to 100:
+* The iterable protocol allows JavaScript objects to define or customize their iteration behavior, such as what values are looped over in a for..of construct. Some built-in types are built-in iterables with a default iteration behavior, such as Array or Map, while other types (such as Object) are not.
+  
+  In order to be iterable, an object must implement the @@iterator method, meaning that the object (or one of the objects up its prototype chain) must have a property with a @@iterator key which is available via constant Symbol.iterator:
+
+  | Property | Value |
+  | --- | --- |
+  | ```[Symbol.iterator]``` | A zero arguments function that returns an object, conforming to the iterator protocol. |
+
+  Whenever an object needs to be iterated (such as at the beginning of a for..of loop), its @@iterator method is called with no arguments, and the returned iterator is used to obtain the values to be iterated.
+
+* The iterator protocol defines a standard way to produce a sequence of values (either finite or infinite), and potentially a return value when all values have been generated.
+  
+  An object is an iterator when it implements a next() method with the following semantics:
+
+  | Property | Value |
+  | --- | --- |
+  | next | A zero arguments function that returns an object with at least the following two properties: <ul><li>```done``` (boolean)<ul><li>Has the value ```true``` if the iterator is past the end of the iterated sequence. In this case ```value``` optionally specifies the return value of the iterator.</li><li>Has the value ```false``` if the iterator was able to produce the next value in the sequence. This is equivalent of not specifying the done property altogether.</li></ul></li><li>```value``` - any JavaScript value returned by the iterator. Can be omitted when ```done``` is ```true```.</li></ul> The next method always has to return an object with appropriate properties including ```done``` and ```value```. If a non-object value gets returned (such as ```false``` or ```undefined```), a TypeError ("iterator.next() returned a non-object value") will be thrown.|
+
+### Iterable and Iteration Protocol
+
+Iterable intends to unify all iterable objects, be it a built-in iterable (e.g. Array, String, Map) or a user-made iterable (e.g. user-defined generators, objects with Symbol.iterator property), acting as the de-facto superset.
+
+By taking advantage of the Iteration Protocol, Iterable can provide operators that allows to transform any iterable objects.
+
+Iterable operators are not strict to Iterable instance, they expect the first parameters to be an iterable object, regardless of the implementation. For example,
 
 ```js
-for (const i of Iterable.range(1, 100)) {
-  console.log('Next: ', i);
-}
+Iterable.concat('Hello', [1, 2, 3, 4, 5]);
 ```
 
-List of JS Classes that are Iterable:
+creates an iterable that yields the characters of 'Hello' and the values of ```[1, 2, 3, 4, 5]``` sequentially.
 
-* String
-* Array
-* TypedArrays
-* Set
-* Map
-
-## Iterable vs IxJS
+### Iterable vs IxJS
 
 First, I would like to point out that at the time I have written almost half of the library, I stumbled upon the library [IxJS](https://github.com/ReactiveX/IxJS) while looking for Rx libraries, and to my surprise, it has the same goal as my library's.
 
@@ -51,6 +67,8 @@ Method Counterparts
 | --- | --- | --- |
 | ```all``` | ```every``` | Returns a singular Iterable that yields the boolean result. |
 | ```any``` | ```some``` | Returns a singular Iterable that yields the boolean result.  |
+| ```average``` | ```average``` | Returns a singular Iterable that yields the number result. |
+| ```breadthFirst``` | | |
 | ```breakWith``` | | |
 | ```buffer``` | ```buffer``` | Doesn't have the skip mechanism. |
 | ```cache``` | | |
@@ -58,6 +76,8 @@ Method Counterparts
 | ```concat``` | ```concat```, ```of```, ```endWith``` | Unlike the IxJS ```concat```, Iterable ```concat``` allows to concat non-Iterable values. |
 | ```contains``` | ```includes``` | Doesn't have the skip mechanism. Returns a singular Iterable that yields the boolean result. |
 | ```count``` | ```count``` | Returns a singular Iterable that yields the number result. |
+| ```defaultIfEmpty``` | ```defaultIfEmpty``` | |
+| ```depthFirst``` | | |
 | ```distinct``` | ```distinct``` | Doesn't have the compare mechanism. Strict equality is used. |
 | ```distinctAdjacent``` | ```distinctUntilChanged``` | Doesn't have the compare mechanism. Strict equality is used. |
 | ```elementAt``` | ```elementAt``` | Returns a singular Iterable that yields the result. |
@@ -66,8 +86,9 @@ Method Counterparts
 | ```filter``` | ```filter``` | |
 | ```find``` | ```find``` | Instead of yielding the passing value, ```find`` yields the index. Returns a singular Iterable that yields the number result. |
 | ```first``` | ```first``` | Returns a singular Iterable that yields the result. |
-| ```flat``` | ```flatten``` | Iterable ```flat``` only flattens a single layer. |
+| ```flat``` | ```flatten``` | Iterable ```flat``` only flattens a single layer. To flatten all layers, use ```depthFirst``` |
 | ```flatMap``` | ```flatMap``` | |
+| ```ignoreElements``` | ```ignoreElements``` | |
 | ```indexOf``` | | |
 | ```intercalate``` | | |
 | ```intersect``` | | |
@@ -76,38 +97,41 @@ Method Counterparts
 | ```just``` | | |
 | ```last``` | ```last``` | |
 | ```map``` | ```map``` | |
+| ```max``` | ```max``` | Returns a singular Iterable that yields the result. |
+| ```min``` | ```min``` | Returns a singular Iterable that yields the result. |
 | ```onDone``` | | |
 | ```onStart``` | | |
 | ```onYield``` | | |
 | ```partition``` | ```partition``` | |
 | ```range``` | ```range``` | Unlike IxJS, Iterable ```range``` allows negative slope, and custom step size. |
 | ```reduce``` | ```reduce``` | Returns a singular Iterable that yields the result. |
+| ```reduceRight``` | ```reduceRight``` | Returns a singular Iterable that yields the result. |
 | ```repeat``` | ```repeat``` | |
 | ```replace``` | | |
-| ```reverse``` | | |
-| ```scan``` | ```scan``` | Iterable ```scan``` omits the seed mechanism. Returns a singular Iterable that yields the result. |
+| ```reverse```  |```reverse``` | |
+| ```scan``` | ```scan``` | |
+| ```scanRight``` | ```scanRight``` | |
 | ```skip``` | ```skip``` | |
 | ```skipLast``` | ```skipLast``` | |
 | ```skipUntil``` | | |
 | ```skipWhile``` | ```skipWhile``` | |
 | ```sort``` | ```orderBy``` | |
-| ```sorted``` | | |
+| ```sorted``` | | Returns a singular Iterable that yields the boolean result. |
 | ```spanWith``` | | |
 | ```split``` | | |
 | ```step``` | | |
+| ```sum``` | ```sum``` | Returns a singular Iterable that yields the result. |
 | ```take``` | ```take``` | |
 | ```takeLast``` | ```takeLast``` | |
 | ```takeUntil``` | | |
 | ```takeWhile``` | ```takeWhile``` | |
 | ```toArray``` | ```toArray``` | |
 | ```zip``` | ```zip``` | |
-| | ```average``` | to be added. |
 | | ```case``` | |
 | | ```catch``` | Iterable throws the error synchronously. |
 | | ```catchWith``` | Iterable throws the error synchronously. |
 | | ```chain``` | |
 | | ```concatAll``` | |
-| | ```defaultIfEmpty``` | to be added. |
 | | ```defer``` | Meh |
 | | ```doWhile``` | to be added. |
 | | ```expand``` | |
@@ -117,12 +141,9 @@ Method Counterparts
 | | ```groupBy``` | |
 | | ```groupJoin``` | |
 | | ```if``` | |
-| | ```ignoreElements``` | to be added. |
 | | ```innerJoin``` | |
 | | ```intersect``` | |
-| | ```max``` | to be added. |
 | | ```memoize``` | |
-| | ```min``` | to be added. |
 | | ```ofEntries``` | Use ```Object.entries``` instead. |
 | | ```ofKeys``` | Use ```Object.keys``` instead. |
 | | ```ofValues``` | Use ```Object.values``` instead. |
@@ -130,13 +151,10 @@ Method Counterparts
 | | ```pairwise``` | |
 | | ```pluck``` | |
 | | ```publish``` | |
-| | ```reduceRight``` | use ```reverse``` and ```reduce``` |
 | | ```retry``` | Iterable doesn't support fallbacks. |
-| | ```scanRight``` | use ```reverse``` and ```scan``` |
 | | ```share``` | |
 | | ```single``` | Isn't encouraged. |
 | | ```slice``` | to be added. |
-| | ```sum``` | to be added. |
 | | ```tap``` | use the ```do``` operators. |
 | | ```union``` | to be added. |
 | | ```while``` | to be added. |
@@ -181,6 +199,7 @@ Loading the JavaScript file for the iterable-js provides the Iterable class.
 
 ### Example
 
+Creates a partition of iterables in which the first iterable yields the even numbers, while the second iterable yields the odd numbers.
 ```js
 const evenOdd = Iterable.range(1, 200).partition(x => x % 2 === 0);
 
