@@ -97,13 +97,6 @@ export const IterablePositiveNumberCheck = (iterable, num, field) => {
 /**
  * @ignore
  */
-export const IterableNumberCheck = (iterable, num, field) => {
-  IterableCheck(iterable, 1, field);
-  NumberCheck(num, 2, field);
-};
-/**
- * @ignore
- */
 export const DoubleIterableCheck = (iterable, other, field) => {
   IterableCheck(iterable, 1, field);
   IterableCheck(other, 2, field);
