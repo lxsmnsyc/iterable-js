@@ -2,7 +2,7 @@
 /* eslint-disable func-names */
 import Iterable from '../iterable';
 import {
-  isIterable, ITERATOR, BadArgumentError, isFunction, isUndefined, defineField, FunctionCheck,
+  BadArgumentError, isFunction, isUndefined, defineField, FunctionCheck,
 } from './utils';
 /**
  * @ignore
