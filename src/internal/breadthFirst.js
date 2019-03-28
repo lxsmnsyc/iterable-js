@@ -13,7 +13,7 @@ export default (iterable) => {
     stack.push(iterable);
 
     while (stack.length !== 0) {
-      const top = stack.unshift();
+      const top = stack.shift();
 
       if (isIterable(top)) {
         for (const i of top) {
