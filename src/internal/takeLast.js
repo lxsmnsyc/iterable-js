@@ -12,14 +12,14 @@ const FIELD = defineField('takeLast');
 export default (iterable, count) => {
   IterablePositiveNumberCheck(iterable, count, FIELD);
   return new Iterable(function* () {
+    if (count === 0) {
+      return;
+    }
+
     const buffer = [];
 
     for (const i of iterable) {
-      if (count === 0) {
-        yield i;
-      } else {
-        buffer.push(i);
-      }
+      buffer.push(i);
     }
 
     for (const i of buffer.slice(-count)) {
