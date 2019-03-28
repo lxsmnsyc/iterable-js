@@ -14,7 +14,7 @@ describe('#startWith', () => {
     }
   });
   it('should return an Iterable if no errors.', () => {
-    const iterable = Iterable.startWith([1, 2, 3, 4]);
+    const iterable = Iterable.startWith([1, 2, 3, 4], 5, 6);
     assert(iterable instanceof Iterable);
   });
   it('should yield the correct sequence', () => {
