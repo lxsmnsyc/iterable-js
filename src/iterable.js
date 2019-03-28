@@ -220,7 +220,6 @@ export default class Iterable {
   /**
    * Performs a breadth-first flattening method to this Iterable:
    * shallow elements are yielded first before deeper elements.
-   * @param {Iterable} it
    * @returns {Iterable}
    */
   breadthFirst() {
