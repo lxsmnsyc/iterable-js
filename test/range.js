@@ -32,10 +32,12 @@ describe('#range', () => {
     assert(iterable instanceof Iterable);
   });
   it('should yield the correct value', () => {
-    const base = [1, 2, 3, 4];
+    const expected = [1, 2, 3, 4];
     const iterable = Iterable.range(1, 4, 1);
-    for (const c of iterable) {
-      assert(c === base.shift());
+    let acc = true;
+    for (const i of iterable) {
+      acc = acc && i === expected.shift();
     }
+    assert(acc);
   });
 });
