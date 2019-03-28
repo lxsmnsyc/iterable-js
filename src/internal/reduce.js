@@ -9,13 +9,19 @@ const FIELD = defineField('reduce');
 /**
  * @ignore
  */
-export default (iterable, predicate) => {
+export default (iterable, predicate, seed) => {
   IterablePredicateCheck(iterable, predicate, FIELD);
   return new Iterable(function* () {
-    let acc;
+    let acc = seed;
+    let flag = seed != null;
 
     for (const i of iterable) {
-      acc = predicate(acc, i);
+      if (flag) {
+        acc = i;
+        flag = false;
+      } else {
+        acc = predicate(acc, i);
+      }
     }
 
     yield acc;
