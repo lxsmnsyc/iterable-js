@@ -22,8 +22,10 @@ describe('#flat', () => {
     const expected = [1, 2, 3, 4, 5];
     const iterable = new Iterable(base).flat();
 
+    let acc = true;
     for (const i of iterable) {
-      assert(expected.shift() === i);
+      acc = acc && i === expected.shift();
     }
+    assert(acc && expected.length === 0);
   });
 });
