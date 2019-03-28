@@ -78,6 +78,7 @@ Method Counterparts
 | ```count``` | ```count``` | Returns a singular Iterable that yields the number result. |
 | ```defaultIfEmpty``` | ```defaultIfEmpty``` | |
 | ```depthFirst``` | | |
+| ```diff``` | | |
 | ```distinct``` | ```distinct``` | Doesn't have the compare mechanism. Strict equality is used. |
 | ```distinctAdjacent``` | ```distinctUntilChanged``` | Doesn't have the compare mechanism. Strict equality is used. |
 | ```elementAt``` | ```elementAt``` | Returns a singular Iterable that yields the result. |
@@ -90,18 +91,22 @@ Method Counterparts
 | ```flatMap``` | ```flatMap``` | |
 | ```ignoreElements``` | ```ignoreElements``` | |
 | ```indexOf``` | | |
+| ```innerJoin``` | ```innerJoin``` | |
+| ```intersect``` | ```intersect``` | |
 | ```intercalate``` | | |
 | ```intersect``` | | |
 | ```intersperse``` | | |
 | ```isEmpty``` | ```isEmpty``` | Returns a singular Iterable that yields the boolean result. |
 | ```just``` | | |
 | ```last``` | ```last``` | |
+| ```leftJoin``` | | |
 | ```map``` | ```map``` | |
 | ```max``` | ```max``` | Returns a singular Iterable that yields the result. |
 | ```min``` | ```min``` | Returns a singular Iterable that yields the result. |
 | ```onDone``` | | |
 | ```onStart``` | | |
 | ```onYield``` | | |
+| ```outerJoin``` | | |
 | ```partition``` | ```partition``` | |
 | ```range``` | ```range``` | Unlike IxJS, Iterable ```range``` allows negative slope, and custom step size. |
 | ```reduce``` | ```reduce``` | Returns a singular Iterable that yields the result. |
@@ -141,8 +146,6 @@ Method Counterparts
 | | ```groupBy``` | |
 | | ```groupJoin``` | |
 | | ```if``` | |
-| | ```innerJoin``` | |
-| | ```intersect``` | |
 | | ```memoize``` | |
 | | ```ofEntries``` | Use ```Object.entries``` instead. |
 | | ```ofKeys``` | Use ```Object.keys``` instead. |
