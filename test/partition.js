@@ -25,6 +25,12 @@ describe('#partition', () => {
     assert(iterable instanceof Array);
     assert(iterable.length === 2);
     assert(iterable[0] instanceof Iterable);
+    for (const i of iterable[0]) {
+      assert(i % 2 === 0);
+    }
     assert(iterable[1] instanceof Iterable);
+    for (const i of iterable[1]) {
+      assert(i % 2 === 1);
+    }
   });
 });
