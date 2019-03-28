@@ -17,12 +17,14 @@ describe('#reverse', () => {
     const iterable = Iterable.reverse([1, 2, 3, 4]);
     assert(iterable instanceof Iterable);
   });
-  it('should yield the correct value', () => {
+  it('should yield the correct sequence', () => {
     const base = [1, 2, 3, 4];
     const expected = [4, 3, 2, 1];
     const iterable = new Iterable(base).reverse();
-    for (const c of iterable) {
-      assert(c === expected.shift());
+    let acc = true;
+    for (const i of iterable) {
+      acc = acc && i === expected.shift();
     }
+    assert(acc && expected.length === 0);
   });
 });
