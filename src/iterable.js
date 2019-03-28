@@ -44,7 +44,7 @@ import {
   distinct, distinctAdjacent, equal, sort, sorted,
   scan, average, max, min, sum, defaultIfEmpty,
   scanRight, reduceRight, breadthFirst, depthFirst,
-  slice, diff, innerJoin, outerJoin, leftJoin,
+  slice, diff, innerJoin, outerJoin, leftJoin, skipUntil, takeUntil,
 } from './internal/dependency';
 
 /**
@@ -1436,6 +1436,35 @@ export default class Iterable {
 
   /**
    * Returns an Iterable that skips all items yielded by the source
+   * Iterable as long as a specified condition holds false, but yields
+   * all further source items as soon as the condition becomes true.
+   * @param {!Iterable} it
+   * @param {!function(item: any):boolean} predicate
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function
+   * @returns {Iterable}
+   */
+  static skipUntil(it, predicate) {
+    return skipUntil(it, predicate);
+  }
+
+  /**
+   * Returns an Iterable that skips all items yielded by the source
+   * Iterable as long as a specified condition holds false, but yields
+   * all further source items as soon as the condition becomes true.
+   * @param {!function(item: any):boolean} predicate
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function
+   * @returns {Iterable}
+   */
+  skipUntil(predicate) {
+    return skipUntil(this.it, predicate);
+  }
+
+  /**
+   * Returns an Iterable that skips all items yielded by the source
    * Iterable as long as a specified condition holds true, but yields
    * all further source items as soon as the condition becomes false.
    * @param {!Iterable} it
@@ -1732,6 +1761,35 @@ export default class Iterable {
    */
   takeLast(amount) {
     return takeLast(this.it, amount);
+  }
+
+  /**
+   * Returns an Iterable that yields items yielded by the source Iterable
+   * so long as each item does not satisfie a specified condition, and then
+   * completes as soon as this condition is satisfied.
+   * @param {!Iterable} it
+   * @param {!function(item: any):boolean} predicate
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function
+   * @returns {Iterable}
+   */
+  static takeUntil(it, predicate) {
+    return takeUntil(it, predicate);
+  }
+
+  /**
+   * Returns an Iterable that yields items yielded by this Iterable
+   * so long as each item does not satisfie a specified condition, and then
+   * completes as soon as this condition is satisfied.
+   * @param {!function(item: any):boolean} predicate
+   * @throws {BadArgumentError}
+   * throws error if the given predicate is not a function
+   * @returns {Iterable}
+   */
+  takeUntil(predicate) {
+    return takeUntil(this.it, predicate);
   }
 
   /**
