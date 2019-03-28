@@ -1,8 +1,8 @@
 /* eslint-disable no-restricted-syntax */
 import '@babel/polyfill';
 import assert from 'assert';
-import Iterable from '../src/iterable';
-import { BadArgumentError } from '../src/internal/utils';
+import Iterable from '../../src/iterable';
+import { BadArgumentError } from '../../src/internal/utils';
 
 /* eslint-disable no-undef */
 describe('#takeLast', () => {
