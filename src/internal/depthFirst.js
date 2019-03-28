@@ -12,6 +12,8 @@ export default (iterable) => {
     const stack = [];
     stack.push(iterable);
 
+    const result = [];
+
     while (stack.length !== 0) {
       const top = stack.pop();
 
@@ -20,8 +22,12 @@ export default (iterable) => {
           stack.push(i);
         }
       } else {
-        yield top;
+        result.push(top);
       }
+    }
+
+    for (const i of result.reverse()) {
+      yield i;
     }
   });
 };
