@@ -42,7 +42,9 @@ import {
   reverse, cache, compose, buffer, step, reduce,
   intercalate, intersperse, toArray, intersect,
   distinct, distinctAdjacent, equal, sort, sorted,
-  scan, average, max, min, sum, defaultIfEmpty, scanRight, reduceRight,
+  scan, average, max, min, sum, defaultIfEmpty,
+  scanRight, reduceRight, breadthFirst, depthFirst,
+  slice, diff, innerJoin, outerJoin, leftJoin,
 } from './internal/dependency';
 
 /**
@@ -200,6 +202,29 @@ export default class Iterable {
    */
   average() {
     return average(this.it);
+  }
+
+  /**
+   * Performs a breadth-first flattening method to the source Iterable:
+   * shallow elements are yielded first before deeper elements.
+   * @param {Iterable} it
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static breadthFirst(it) {
+    return breadthFirst(it);
+  }
+
+
+  /**
+   * Performs a breadth-first flattening method to this Iterable:
+   * shallow elements are yielded first before deeper elements.
+   * @param {Iterable} it
+   * @returns {Iterable}
+   */
+  breadthFirst() {
+    return breadthFirst(this.it);
   }
 
   /**
@@ -403,6 +428,55 @@ export default class Iterable {
   }
 
   /**
+   * Performs a depth-first flattening method to the source Iterable. This
+   * is the same as the flat method except that depthFirst removes all nesting.
+   * @param {Iterable} it
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static depthFirst(it) {
+    return depthFirst(it);
+  }
+
+
+  /**
+   * Performs a depth-first flattening method to this Iterable. This
+   * is the same as the flat method except that depthFirst removes all nesting.
+   * @returns {Iterable}
+   */
+  depthFirst() {
+    return depthFirst(this.it);
+  }
+
+  /**
+   * Returns an Iterable that yields the items of the source Iterable
+   * that does not exist in the other Iterable.
+   * @param {!Iterable} it
+   * @param {!Iterable} other
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the other given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static diff(it, other) {
+    return diff(it, other);
+  }
+
+  /**
+   * Returns an Iterable that yields the items of the source Iterable
+   * that does not exist in the other Iterable.
+   * @param {!Iterable} other
+   * @throws {BadArgumentError}
+   * throws error if the other given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  diff(other) {
+    return diff(this.it, other);
+  }
+
+  /**
    * Returns an Iterable that yields all items yielded by the
    * source Iterable that are distinct based on the strict equality
    * comparison.
@@ -486,7 +560,7 @@ export default class Iterable {
    * Returns an Iterable that doesn't yield any value.
    * @returns {Iterable}
    */
-  empty() {
+  ignoreElements() {
     return empty(this);
   }
 
@@ -669,6 +743,33 @@ export default class Iterable {
   }
 
   /**
+   * Returns an Iterable that yields the mutual items of the source Iterable
+   * and the other Iterable.
+   * @param {!Iterable} it
+   * @param {!Iterable} other
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the other given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static innerJoin(it, other) {
+    return innerJoin(it, other);
+  }
+
+  /**
+   * Returns an Iterable that yields the mutual items of this Iterable
+   * and the other Iterable.
+   * @param {!Iterable} other
+   * @throws {BadArgumentError}
+   * throws error if the other given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  innerJoin(other) {
+    return innerJoin(this.it, other);
+  }
+
+  /**
    * Inserts the yields of the other Iterable in between
    * the source Iterable adjacent yields.
    * @param {!Iterable} it
@@ -696,8 +797,8 @@ export default class Iterable {
   }
 
   /**
-   * Returns an Iterable that yields the items that the source Iterable
-   * and the other Iterable has in common.
+   * Returns an Iterable that yields the items of the source Iterable
+   * that exists in the other Iterable.
    * @param {!Iterable} it
    * @param {!Iterable} other
    * @throws {BadArgumentError}
@@ -711,8 +812,8 @@ export default class Iterable {
   }
 
   /**
-   * Returns an Iterable that yields the items that the source Iterable
-   * and the other Iterable has in common.
+   * Returns an Iterable that yields the items of the source Iterable
+   * that exists in the other Iterable.
    * @param {!Iterable} other
    * @throws {BadArgumentError}
    * throws error if the other given Iterable doesn't implement the Iteration Protocol
@@ -804,6 +905,33 @@ export default class Iterable {
    */
   last(predicate) {
     return last(this.it, predicate);
+  }
+
+  /**
+   * Returns an Iterable that yields theitems of the source Iterable
+   * and the items of the other Iterable that are in the source Iterable.
+   * @param {!Iterable} it
+   * @param {!Iterable} other
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the other given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static leftJoin(it, other) {
+    return leftJoin(it, other);
+  }
+
+  /**
+   * Returns an Iterable that yields theitems of the source Iterable
+   * and the items of the other Iterable that are in this Iterable.
+   * @param {!Iterable} other
+   * @throws {BadArgumentError}
+   * throws error if the other given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  leftJoin(other) {
+    return leftJoin(this.it, other);
   }
 
   /**
@@ -960,6 +1088,33 @@ export default class Iterable {
    */
   onYield(fn) {
     return onYield(this.it, fn);
+  }
+
+  /**
+   * Returns an Iterable that yields the non-mutual items of the source Iterable
+   * and the other Iterable.
+   * @param {!Iterable} it
+   * @param {!Iterable} other
+   * @throws {BadArgumentError}
+   * throws error if the given Iterable doesn't implement the Iteration Protocol
+   * @throws {BadArgumentError}
+   * throws error if the other given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  static outerJoin(it, other) {
+    return outerJoin(it, other);
+  }
+
+  /**
+   * Returns an Iterable that yields the non-mutual items of this Iterable
+   * and the other Iterable.
+   * @param {!Iterable} other
+   * @throws {BadArgumentError}
+   * throws error if the other given Iterable doesn't implement the Iteration Protocol
+   * @returns {Iterable}
+   */
+  outerJoin(other) {
+    return outerJoin(this.it, other);
   }
 
   /**
@@ -1306,6 +1461,32 @@ export default class Iterable {
    */
   skipWhile(predicate) {
     return skipWhile(this.it, predicate);
+  }
+
+  /**
+   * Returns a portion of the source Iterable as a new Iterable.
+   * @param {!Iterable} it
+   * @param {!number} start
+   * @param {!number} end
+   * @throws {BadArgumentError}
+   * throws error if the given iterables is not an array
+   * @returns {Iterable}
+   */
+  static slice(it, start, end) {
+    return slice(it, start, end);
+  }
+
+
+  /**
+   * Returns a portion of this Iterable as a new Iterable.
+   * @param {!number} start
+   * @param {!number} end
+   * @throws {BadArgumentError}
+   * throws error if the given iterables is not an array
+   * @returns {Iterable}
+   */
+  slice(start, end) {
+    return slice(this.it, start, end);
   }
 
   /**
