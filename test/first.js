@@ -19,7 +19,7 @@ describe('#first', () => {
   });
   it('should yield the correct result.', () => {
     const base = [1, 2, 3];
-    const iterable = new Iterable(base.slice(0)).first();
+    const iterable = new Iterable(base.slice(0)).first(x => typeof x === 'number');
 
     for (const i of iterable) {
       assert(base[0] === i);
