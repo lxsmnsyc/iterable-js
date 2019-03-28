@@ -2,6 +2,14 @@
 
 An extensions for objects with Iteration Protocol for JS
 
+| Platform | Build Status |
+| --- | --- |
+| Linux | [![Build Status](https://travis-ci.org/LXSMNSYC/iterable-js.svg?branch=master)](https://travis-ci.org/LXSMNSYC/iterable-js) |
+| Windows | [![Build status](https://ci.appveyor.com/api/projects/status/272hv6jnglgamb0g?svg=true)](https://ci.appveyor.com/project/LXSMNSYC/iterable-js) |
+
+[![codecov](https://codecov.io/gh/LXSMNSYC/iterable-js/branch/master/graph/badge.svg)](https://codecov.io/gh/LXSMNSYC/iterable-js)
+
+
 ### Introduction
 
 ### Iterations Protocol
@@ -12,9 +20,8 @@ ES2015 introduces a new feature, namely the [Iterations Protocol](https://develo
   
   In order to be iterable, an object must implement the @@iterator method, meaning that the object (or one of the objects up its prototype chain) must have a property with a @@iterator key which is available via constant Symbol.iterator:
 
-  | Property | Value |
-  | --- | --- |
-  | ```[Symbol.iterator]``` | A zero arguments function that returns an object, conforming to the iterator protocol. |
+  * ```[Symbol.iterator]``` 
+    * A zero arguments function that returns an object, conforming to the iterator protocol.
 
   Whenever an object needs to be iterated (such as at the beginning of a for..of loop), its @@iterator method is called with no arguments, and the returned iterator is used to obtain the values to be iterated.
 
@@ -22,9 +29,16 @@ ES2015 introduces a new feature, namely the [Iterations Protocol](https://develo
   
   An object is an iterator when it implements a next() method with the following semantics:
 
-  | Property | Value |
-  | --- | --- |
-  | next | A zero arguments function that returns an object with at least the following two properties: <ul><li>```done``` (boolean)<ul><li>Has the value ```true``` if the iterator is past the end of the iterated sequence. In this case ```value``` optionally specifies the return value of the iterator.</li><li>Has the value ```false``` if the iterator was able to produce the next value in the sequence. This is equivalent of not specifying the done property altogether.</li></ul></li><li>```value``` - any JavaScript value returned by the iterator. Can be omitted when ```done``` is ```true```.</li></ul> The next method always has to return an object with appropriate properties including ```done``` and ```value```. If a non-object value gets returned (such as ```false``` or ```undefined```), a TypeError ("iterator.next() returned a non-object value") will be thrown.|
+  * next
+    * A zero arguments function that returns an object with at least the following two properties: 
+      * ```done``` (boolean)
+        * Has the value ```true``` if the iterator is past the end of the iterated sequence. In this case ```value``` optionally specifies the return value of the iterator.
+        * Has the value ```false``` if the iterator was able to produce the next value in the sequence. This is equivalent of not specifying the done property altogether.
+      * ```value``` 
+        * any JavaScript value returned by the iterator.
+        * Can be omitted when ```done``` is ```true```.
+    * The next method always has to return an object with appropriate properties including ```done``` and ```value```.
+    * If a non-object value gets returned (such as ```false``` or ```undefined```), a TypeError ("iterator.next() returned a non-object value") will be thrown.
 
 ### Iterable and Iteration Protocol
 
@@ -81,6 +95,7 @@ Method Counterparts
 | ```diff``` | | |
 | ```distinct``` | ```distinct``` | Doesn't have the compare mechanism. Strict equality is used. |
 | ```distinctAdjacent``` | ```distinctUntilChanged``` | Doesn't have the compare mechanism. Strict equality is used. |
+| ```doWhile``` | ```doWhile``` | |
 | ```elementAt``` | ```elementAt``` | Returns a singular Iterable that yields the result. |
 | ```empty``` | ```empty``` | |
 | ```equal``` | ```sequenceEqual``` | Returns a singular Iterable that yields the boolean result. |
@@ -92,9 +107,8 @@ Method Counterparts
 | ```ignoreElements``` | ```ignoreElements``` | |
 | ```indexOf``` | | |
 | ```innerJoin``` | ```innerJoin``` | |
-| ```intersect``` | ```intersect``` | |
 | ```intercalate``` | | |
-| ```intersect``` | | |
+| ```intersect``` | ```intersect``` | |
 | ```intersperse``` | | |
 | ```isEmpty``` | ```isEmpty``` | Returns a singular Iterable that yields the boolean result. |
 | ```just``` | | |
@@ -124,6 +138,7 @@ Method Counterparts
 | ```sorted``` | | Returns a singular Iterable that yields the boolean result. |
 | ```spanWith``` | | |
 | ```split``` | | |
+| ```startWith``` | ```startWith``` | |
 | ```step``` | | |
 | ```sum``` | ```sum``` | Returns a singular Iterable that yields the result. |
 | ```take``` | ```take``` | |
@@ -131,6 +146,7 @@ Method Counterparts
 | ```takeUntil``` | | |
 | ```takeWhile``` | ```takeWhile``` | |
 | ```toArray``` | ```toArray``` | |
+| ```whileDo``` | ```while``` | |
 | ```zip``` | ```zip``` | |
 | | ```case``` | |
 | | ```catch``` | Iterable throws the error synchronously. |
@@ -138,7 +154,6 @@ Method Counterparts
 | | ```chain``` | |
 | | ```concatAll``` | |
 | | ```defer``` | Meh |
-| | ```doWhile``` | to be added. |
 | | ```expand``` | |
 | | ```find``` | |
 | | ```for``` | |
@@ -157,10 +172,8 @@ Method Counterparts
 | | ```retry``` | Iterable doesn't support fallbacks. |
 | | ```share``` | |
 | | ```single``` | Isn't encouraged. |
-| | ```slice``` | to be added. |
-| | ```tap``` | use the ```do``` operators. |
-| | ```union``` | to be added. |
-| | ```while``` | to be added. |
+| | ```tap``` | use the ```doXXXX``` operators. |
+| | ```union``` | |
 
 ## Usage
 
@@ -212,4 +225,64 @@ for (const i of evenOdd[0].map(x => `Next Even: ${x}`)) {
 for (const i of evenOdd[1].map(x => `Next Odd: ${x}`)) {
   console.log(i);
 }
+```
+
+### Static and non-Static
+
+All operators of Iterable are both static and non-static (except for a few ones), allowing chainable and direct transformations.
+
+Both examples below does the same thing.
+
+```js
+for (const i of Iterable.filter('Hello World', x => x === x.toUpperCase())) {
+  console.log(i);
+}
+```
+
+```js
+for (const i of new Iterable('Hello World').filter(x => x === x.toUpperCase())) {
+  console.log(i);
+}
+```
+
+### Generators
+
+Iterable treats generator functions as an iterable object, even if it doesn't implement the iterable protocol.
+
+```js
+const iterable = new Iterable(function* () {
+  yield 1;
+  yield 2;
+  yield 3;
+});
+for (const i of iterable) {
+  console.log(i);
+}
+```
+
+### Creating your own operators
+
+To create your own operator, you must pass functions to the ```compose``` method. The functions provided must receive a single parameter, which refers to the chained Iterable, and must return an Iterable.
+
+```js
+const getOdds = source => source.filter(x => x % 2 === 1);
+
+for (const i of Iterable.range(1, 1000).compose(getOdds)) {
+  console.log(i);
+}
+```
+
+```compose``` can accept multiple functions, allowing to build pipelines of operators.
+
+## Build
+
+Clone the repo then run
+
+```bash
+npm install
+```
+
+To build distributables, coverages and tests:
+```bash
+npm run build
 ```
