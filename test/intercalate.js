@@ -22,8 +22,11 @@ describe('#intercalate', () => {
   });
   it('should yield the correct sequence', () => {
     const expected = [10, 20, 30];
-    for (const c of Iterable.intercalate([10, 30], [20])) {
-      assert(expected.shift() === c);
+    const iterable = new Iterable([10, 30]).intercalate([20]);
+    let acc = true;
+    for (const i of iterable) {
+      acc = acc && i === expected.shift();
     }
+    assert(acc && expected.length === 0);
   });
 });
