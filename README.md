@@ -189,13 +189,13 @@ CDN
 * jsDelivr
   
 ```html
-<script src="https://cdn.jsdelivr.net/npm/rx-single/dist/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/iterable-js/dist/index.min.js"></script>
 ```
 
 * unpkg
   
 ```html
-<script src="https://unpkg.com/rx-single/dist/index.min.js"></script>
+<script src="https://unpkg.com/iterable-js/dist/index.min.js"></script>
 ```
 
 
