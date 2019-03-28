@@ -1,6 +1,16 @@
 import Iterable from '../iterable';
+import { isUndefined } from './utils';
 
 /**
  * @ignore
  */
-export default () => new Iterable([]);
+let INSTANCE;
+/**
+ * @ignore
+ */
+export default () => {
+  if (isUndefined(INSTANCE)) {
+    INSTANCE = new Iterable([]);
+  }
+  return INSTANCE;
+};
