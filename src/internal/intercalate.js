@@ -1,6 +1,7 @@
+/* eslint-disable func-names */
 /* eslint-disable no-restricted-syntax */
 import { DoubleIterableCheck, defineField } from './utils';
-import reduce from './reduce';
+import Iterable from '../iterable';
 /**
  * @ignore
  */
@@ -10,15 +11,18 @@ const FIELD = defineField('intercalate');
  */
 export default (iterable, other) => {
   DoubleIterableCheck(iterable, other, FIELD);
-
-  return reduce(iterable, (acc, item) => {
-    if (typeof acc === 'undefined') {
-      return [item];
-    }
+  return new Iterable(function* () {
+    const buffer = [];
+    let prev;
     for (const i of iterable) {
-      acc.push(i);
+      buffer.push(i);
+      prev = buffer.slice(0);
+      for (const o of other) {
+        buffer.push(o);
+      }
     }
-    acc.push(item);
-    return acc;
+    for (const i of prev) {
+      yield i;
+    }
   });
 };
