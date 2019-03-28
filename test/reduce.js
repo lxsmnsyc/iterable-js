@@ -26,12 +26,7 @@ describe('#reduce', () => {
   });
   it('should yield the correct result.', () => {
     const base = [1, 2, 3];
-    const iterable = new Iterable(base).reduce((acc, i) => {
-      if (typeof acc === 'undefined') {
-        return i;
-      }
-      return acc + i;
-    });
+    const iterable = new Iterable(base).reduce((acc, i) => (acc == null ? 0 : acc) + i);
     for (const i of iterable) {
       assert(i === base.reduce((acc, x) => acc + x));
     }
