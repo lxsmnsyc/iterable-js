@@ -4,7 +4,9 @@ import Iterable from '../iterable';
 import { IterableCheck, defineField } from './utils';
 
 const FIELD = defineField('defaultIfEmpty');
-
+/**
+ * @ignore
+ */
 export default (iterable, value) => {
   IterableCheck(iterable, 1, FIELD);
   return new Iterable(function* () {
