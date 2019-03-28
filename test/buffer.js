@@ -33,15 +33,19 @@ describe('#buffer', () => {
   });
   it('should yield Arrays of the given length.', () => {
     const iterable = Iterable.buffer([1, 2, 3, 4], 2);
+    let acc = true;
     for (const i of iterable) {
-      assert(i instanceof Array);
-      assert(i.length === 2);
+      acc = acc && i instanceof Array;
+      acc = acc && i.length === 2;
     }
+    assert(acc);
   });
   it('should yield Arrays of the given length along with an excess.', () => {
     const iterable = new Iterable([1, 2, 3, 4, 5]).buffer(2);
+    let acc = true;
     for (const i of iterable) {
-      assert(i instanceof Array);
+      acc = acc && i instanceof Array;
     }
+    assert(acc);
   });
 });
