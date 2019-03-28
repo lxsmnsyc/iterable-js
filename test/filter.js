@@ -26,10 +26,13 @@ describe('#filter', () => {
   });
   it('should yield the correct result.', () => {
     const base = [1, 2, 3];
-    const iterable = new Iterable(base.slice(0)).filter(x => typeof x === 'number');
+    const expected = [1, 2, 3];
+    const iterable = new Iterable(base).filter(x => typeof x === 'number');
 
+    let acc = true;
     for (const i of iterable) {
-      assert(base.shift() === i);
+      acc = acc && i === expected.shift();
     }
+    assert(acc && expected.length === 0);
   });
 });
