@@ -26,10 +26,13 @@ describe('#flatMap', () => {
   });
   it('should yield the correct result.', () => {
     const base = [1, 2, 3];
-    const iterable = new Iterable(base.slice(0)).flatMap(x => [x]);
+    const expected = [1, 2, 3];
+    const iterable = new Iterable(base).flatMap(x => [x]);
 
+    let acc = true;
     for (const i of iterable) {
-      assert(base.shift() === i);
+      acc = acc && i === expected.shift();
     }
+    assert(acc && expected.length === 0);
   });
 });
