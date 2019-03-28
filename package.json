@@ -1,5 +1,5 @@
 {
-  "name": "iterable-js",
+  "name": "@lxsmnsyc/iterable-js",
   "version": "0.1.0",
   "description": "Extensions for objects with Iteration Protocol for JS",
   "main": "index.js",
