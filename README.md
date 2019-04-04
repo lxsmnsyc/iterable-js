@@ -88,7 +88,7 @@ Method Counterparts
 | ```breakWith``` | | |
 | ```buffer``` | ```buffer``` | Doesn't have the skip mechanism. |
 | ```cache``` | | |
-| ```compose``` | ```pipe``` | Iterable ```compose``` doesn't bind to the given transformer. |
+| ```compose``` | ```pipe``` | |
 | ```concat``` | ```concat```, ```of```, ```endWith``` | Unlike the IxJS ```concat```, Iterable ```concat``` allows to concat non-Iterable values. |
 | ```contains``` | ```includes``` | Doesn't have the skip mechanism. Returns a singular Iterable that yields the boolean result. |
 | ```count``` | ```count``` | Returns a singular Iterable that yields the number result. |
