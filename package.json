@@ -59,7 +59,7 @@
     "mocha": "^6.0.2",
     "nyc": "^13.3.0",
     "rollup": "^1.7.2",
-    "terser": "^3.17.0"
+    "terser": "^4.8.1"
   },
   "dependencies": {}
 }
